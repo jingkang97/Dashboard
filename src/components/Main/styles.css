@@ -45,17 +45,26 @@ p {
   font-size: 15px;
   background-color: transparent;
 }
+
+.ant-menu-item {
+  color: "white";
+}
+
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
   font-weight: bold;
   background: transparent;
-  color: #5a65ea;
+  color: "white";
 }
 
 .ant-menu > .ant-menu-item:hover {
-  color: #5a65ea;
+  /* color: #5a65ea; */
+}
+
+.ant-menu > .ant-menu-item {
+  background: transparent;
 }
 
 .ant-menu > .ant-menu-item:active {
   background: transparent;
-  color: #5a65ea;
+  /* color: #5a65ea; */
 }

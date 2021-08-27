@@ -3,7 +3,7 @@ import './styles.css'
 
 const User = () => {
     return ( 
-        <div>
+        <div style={{fontSize:'10px', color:'white'}}>
             User
         </div>
      );

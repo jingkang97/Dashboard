@@ -1,6 +1,6 @@
 const Session = () => {
     return ( 
-        <div>
+        <div style={{fontSize:'10px', color:'white'}}>
             Session
         </div>
      );
