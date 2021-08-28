@@ -16491,7 +16491,7 @@ textarea.ant-mentions {
   > .ant-menu-submenu-title {
   left: 0;
   /* padding: 0 calc(50% - 16px / 2); */
-  padding-left: 25px;
+  padding-left: 28px;
   text-overflow: clip;
 }
 .ant-menu.ant-menu-inline-collapsed > .ant-menu-item .ant-menu-submenu-arrow,
@@ -21871,14 +21871,16 @@ span.ant-radio + * {
   margin: -8px -8px -8px 25px;
 }
 .ant-table-small .ant-table-thead > tr > th {
-  background-color: #fafafa;
+  /* background-color: #fafafa; */
+  background-color: pink;
 }
 .ant-table-small .ant-table-selection-column {
   width: 46px;
   min-width: 46px;
 }
 .ant-table.ant-table-bordered > .ant-table-title {
-  border: 1px solid #f0f0f0;
+  /* border: 1px solid #f0f0f0; */
+  border: 1px solid pink;
   border-bottom: 0;
 }
 .ant-table.ant-table-bordered > .ant-table-container {
@@ -22056,7 +22058,8 @@ span.ant-radio + * {
   > thead
   > tr
   > th::before {
-  background-color: transparent !important;
+  /* background-color: transparent !important; */
+  background-color: #3a3c41;
 }
 .ant-table.ant-table-bordered
   > .ant-table-container
@@ -22322,7 +22325,8 @@ span.ant-radio + * {
   font-feature-settings: "tnum";
   position: relative;
   font-size: 14px;
-  background: #fff;
+  /* background: #fff; */
+  background-color: #3a3c41;
   border-radius: 2px;
 }
 .ant-table table {
@@ -22372,11 +22376,13 @@ span.ant-radio + * {
 }
 .ant-table-thead > tr > th {
   position: relative;
-  color: rgba(0, 0, 0, 0.85);
+  /* color: rgba(0, 0, 0, 0.85); */
+  color: "white";
   font-weight: 500;
   text-align: left;
-  background: #fafafa;
-  border-bottom: 1px solid #f0f0f0;
+  /* background: #fafafa; */
+  background: #3a3c41;
+  border-bottom: 1px solid #9ba6b2;
   transition: background 0.3s ease;
 }
 .ant-table-thead > tr > th[colspan]:not([colspan="1"]) {
@@ -22399,7 +22405,9 @@ span.ant-radio + * {
   border-bottom: 0;
 }
 .ant-table-tbody > tr > td {
-  border-bottom: 1px solid #f0f0f0;
+  /* border-bottom: 1px solid #f0f0f0; */
+  border-bottom: 1px solid #9ba6b2;
+
   transition: background 0.3s;
 }
 .ant-table-tbody > tr > td > .ant-table-wrapper:only-child .ant-table,
@@ -22461,7 +22469,8 @@ span.ant-radio + * {
   border-radius: 0;
 }
 .ant-table-tbody > tr.ant-table-row:hover > td {
-  background: #fafafa;
+  /* background: #fafafa; */
+  background: #3a3c41;
 }
 .ant-table-tbody > tr.ant-table-row-selected > td {
   background: #f0f4ff;

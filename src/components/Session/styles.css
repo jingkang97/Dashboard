@@ -1,0 +1,14 @@
+.ant-table-content {
+  background-color: #3a3c41;
+  color: white;
+  /* color: rgb(127, 127, 127); */
+  /* border-radius: 20px; */
+}
+
+.ant-table-thead {
+  background-color: pink;
+}
+
+/* tbody > tr > td {
+  background-color: #3a3c41;
+} */

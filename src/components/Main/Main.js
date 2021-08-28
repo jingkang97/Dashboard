@@ -57,19 +57,21 @@ const Main = () => {
                         backgroundColor:'#202225', 
                         // padding:'10px',
                         // backgroundColor: 'white',
-                        color:'#9C9EAA'}} defaultSelectedKeys={['1']}
-                        defaultOpenKeys={['sub1']}
+                        color:'#9C9EAA'}} 
+                        defaultSelectedKeys={[location.pathname.slice(1)]}
+                        // defaultSelectedKeys={['1']}
+                        // defaultOpenKeys={['sub1']}
                         mode="inline"
                     >
-                        <Menu.Item className="menuItem" key="1" icon={<DashboardOutlined style={{fontSize:'25px'}}/>}>
+                        <Menu.Item className="menuItem" key="overview" icon={<DashboardOutlined style={{fontSize:'25px'}}/>}>
                             <Link to="/overview">
                                 Overview
                             </Link>
                         </Menu.Item>
-                        <Menu.Item className="menuItem" key="2" icon={<CollectionPlay style={{fontSize:'25px'}}/>}>
+                        <Menu.Item className="menuItem" key="session" icon={<CollectionPlay style={{fontSize:'25px'}}/>}>
                             <Link to="/session" >Session</Link>
                         </Menu.Item>   
-                        <Menu.Item className="menuItem" key="3" icon={<UserOutlined style={{fontSize:'25px'}}/>}>
+                        <Menu.Item className="menuItem" key="users" icon={<UserOutlined style={{fontSize:'25px'}}/>}>
                             <Link to="/users" >Users</Link>
                         </Menu.Item>   
                     </Menu>
