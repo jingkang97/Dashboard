@@ -1,6 +1,6 @@
 import React from 'react';
-import {  Layout,Menu,Avatar } from 'antd';
-import { DashboardOutlined, UserOutlined } from '@ant-design/icons';
+import {  Layout,Menu,Avatar, Button } from 'antd';
+import { DashboardOutlined, UserOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
 
 
@@ -25,25 +25,30 @@ import './styles.css'
 const Main = () => {
     const location = useLocation();
     const { Header, Content, Sider } = Layout;
-    const [open, setOpen] = React.useState(false)
+    const [collapse, setCollapse] = React.useState(false)
     const [user, setUser] = React.useState('Alex')
     
     const handleClick = e => {
         console.log('click ', e);
     };
     const handleCollapse = () => {
-        setOpen(!open)
+        setCollapse(!collapse)
     }
     return ( 
         <div>
             <Layout style={{ height: '100vh', overflow:'hidden'}}>
                 <Sider width={200} className="sider"
-                // collapsible collapsed={open}
-                // onCollapse={handleCollapse}
+                // collapsible 
+                collapsed={collapse}
+                onCollapse={handleCollapse}
                 >
+                    <Button type="primary" onClick={handleCollapse} style={{border:'0px', borderRadius:'0px', backgroundColor: '#5a65ea' , position:'absolute', bottom:'0', width:'100%', height:'50px'}}>
+                        {collapse ? <RightOutlined /> : <LeftOutlined />}
+                    </Button>
                     <div className="logo">
                         <img src="DanceOnLogo.svg" style={{height:'40px'}}/>
-                        <div style={{marginLeft:'10px'}}>DANCE<span style={{fontWeight:'bold', color:'#5a65ea'}}>ON</span></div>
+                        {collapse ? null : <div style={{marginLeft:'10px'}}>DANCE<span style={{fontWeight:'bold', color:'#5a65ea'}}>DANCE</span></div>}
+                        
                     </div>
                     <Menu
                         // theme="dark"
@@ -65,9 +70,10 @@ const Main = () => {
                             <Link to="/session" >Session</Link>
                         </Menu.Item>   
                         <Menu.Item className="menuItem" key="3" icon={<UserOutlined style={{fontSize:'25px'}}/>}>
-                            <Link to="/users" >User</Link>
+                            <Link to="/users" >Users</Link>
                         </Menu.Item>   
                     </Menu>
+                    
                 </Sider>
                 <Layout>
                     <Header className="header">
