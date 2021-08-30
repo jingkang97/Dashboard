@@ -15,7 +15,7 @@ const Overview = ({user}) => {
     const [loading, setLoading] = React.useState(true)
     return ( 
         <div className="content">
-            <Row gutter={21} style={{ marginBottom: 0 }}>
+            <Row gutter={21} style={{ marginBottom: 0, marginTop:'-25px'}}>
 
                 <div style={{fontSize:'15px', margin:'0px 0px 10px 15px'}}>
                     Good Afternoon,<span className="name"> {user}!</span>
