@@ -1,7 +1,8 @@
 import React from 'react';
-import {  Layout,Menu,Avatar, Button } from 'antd';
-import { DashboardOutlined, UserOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
+import {  Layout,Menu,Avatar, Button, Select } from 'antd';
+import { DashboardOutlined, UserOutlined, RightOutlined, LeftOutlined, DownOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
+
 
 
 import {
@@ -23,6 +24,7 @@ import './styles.css'
 
 
 const Main = () => {
+    const { Option } = Select;
     const location = useLocation();
     const { Header, Content, Sider } = Layout;
     const [collapse, setCollapse] = React.useState(false)
@@ -33,6 +35,11 @@ const Main = () => {
     };
     const handleCollapse = () => {
         setCollapse(!collapse)
+    }
+
+    const handleChange= (value) => {
+        setUser(value)
+        console.log(`selected ${value}`);
     }
     return ( 
         <div>
@@ -80,17 +87,23 @@ const Main = () => {
                 <Layout>
                     <Header className="header">
                         {location.pathname == '/overview' ? 'Overview' : (location.pathname == '/users' ? 'Users' : (location.pathname == '/session' ? 'Session': null))}
-                        <div style={{position:'absolute', right:'0', marginRight:'50px',  fontWeight:'normal', fontSize:'15px', display:'flex', flexDirection:'row', alignItems:'center'}}>
-                            <div style={{marginRight:'10px'}}> 
-                                {user}
+                        <div style={{position:'absolute', right:'0', marginRight:'20px',  fontWeight:'normal', fontSize:'15px', display:'flex', flexDirection:'row', alignItems:'center'}}>
+                        <Avatar size={40}  icon={<UserOutlined />} />
+                            <div style={{marginRight:'0px'}}> 
+                            <Select defaultValue="Alex" style={{ width: 80}} onChange={handleChange}>
+                            <Option value="Alex">Alex</Option>
+                            <Option value="Lucy">Lucy</Option>
+                            
+                            </Select>
+                                {/* {user} */}
                             </div>
-                            <Avatar size={40}  icon={<UserOutlined />} />
+                            
                         </div>
                     </Header>
                     <Content className="content" >
                         <Switch>
                         <Route path="/overview">
-                            <Overview />
+                            <Overview user={user}/>
                         </Route>
                         <Route path="/users">
                             <User />

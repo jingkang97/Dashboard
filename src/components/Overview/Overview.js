@@ -10,43 +10,65 @@ import './styles.css'
 import * as dummy from './dummydata'
 
 
-const Overview = () => {
+const Overview = ({user}) => {
     const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#5a65ea' }} spin />;
     const [loading, setLoading] = React.useState(true)
     return ( 
         <div className="content">
-        <Row gutter={21} style={{ marginBottom: 8 }}>
+            <Row gutter={21} style={{ marginBottom: 0 }}>
+
+                <div style={{fontSize:'15px', margin:'0px 0px 10px 15px'}}>
+                    Good Afternoon,<span className="name"> {user}!</span>
+                    {/* <div style={{fontSize:'15px'}}>
+                    Your daily report is ready.
+                    </div> */}
+                    
+                </div>
+                <div className="description" style={{fontSize:'12px', backgroundColor:'pink', margin:'0px 10px 15px 10px'}}>
+                <div style={{fontSize:'15px', fontWeight:'bold'}}>Keep up the good work!</div>
+                You danced an average of <span style={{fontWeight:'bold'}}>24</span> mins today and you have achieved an average grade of 
+                 <span style={{fontWeight:'bold'}}> 'Excellent'</span>! 
+                You tend to dance till your muscle is fatigued so do remember to stretch and take adequate rest!
+                </div>
+                
+            </Row>
+        <Row gutter={21} style={{ marginBottom: 0 }}>
       <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 15 }}>
       <Card  bordered={false} style={{ width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225'}}>
-                <div style={{fontWeight:'bold', fontSize:'20px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Total Sessions <CollectionPlay /></div>
-                <Skeleton active />
+                <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Total Sessions <CollectionPlay /></div>
+                <div style={{height:'130px'}}>
+                <Skeleton size="large" active />
+                </div>
         </Card>
       </Col>
-      <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 15 }}>
-            <Card  bordered={false} style={{ width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225' }}>
-            <div style={{fontWeight:'bold', fontSize:'20px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Number of Users <UserOutlined /></div>
+      <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 10 }}>
+            <Card  bordered={false} style={{height:'200px', width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225' }}>
+            <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Number of Users <UserOutlined /></div>
                 <Skeleton 
                 // loading={loading}
                 loading={false}
                 active
                 >
-                    <div style={{fontSize:'50px', height:'150px'}}>
+                    <div style={{fontSize:'50px', height:'100px'}}>
                         16
                     </div>
                 </Skeleton>
             </Card>
       </Col>
       
-      <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 15 }}>
-      <Card  bordered={false} style={{ width: '100%', backgroundColor: '#5a65ea', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #5a65ea' }}>
-      <div style={{fontWeight:'bold', fontSize:'20px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Favourite Move <LikeOutlined /></div>
+      <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 12 }}>
+      <Card  bordered={false} style={{ height:'200px',width: '100%', backgroundColor: '#5a65ea', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #5a65ea' }}>
+      <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Favourite Move <LikeOutlined /></div>
+                <div style={{height:'50px'}}>
                 <Skeleton active />
+                </div>
+                
             </Card>
       </Col>
     </Row>
     <Row >
         <Card  bordered={false} style={{ width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225', position:'relative', overflow:'scroll'}}>
-                <div style={{fontWeight:'bold', fontSize:'20px', color:'#9BA6B2', marginBottom:'20px'}}>Your Performance
+                <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', marginBottom:'20px'}}>Your Performance
                     <Spin indicator={antIcon} style={{position:'absolute', right:'0', top:'0', marginRight:'25px', marginTop:'30px'}}/>
                 </div>
                 <div style={{display:'flex', flexDirection:'row'}}>

@@ -28,8 +28,8 @@ p {
   background-color: #2f3136;
   color: white;
   text-align: left;
-  height: 60px;
-  font-size: 30px;
+  height: 50px;
+  font-size: 20px;
   font-weight: bold;
 }
 
@@ -68,3 +68,21 @@ p {
   background: transparent;
   /* color: #5a65ea; */
 }
+
+.ant-select-focused .ant-select-selector,
+.ant-select-selector:focus,
+.ant-select-selector:active,
+.ant-select-open .ant-select-selector {
+  border-color: black;
+  background-color: pink;
+  /* box-shadow: none !important; */
+}
+
+/* .ant-select-selection {
+  background-color: green;
+} */
+
+/* .ant-select:hover .ant-select-selector {
+  border-color: pink !important;
+  box-shadow: none !important;
+} */
