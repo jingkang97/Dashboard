@@ -1,0 +1,44 @@
+.content {
+  overflow-y: scroll;
+}
+
+.description {
+  background: rgb(255, 109, 152);
+  background: linear-gradient(
+    77deg,
+    rgba(255, 109, 152, 1) 0%,
+    rgba(90, 101, 234, 1) 100%
+  );
+  background-size: 150% 150%;
+  animation: gradient 3s ease infinite;
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: -10px;
+  width: 100%;
+  /* box-shadow: 0 0 20px 0px white; */
+}
+
+.name {
+  /* font-size: 30px; */
+  font-weight: bold;
+  background: linear-gradient(
+    77deg,
+    rgba(255, 109, 152, 1) 0%,
+    rgba(90, 101, 234, 1) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
