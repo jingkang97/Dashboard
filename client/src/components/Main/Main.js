@@ -7,7 +7,8 @@ import {
     Switch,
     Route,
     Link,
-    useLocation
+    useLocation, 
+    Redirect
   } from "react-router-dom";
 
 import Overview from '../Overview/Overview';
@@ -60,8 +61,11 @@ const Main = () => {
                         backgroundColor:'#202225', 
                         // padding:'10px',
                         // backgroundColor: 'white',
-                        color:'#9C9EAA'}} 
-                        defaultSelectedKeys={[location.pathname.slice(1)]}
+                        color:'#9C9EAA'}}
+
+                        // defaultSelectedKeys={[location.pathname.slice(1)]}
+                        defaultSelectedKeys={location.pathname == '/' ? ['overview'] : [location.pathname.slice(1)]}
+
                         // defaultSelectedKeys={['1']}
                         // defaultOpenKeys={['sub1']}
                         mode="inline"
@@ -97,7 +101,11 @@ const Main = () => {
                         </div>
                     </Header>
                     <Content className="content" >
+
                         <Switch>
+                        {console.log(location.pathname)}
+
+                        <Route exact path="/"><Redirect to="/overview" /></Route>
                         <Route path="/overview">
                             <Overview user={user}/>
                         </Route>
