@@ -1,14 +1,12 @@
 import React from 'react';
-import { Card, Skeleton, Row, Col, } from 'antd';
-import { Spin } from 'antd';
+import { Card, Skeleton, Row, Col, Spin} from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, ComposedChart, Legend } from 'recharts';
-import { DashboardOutlined, UserOutlined, LikeOutlined } from '@ant-design/icons';
-import { CollectionPlay, PlayBtn } from 'react-bootstrap-icons';
+import { UserOutlined, LikeOutlined } from '@ant-design/icons';
+import { CollectionPlay } from 'react-bootstrap-icons';
 
 import './styles.css'
 import * as dummy from './dummydata'
-
 
 const Overview = ({user}) => {
     const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#5a65ea' }} spin />;
@@ -16,13 +14,8 @@ const Overview = ({user}) => {
     return ( 
         <div className="content">
             <Row gutter={21} style={{ marginBottom: 0, marginTop:'-25px'}}>
-
                 <div style={{fontSize:'15px', margin:'0px 0px 10px 15px'}}>
                     Good Afternoon,<span className="name"> {user}!</span>
-                    {/* <div style={{fontSize:'15px'}}>
-                    Your daily report is ready.
-                    </div> */}
-                    
                 </div>
                 <div className="description" style={{fontSize:'12px', backgroundColor:'pink', margin:'0px 10px 15px 10px'}}>
                 <div style={{fontSize:'15px', fontWeight:'bold'}}>Keep up the good work!</div>
@@ -72,8 +65,6 @@ const Overview = ({user}) => {
                     <Spin indicator={antIcon} style={{position:'absolute', right:'0', top:'0', marginRight:'25px', marginTop:'30px'}}/>
                 </div>
                 <div style={{display:'flex', flexDirection:'row'}}>
-                    
-                
                     <div style={{width:'400px', height:'200px'}}>
                     <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart
@@ -108,8 +99,6 @@ const Overview = ({user}) => {
                         <div style={{fontWeight:'bold', color:'#9BA6B2', marginLeft:'20px'}}>
                             Average Mistakes
                         </div>
-                        
-
                     </div>
                 </div>
         </Card>

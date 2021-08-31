@@ -2,23 +2,12 @@ import React from 'react';
 import {  Layout,Menu,Avatar, Button, Select } from 'antd';
 import { DashboardOutlined, UserOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
-
-import {
-    Switch,
-    Route,
-    Link,
-    useLocation, 
-    Redirect
-  } from "react-router-dom";
-
+import { Switch, Route, Link, useLocation, Redirect} from "react-router-dom";
 import Overview from '../Overview/Overview';
 import Session from '../Session/Session'
 import User from '../User/User'
-
-// import 'antd/dist/antd.css';
 import '../../style/custom-antd.css'
 import './styles.css'
-
 
 const Main = () => {
     const { Option } = Select;
@@ -26,18 +15,8 @@ const Main = () => {
     const { Header, Content, Sider } = Layout;
     const [collapse, setCollapse] = React.useState(false)
     const [user, setUser] = React.useState('Alex')
-    
-    const handleClick = e => {
-        console.log('click ', e);
-    };
-    const handleCollapse = () => {
-        setCollapse(!collapse)
-    }
-
-    const handleChange= (value) => {
-        setUser(value)
-        console.log(`selected ${value}`);
-    }
+    const handleCollapse = () => {setCollapse(!collapse)}
+    const handleChange = (value) => {setUser(value)}
     return ( 
         <div>
             <Layout style={{ height: '100vh', overflow:'hidden'}}>
@@ -55,19 +34,10 @@ const Main = () => {
                         
                     </div>
                     <Menu
-                        // theme="dark"
-                        onClick={handleClick}
                         style={{ height: '100%', borderRightColor:'transparent', 
                         backgroundColor:'#202225', 
-                        // padding:'10px',
-                        // backgroundColor: 'white',
                         color:'#9C9EAA'}}
-
-                        // defaultSelectedKeys={[location.pathname.slice(1)]}
                         defaultSelectedKeys={location.pathname == '/' ? ['overview'] : [location.pathname.slice(1)]}
-
-                        // defaultSelectedKeys={['1']}
-                        // defaultOpenKeys={['sub1']}
                         mode="inline"
                     >
                         <Menu.Item className="menuItem" key="overview" icon={<DashboardOutlined style={{fontSize:'25px'}}/>}>
@@ -82,7 +52,6 @@ const Main = () => {
                             <Link to="/users" >Users</Link>
                         </Menu.Item>   
                     </Menu>
-                    
                 </Sider>
                 <Layout>
                     <Header className="header">
@@ -90,31 +59,25 @@ const Main = () => {
                         <div style={{position:'absolute', right:'0', marginRight:'20px',  fontWeight:'normal', fontSize:'15px', display:'flex', flexDirection:'row', alignItems:'center'}}>
                         <Avatar size={40} src={`${user}.jpeg`} icon={<UserOutlined />} />
                             <div style={{marginRight:'0px'}}> 
-                            <Select defaultValue="Alex" style={{ width: 80}} onChange={handleChange}>
-                            <Option value="Alex">Alex</Option>
-                            <Option value="Lucy">Lucy</Option>
-                            
-                            </Select>
-                                {/* {user} */}
+                                <Select defaultValue="Alex" style={{ width: 80}} onChange={handleChange}>
+                                    <Option value="Alex">Alex</Option>
+                                    <Option value="Lucy">Lucy</Option>
+                                </Select>
                             </div>
-                            
                         </div>
                     </Header>
                     <Content className="content" >
-
                         <Switch>
-                        {console.log(location.pathname)}
-
-                        <Route exact path="/"><Redirect to="/overview" /></Route>
-                        <Route path="/overview">
-                            <Overview user={user}/>
-                        </Route>
-                        <Route path="/users">
-                            <User />
-                        </Route>
-                        <Route path="/session">
-                            <Session />
-                        </Route>
+                            <Route exact path="/"><Redirect to="/overview" /></Route>
+                            <Route path="/overview">
+                                <Overview user={user}/>
+                            </Route>
+                            <Route path="/users">
+                                <User />
+                            </Route>
+                            <Route path="/session">
+                                <Session />
+                            </Route>
                         </Switch>
                     </Content>
                 </Layout>

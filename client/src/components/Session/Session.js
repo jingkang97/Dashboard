@@ -1,10 +1,9 @@
 import React from 'react';
 import { Table, Tag, Space, Avatar, Spin } from 'antd';
-import * as dummy from './dummydata'
-import './styles.css'
 import { UserOutlined, AntDesignOutlined,LoadingOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
-
+import * as dummy from './dummydata'
+import './styles.css'
 
 const columns = [
   {
@@ -42,7 +41,6 @@ const columns = [
     dataIndex: 'total_participants',
     key: 'total_participants',
     align: 'center',
-
   },
   {
     title: 'Users',
@@ -67,8 +65,6 @@ const columns = [
   },
 ];
 
-
-
 const Session = () => {
     const [loading, setLoading] = React.useState(true)
     const antIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
@@ -82,8 +78,6 @@ const Session = () => {
                 All Sessions <CollectionPlay style={{marginLeft:'10px'}}/>
             </div>
             </div>
-            
-       
         <div style={{borderRadius:'20px', overflow:'hidden',  boxShadow: '0px 0px 20px 1px #202225', marginTop:'20px', backgroundColor:'#3A3C41'}}>
         <Spin spinning={loading} delay={500} size="large">
         
