@@ -59,9 +59,10 @@ const Main = () => {
                         <div style={{position:'absolute', right:'0', marginRight:'20px',  fontWeight:'normal', fontSize:'15px', display:'flex', flexDirection:'row', alignItems:'center'}}>
                         <Avatar size={40} src={`${user}.jpeg`} icon={<UserOutlined />} />
                             <div style={{marginRight:'0px'}}> 
-                                <Select defaultValue="Alex" style={{ width: 80}} onChange={handleChange}>
+                                <Select defaultValue="Alex" style={{ width: '100%'}} onChange={handleChange}>
                                     <Option value="Alex">Alex</Option>
                                     <Option value="Lucy">Lucy</Option>
+                                    <Option value="Mingzhen">Mingzhen</Option>
                                 </Select>
                             </div>
                         </div>

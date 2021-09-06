@@ -2342,6 +2342,7 @@ html {
   color: #fff;
   border-color: #5a65ea;
   background: #5a65ea;
+  border-radius: 8px;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
 }
@@ -2360,9 +2361,20 @@ html {
 .ant-btn-primary:hover,
 .ant-btn-primary:focus {
   color: #fff;
-  border-color: #8693f7;
-  background: #8693f7;
+  /* border-color: #8693f7; */
+  /* background: #8693f7; */
+  border-color: #5a65ea;
+  background: #5a65ea;
+  /* box-shadow: 0px 0px 10px 0px #5a65ea; */
 }
+
+.ant-btn-primary:hover {
+  color: #fff;
+  border-color: #5a65ea;
+  background: #5a65ea;
+  box-shadow: 0px 0px 10px 0px #5a65ea;
+}
+
 .ant-btn-primary:hover > a:only-child,
 .ant-btn-primary:focus > a:only-child {
   color: currentColor;
