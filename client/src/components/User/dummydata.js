@@ -15,4 +15,28 @@ export const data = [
       wearable_name: 'Dance Band Lite',
       
     },
+    {
+      key: '4',
+      name: 'Lucy',
+      wearable_name: 'Dance Band Lite',
+      
+    },
+    {
+      key: '5',
+      name: 'Lucy',
+      wearable_name: 'Dance Band Lite',
+      
+    },
+    {
+      key: '6',
+      name: 'Lucy',
+      wearable_name: 'Dance Band Lite',
+      
+    },
+    {
+      key: '7',
+      name: 'Lucy',
+      wearable_name: 'Dance Band Lite',
+      
+    },
   ];

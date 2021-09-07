@@ -83,7 +83,7 @@ const Main = () => {
                                 <Overview user={user}/>
                             </Route>
                             <Route path="/users">
-                                <User />
+                                <User user={user}/>
                             </Route>
                             <Route path="/session">
                                 <Session />

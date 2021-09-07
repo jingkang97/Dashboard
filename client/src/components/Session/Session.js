@@ -72,7 +72,6 @@ const Session = () => {
     setInterval(function(){ setLoading(false) }, 3000);
     const handleCLick = (event) =>{
       setButtonLoading(true)
-      console.log(buttonLoading)
       setInterval(function(){ setButtonLoading(false) }, 3000);
     }
     return ( 
