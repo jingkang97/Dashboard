@@ -1,8 +1,8 @@
 import React from 'react';
-import {  Layout,Menu,Avatar, Button, Select } from 'antd';
+import { Layout,Menu,Avatar, Button, Select } from 'antd';
 import { DashboardOutlined, UserOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
-import { Switch, Route, Link, useLocation, Redirect} from "react-router-dom";
+import { Switch, Route, Link, useLocation, Redirect, useHistory} from "react-router-dom";
 import Overview from '../Overview/Overview';
 import Session from '../Session/Session'
 import User from '../User/User'
@@ -12,11 +12,18 @@ import './styles.css'
 const Main = () => {
     const { Option } = Select;
     const location = useLocation();
+    const history = useHistory();
     const { Header, Content, Sider } = Layout;
     const [collapse, setCollapse] = React.useState(false)
     const [user, setUser] = React.useState('Alex')
     const handleCollapse = () => {setCollapse(!collapse)}
-    const handleChange = (value) => {setUser(value)}
+    const handleChange = (value) => { 
+        if(value == 'Logout'){
+            history.push('/login')
+        }else{
+            setUser(value)
+        }
+    }
     return ( 
         <div>
             <Layout style={{ height: '100vh', overflow:'hidden'}}>
@@ -62,7 +69,9 @@ const Main = () => {
                                 <Select defaultValue="Alex" style={{ width: '100%'}} onChange={handleChange}>
                                     <Option value="Alex">Alex</Option>
                                     <Option value="Lucy">Lucy</Option>
-                                    <Option value="Mingzhen">Mingzhen</Option>
+                                    <Option value="Li Mingzhen">Mingzhen</Option>
+                                    <Option value="Logout">Logout</Option>
+
                                 </Select>
                             </div>
                         </div>
