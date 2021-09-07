@@ -41,8 +41,10 @@ const Login = () => {
     }
     return ( 
         <form onSubmit={handleLogin}>
-        <div style={{background:'#2f3136', height:'100vh', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', width:'100%'}}>
-            <div style={{background:'#3A3C41', borderRadius:'20px', height:'300px', width:'300px', display:'flex', flexDirection:'column', alignItems:'center', boxShadow:'0px 0px 20px 1px #202225'}}>
+            
+        <div style={{position:'relative', background:'#2f3136', height:'100vh', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', width:'100%'}}>
+        
+            <div style={{position:'relative', background:'#3A3C41', borderRadius:'20px', height:'300px', width:'300px', display:'flex', flexDirection:'column', alignItems:'center', boxShadow:'0px 0px 20px 1px #202225'}}>
                 <div style={{overflow:'hidden', position:'relative'}}>
                     <div className="brand">
                         <img src="whitelogo.svg" style={{height:'40px'}}/>
