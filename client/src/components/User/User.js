@@ -64,8 +64,8 @@ const User = ({user}) => {
               <Button type="primary" style={{position:'absolute', right:'0', marginRight:'20px'}}>Edit</Button>
               <Avatar style={{borderRadius:'10px', height:'100px', width:'100px'}} shape="square" src={`${user}.jpeg`}/>
                 <div style={{marginLeft:'20px', display:'flex', flexDirection:'column', backgroundColor:'transparent'}}>
-                <div style={{fontSize:'20px'}}>{user}</div>
-
+                {/* <div style={{fontSize:'20px'}}>{user}</div> */}
+                <div style={{fontSize:'20px'}}>{localStorage.getItem('username')}</div>
                 <div style={{marginTop:'0px', display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}><IoWatchOutline fontSize="15px"/><div style={{marginLeft:'7px'}}>#sjsnjdks1123</div></div>
                 <div> <Tag color="pink" style={{marginTop:'10px', backgroundColor:"transparent", color:'white', width:'100%', justifyContent:'center', display:'flex'}}>Dance Band Pro</Tag></div>
                 </div>

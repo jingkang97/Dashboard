@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout,Menu,Avatar, Button, Select } from 'antd';
+import { Layout, Menu, Avatar, Button, Select, Dropdown } from 'antd';
 import { DashboardOutlined, UserOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
 import { Switch, Route, Link, useLocation, Redirect, useHistory} from "react-router-dom";
@@ -20,6 +20,7 @@ const Main = () => {
     const handleChange = (value) => { 
         if(value == 'Logout'){
             history.push('/login')
+            localStorage.clear()
         }else{
             setUser(value)
         }
@@ -65,13 +66,16 @@ const Main = () => {
                         {location.pathname == '/overview' ? 'Overview' : (location.pathname == '/users' ? 'Users' : (location.pathname == '/session' ? 'Session': null))}
                         <div style={{position:'absolute', right:'0', marginRight:'20px',  fontWeight:'normal', fontSize:'15px', display:'flex', flexDirection:'row', alignItems:'center'}}>
                         <Avatar size={40} src={`${user}.jpeg`} icon={<UserOutlined />} />
+                        {/* {localStorage.getItem('username')} */}
                             <div style={{marginRight:'0px'}}> 
-                                <Select defaultValue="Alex" style={{ width: '100%'}} onChange={handleChange}>
-                                    <Option value="Alex">Alex</Option>
-                                    <Option value="Lucy">Lucy</Option>
-                                    <Option value="Li Mingzhen">Mingzhen</Option>
-                                    <Option value="Logout">Logout</Option>
 
+    
+                            <Select defaultValue={localStorage.getItem('username')} style={{ width: '100%', minWidth:'70px'}} onChange={handleChange}>
+                                {/* <Select defaultValue="Alex" style={{ width: '100%'}} onChange={handleChange}> */}
+                                    {/* <Option value="Alex">Alex</Option>
+                                    <Option value="Lucy">Lucy</Option>
+                                    <Option value="Li Mingzhen">Mingzhen</Option> */}
+                                    <Option value="Logout">Logout</Option>
                                 </Select>
                             </div>
                         </div>

@@ -3,30 +3,42 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const register = (req, res, next) => {
-    bcrypt.hash(req.body.password , 10, function(err, hashedPass) {
-        if(err){
-            res.json({
-                error: err
+    User.findOne({username: req.body.username}).then(user => {
+        if(user){
+            console.log(user)
+            return res.json({message: "User already exists."})
+        }else{
+            bcrypt.hash(req.body.password , 10, function(err, hashedPass) {
+                if(err){
+                    res.json({
+                        error: err
+                    })
+                }
+                let user = new User ({
+                    name: 'test',
+                    username: req.body.username,
+                    password: hashedPass,
+                    wearable_id: 'test',
+                    wearable_name: 'test'
+                })
+                user.save()
+                .then(user => {
+                    let token = jwt.sign({name: user.username}, 'verySecretValue', {expiresIn: '1h'})
+                    res.json({
+                        message: 'User Added Successfully!',
+                        token: token,
+                        username: user.username,
+                        authorised: true
+                    })
+                })
+                .catch(error => {
+                    res.json({
+                        message: 'An error occured!',
+                        authorised: false
+                    })
+                })
             })
-        }
-        let user = new User ({
-            name: 'test',
-            username: req.body.username,
-            password: hashedPass,
-            wearable_id: 'test',
-            wearable_name: 'test'
-        })
-        user.save()
-        .then(user => {
-            res.json({
-                message: 'User Added Successfully!'
-            })
-        })
-        .catch(error => {
-            res.json({
-                message: 'An error occured!'
-            })
-        })
+        }   
     })
 }
 
@@ -47,17 +59,21 @@ const login = (req, res, next) => {
                     let token = jwt.sign({name: user.username}, 'verySecretValue', {expiresIn: '1h'})
                     res.json({
                         message: 'Login Successful!',
-                        token: token
+                        token: token,
+                        username: user.username,
+                        authorised: true
                     })
                 }else{
                     res.json({
-                        message: 'Password does not match!'
+                        message: 'Wrong password!',
+                        authorised: false
                     })
                 }
             })
         }else{
             res.json({
-                message: 'No user found!'
+                message: 'No user found!',
+                authorised: false
             })
         }
     })

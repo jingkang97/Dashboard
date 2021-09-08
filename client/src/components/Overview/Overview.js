@@ -15,7 +15,9 @@ const Overview = ({user}) => {
         <div className="content">
             <Row gutter={21} style={{ marginBottom: 0, marginTop:'-25px'}}>
                 <div style={{fontSize:'15px', margin:'0px 0px 10px 15px'}}>
-                    Good Afternoon,<span className="name"> {user}!</span>
+                    {/* Good Afternoon,<span className="name"> {user}!</span> */}
+                    Good Afternoon,<span className="name"> {localStorage.getItem('username')}!</span>
+
                 </div>
                 <div className="description" style={{fontSize:'12px', backgroundColor:'pink', margin:'0px 10px 15px 10px'}}>
                 <div style={{fontSize:'15px', fontWeight:'bold'}}>Keep up the good work!</div>

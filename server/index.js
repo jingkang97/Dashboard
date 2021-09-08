@@ -24,7 +24,7 @@ const CONNECTION_URL = process.env.ATLAS_URI
 const server = require('http').createServer(app);
 const io = require('socket.io')(server,{
     cors: {
-        origin: ["http://localhost:3001"]
+        origin: ["http://localhost:3001", "http://localhost:3000"]
     }
 });
 
@@ -55,6 +55,23 @@ connection.once("open", () => {
 
     console.log("Setting change streams")
     const testChangeStream = connection.collection("TestData").watch();
+    const userChangeStream = connection.collection("users").watch();
+    userChangeStream.on("change", (next) => {
+        switch(next.operationType) {
+            case "insert":
+                io.emit('receive-message','insert user'+ next)
+                console.log('insert user')
+
+                break;
+            case "delete":
+                console.log('delete user')
+                io.emit('receive-message','delete user '+ next)
+                break;
+
+        }
+    })
+
+
     testChangeStream.on("change", (next) => {
         switch(next.operationType) {
             case "insert":
@@ -70,5 +87,6 @@ connection.once("open", () => {
         // io.emit('receive-message','hihihihi'+next)
         
     })
+    console.log('changestream set')
 
 })
