@@ -19660,6 +19660,7 @@ span.ant-radio + * {
   color: white;
   /* background-color: black; */
   /* color: #9ba6b2; */
+  border-radius: 10px;
   font-size: 14px;
   font-variant: tabular-nums;
   line-height: 1.5715;
@@ -19674,7 +19675,9 @@ span.ant-radio + * {
   /* background-color: #fff; */
   background-color: #2f3136;
   /* border: 1px solid #d9d9d9; */
-  border-radius: 2px;
+  /* border-radius: 2px; */
+  border-radius: 5px;
+
   transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 .ant-select:not(.ant-select-customize-input) .ant-select-selector input {

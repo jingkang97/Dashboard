@@ -4,6 +4,7 @@ const express = require("express")
 const cors = require("cors")
 const postRoutes = require("./router/post.js")
 const authRoute = require('./router/auth.js')
+const usersRoute = require('./router/users')
 
 const app = express();
 
@@ -14,6 +15,8 @@ app.use(cors())
 
 app.use('/post', postRoutes)
 app.use('/api', authRoute)
+app.use('/get', usersRoute)
+
 
 const PORT = process.env.PORT || 5000;
 const CONNECTION_URL = process.env.ATLAS_URI
@@ -59,9 +62,16 @@ connection.once("open", () => {
     userChangeStream.on("change", (next) => {
         switch(next.operationType) {
             case "insert":
-                io.emit('receive-message','insert user'+ next)
-                console.log('insert user')
-
+                const user = {
+                    _id: next.fullDocument._id,
+                    name: next.fullDocument.name,
+                    username: next.fullDocument.username,
+                    wearable_id: next.fullDocument.wearable_id,
+                    wearable_name: next.fullDocument.wearable_name
+                }
+                io.emit('newUser', user)
+                // io.emit('receive-message','insert user'+ next)
+                console.log('insert user', user)
                 break;
             case "delete":
                 console.log('delete user')
@@ -75,7 +85,14 @@ connection.once("open", () => {
     testChangeStream.on("change", (next) => {
         switch(next.operationType) {
             case "insert":
-                io.emit('receive-message','inserrttt '+ next)
+                const user = {
+                    _id: next.fullDocument._id,
+                    name: next.fullDocument.name,
+                    username: next.fullDocument.username,
+                    wearable_id: next.fullDocument.wearable_id,
+                    wearable_name: next.fullDocument.wearable_name
+                }
+                io.emit('receive-message','newUser'+ user)
                 break;
             case "delete":
                 io.emit('receive-message','deleteee '+ next)

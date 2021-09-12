@@ -15,11 +15,11 @@ const register = (req, res, next) => {
                     })
                 }
                 let user = new User ({
-                    name: 'test',
+                    name: req.body.name,
                     username: req.body.username,
                     password: hashedPass,
-                    wearable_id: 'test',
-                    wearable_name: 'test'
+                    wearable_id: '',
+                    wearable_name: 'Not Selected'
                 })
                 user.save()
                 .then(user => {
@@ -28,21 +28,24 @@ const register = (req, res, next) => {
                         message: 'User Added Successfully!',
                         token: token,
                         username: user.username,
+                        name: user.name,
                         authorised: true
                     })
+                    return
                 })
                 .catch(error => {
                     res.json({
                         message: 'An error occured!',
                         authorised: false
                     })
+                    return
                 })
             })
         }   
     })
 }
 
-const login = (req, res, next) => {
+const login = async(req, res, next) => {
     var username = req.body.username
     var password = req.body.password
 
@@ -54,6 +57,7 @@ const login = (req, res, next) => {
                     res.json({
                         error: err
                     })
+                    return
                 }
                 if(result){
                     let token = jwt.sign({name: user.username}, 'verySecretValue', {expiresIn: '1h'})
@@ -63,11 +67,14 @@ const login = (req, res, next) => {
                         username: user.username,
                         authorised: true
                     })
-                }else{
+                    return
+                }
+                else{
                     res.json({
                         message: 'Wrong password!',
                         authorised: false
                     })
+                    return
                 }
             })
         }else{
@@ -75,6 +82,7 @@ const login = (req, res, next) => {
                 message: 'No user found!',
                 authorised: false
             })
+            return
         }
     })
 }

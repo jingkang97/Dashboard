@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { useHistory} from "react-router-dom";
 import { Spin, Button, Input } from 'antd';
-import { UserOutlined, LockOutlined, LoadingOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, LoadingOutlined, IdcardOutlined } from '@ant-design/icons';
 import * as api from '../api/index'
 
 import './styles.css'
@@ -10,9 +10,11 @@ const Login = () => {
     const history = useHistory()
     const [type, setType] = useState('login')
     const [loading, setLoading] = useState(false)
+    const [name, setName] = useState(null)
     const [username, setUsername] = useState(null)
-    const [password, setPassword] = useState('')
+    const [password, setPassword] = useState(null)
     const [confirmPassword, setConfirmPassword] = useState('')
+    const handleNameChange = (e) => { setName(e.target.value) }
     const handleUserChange = (e) => { setUsername(e.target.value) }
     const handlePasswordChange = (e) => { setPassword(e.target.value) }
     const handleConfirmPasswordChange = (e) => { setConfirmPassword(e.target.value) }
@@ -24,7 +26,7 @@ const Login = () => {
         }else{
             try {
                 setLoading(true)
-                api.login({username: username, password: password}).then(resp => {
+                await api.login({username: username, password: password}).then(resp => {
                     console.log(resp)
                     localStorage.setItem('token', resp.data.token)
                     localStorage.setItem('username', resp.data.username)
@@ -96,6 +98,14 @@ const Login = () => {
                         <svg height="100%" width="100%" id="svg" viewBox="0 0 1440 400" xmlns="http://www.w3.org/2000/svg" class="transition duration-300 ease-in-out delay-150"><path d="M 0,400 C 0,400 0,200 0,200 C 126.54545454545456,194.94736842105263 253.09090909090912,189.89473684210526 340,171 C 426.9090909090909,152.10526315789474 474.18181818181813,119.36842105263159 547,151 C 619.8181818181819,182.6315789473684 718.1818181818184,278.6315789473684 821,273 C 923.8181818181816,267.3684210526316 1031.090909090909,160.10526315789474 1135,131 C 1238.909090909091,101.89473684210526 1339.4545454545455,150.94736842105263 1440,200 C 1440,200 1440,400 1440,400 Z" stroke="none" stroke-width="0" fill="#5a65eaff" fill-opacity="0.6" class="transition-all duration-300 ease-in-out delay-150" transform="rotate(-180 720 200)"></path></svg>
                         </div>
                         <div style={{display:'flex', flexDirection:'column', alignItems:'center', marginTop:'-10px', justifyContent:'center'}}>
+                            {type == 'login' ? null : 
+                            <Input name="name" size="large" 
+                            value={name}
+                            onChange={handleNameChange}
+                            placeholder="name" prefix={<IdcardOutlined /> } 
+                            style={{width:'90%', marginTop:'10px', borderRadius:'8px', border:'transparent', background:'#2f3136', marginBottom:'10px'}}
+                            />}
+                            
                             <Input 
                             value={username}
                             onChange={handleUserChange}
@@ -106,7 +116,8 @@ const Login = () => {
                             placeholder="password" prefix={<LockOutlined />} 
                             style={{width:'90%', marginTop:'10px', borderRadius:'8px', border:'transparent', background:'#2f3136'}}
                             />
-                            {type == 'login' ? null : <Input.Password name="confirm password" size="large" 
+                            {type == 'login' ? null : 
+                            <Input.Password name="confirm password" size="large" 
                             value={confirmPassword}
                             onChange={handleConfirmPasswordChange}
                             placeholder="confirm password" prefix={<LockOutlined />} 

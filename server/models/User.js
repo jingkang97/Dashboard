@@ -9,12 +9,16 @@ const userSchema = new Schema({
         type: String
     },
     password:{
-        type: String
+        type: String,
+        // select: false
     },
     wearable_id:{
         type: String
     },
     wearable_name:{
+        type: String
+    },
+    image:{
         type: String
     }
     
