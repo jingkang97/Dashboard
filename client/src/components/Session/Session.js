@@ -23,20 +23,6 @@ const columns = [
     key: 'end_time',
   },
   {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
-    render: tags => (
-        <>
-          {tags.map(tag => (
-            <Tag color="pink" style={{backgroundColor:"transparent", color:'white'}} key={tag}>
-              {tag}
-            </Tag>
-          ))}
-        </>
-      )
-  },
-  {
     title: 'Total Participants',
     dataIndex: 'total_participants',
     key: 'total_participants',

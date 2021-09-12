@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const mongoose = require('mongoose')
 
 const getUser = (req, res) => {
     var username = req.params.username
@@ -8,10 +9,13 @@ const getUser = (req, res) => {
             // console.log(user)
             res.status(200).json({
                 message:'user found!', 
+                name: user.name,
+                id: user._id,
                 username: user.username,
                 password: user.password,
                 wearable_id: user.wearable_id,
-                wearable_name: user.wearable_name
+                wearable_name: user.wearable_name,
+                image: user.image
             })
         }else{
             res.json({
@@ -34,8 +38,26 @@ const getUsers = async(ctx) => {
     
 }
 
+const editUser = async (req, res) => {
+    // const {id: _id} = req.params;
+    const user = req.body;
+    const _id = req.body.id
+    console.log(user)
+    console.log(_id)
+    
+    // if(!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('No user with that id')
+    // async - need await
+    try {
+        const editedUser = await User.findByIdAndUpdate(_id, {...user, _id}, {new:true});
+        res.json(editedUser)
+    } catch (error) {
+        alert(error)
+    }
+    ;
+}
+
 
 module.exports = {
-    getUser, getUsers
+    getUser, getUsers, editUser
 }
 

@@ -1,20 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import { UserOutlined, BarcodeOutlined } from '@ant-design/icons';
+import React, {Profiler, useEffect, useState} from 'react';
+import { UserOutlined, BarcodeOutlined, PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Table, Tag, Space, Avatar, Spin, Button, Input, Select, Upload, message } from 'antd';
-import { IoWatchOutline } from "react-icons/io5";
+import { IoWatchOutline, IoAddOutline } from "react-icons/io5";
 import FileBase from 'react-file-base64'
+
+import Avatars from "react-avatar-edit";
+
 
 import './styles.css'
 import * as dummy from './dummydata'
 import {io} from 'socket.io-client'
 import * as api from '../api/index.js'
+// import { set } from 'mongoose';
 
 const columns = [
     {
       title: 'User',
       dataIndex: 'username',
       key: 'name',
-      render: text => <a style={{color:'white', display:'flex', flexDirection:'row', alignItems:'center'}}><div style={{width:'100px'}}>{text} </div> <Avatar src={`${text}.jpeg`}/></a>,
+      render: text => <div style={{color:'white', display:'flex', flexDirection:'row', alignItems:'center'}}><div style={{width:'100px'}}>{text} </div> <Avatar src=''/></div>,
     },
     {
         title: 'Wearable Name',
@@ -34,9 +38,6 @@ const columns = [
         render: text => 
             <>
               <div>{text}</div>
-              {/* <Tag color={text == "Dance Band Pro" ? "pink" : "green"} style={{backgroundColor:"transparent", color:'white'}}>
-                {text}
-              </Tag> */}
             </>
       },
     {
@@ -45,7 +46,7 @@ const columns = [
       render: (text, record) => (
         <Space size="middle">
           <a>View</a>
-          <a style={{color:'red'}}>Delete</a>
+          {/* <a style={{color:'red'}}>Delete</a> */}
         </Space>
       ),
     },
@@ -55,28 +56,69 @@ const User = ({user}) => {
     const { Option } = Select;
     const [users, setUsers] = useState(null)
     const [profileLoading, setProfileLoading] = useState(false)
+    const [imageLoading, setImageLoading] = useState(false)
+    const [imageUrl, setImageUrl] = useState('')
     const [loading, setLoading] = useState(true)
     const [edit, setEdit] = useState(false)
     const [close, setClose] = useState(false)
+
+    const [preview, setPreview] = useState(null);
+  function onClose() {
+    setPreview(null);
+  }
+  function onCrop(pv) {
+    setPreview(pv);
+  }
+  function onBeforeFileLoad(elem) {
+    if (elem.target.files[0].size > 71680) {
+      alert("File is too big!");
+      elem.target.value = "";
+    }
+  }
+
+
     const [profile, setProfile] = useState({
+      id: '',
       name: '',
       username: localStorage.getItem('username'),
       password: '',
       wearable_name: '',
       wearable_id: '',
-      
+      image:''
     })
     
     const handleEdit = (e) => {
       setEdit(true)
+      
     }
     const handleDismiss = (e) => {
       setEdit(false)
       getUser()
     }
+    const handleSelect = (value) => {
+      setProfile({...profile, wearable_name: value})
+    }
 
-    const handleSubmit = (e) => {
-      setProfileLoading(true)
+    const handleSubmit = async(e) => {
+      setEdit(false)
+      // console.log(profile)
+      try {
+        setProfileLoading(true)
+        console.log(profile)
+        await api.editUser(profile).then(prof=>{
+          console.log(prof)
+          setProfile(prof)       
+          getUser()
+        }
+        )
+        
+      } catch (error) {
+        alert(error)
+      }
+      finally{
+        setProfileLoading(false)
+        
+      }
     }
     const handleUserChange = (e) =>{
       setProfile({...profile, username: e.target.value})
@@ -93,10 +135,13 @@ const User = ({user}) => {
         await api.getUser(user).then(user => {
           console.log(user)
           setProfile({
+            id: user.data.id,
+            name: user.data.name,
             username: user.data.username,
             password: user.data.password,
             wearable_name: user.data.wearable_name,
-            wearable_id: user.data.wearable_id
+            wearable_id: user.data.wearable_id,
+            image: user.data.image
           })
           console.log(user)
         })
@@ -147,11 +192,9 @@ const User = ({user}) => {
                 <div style={{position:'relative', display:'flex', flexDirection:'row', width:'100%', padding:'20px'}}>
 
                     <Button type="primary" style={{position:'absolute', right:'0', marginRight:'20px'}} onClick={handleEdit}>Edit</Button>
-                      <Avatar style={{borderRadius:'10px', height:'100px', width:'100px'}} shape="square" src={`${user}.jpeg`}/>
+                      <Avatar style={{borderRadius:'10px', height:'100px', width:'100px'}} shape="square" src={profile.image}/>
                       <div style={{marginLeft:'20px', display:'flex', flexDirection:'column', backgroundColor:'transparent'}}>
-                      {/* <div style={{fontSize:'20px'}}>{localStorage.getItem('username')}</div> */}
                       <div style={{fontSize:'20px'}}>{profile.username}</div>
-
                       <div style={{marginTop:'5px', display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}><IoWatchOutline fontSize="15px"/><div style={{marginLeft:'7px'}}>{profile.wearable_id}</div></div>
                       <div> <Tag color={profile.wearable_name == "Dance Band Pro" ? "pink" : (profile.wearable_name == "Dance Band Lite" ? "green" : null)} style={{marginTop:'10px', backgroundColor:"transparent", color:'white', width:'100%', justifyContent:'center', display:'flex'}}>{profile.wearable_name}</Tag></div>
                       </div>
@@ -162,13 +205,29 @@ const User = ({user}) => {
                 }
                 </Spin>
                 {edit ? 
-                
+                <form>
                 <div style={{position:'relative', display:'flex', flexDirection:'row', width:'100%', padding:'20px'}}>
-                                <Avatar style={{borderRadius:'10px', height:'100px', width:'100px'}} shape="square" src={`${user}.jpeg`}/>
+                  {/* <div style={{display:'flex', flexDirection:'column'}}> */}
+                    {/* <Avatar style={{borderRadius:'10px', height:'100px', width:'100px'}} shape="square" src={`${profile.image}`}/> */}
+                      <div>
 
+                        <label class="custom-file-upload">
+                        {profile.image ? <img src={profile.image} style={{height:'100px', width: '100px', borderRadius:'10px'}}/> : null}
+
+                          <PlusOutlined style={{fontSize:"50px", position:'absolute', left: 0, right: 0, marginLeft:'auto', marginRight:'auto'}}/>
+                      <FileBase 
+                      // className={classes.fileInput}
+                      type="file" 
+                      multiple={false} 
+                      onDone={({base64}) => {
+                        setProfile({...profile, image: base64}) 
+                        console.log(base64)} }/>
+                      </label>
+                      </div>
+                    {/* </div> */}
                 <div style={{position:'absolute', bottom:'0', right:'0', marginRight:'20px', marginBottom:'20px'}}>
 
-                  <Button type="primary" onClick={handleDismiss}>Ok</Button>
+                  <Button type="primary" onClick={handleSubmit}>Ok</Button>
                   <Button style={{borderRadius:'5px', background:'transparent', marginLeft:'10px'}} onClick={handleDismiss}>Cancel</Button>
                   
                   </div>
@@ -187,7 +246,10 @@ const User = ({user}) => {
                     <div>
                     <div style={{fontSize:'15px', marginBottom:'5px', marginTop:'10px', display:'flex', flexDirection:'row', alignItems:'center'}}><IoWatchOutline style={{marginRight:'5px'}} fontSize="20px"/> Wearable Name</div>
 
-                      <Select defaultValue="Dance Band Lite" size="large" style={{ width: '100%', borderRadius:'20px'}}>
+                      <Select defaultValue={profile.wearable_name} size="large" style={{ width: '100%', borderRadius:'20px'}}
+                        onChange={handleSelect}
+
+                      >
                         <Option value="Dance Band Lite">Dance Band Lite</Option>
                         <Option value="Dance Band Pro">Dance Band Pro</Option>
                         <Option value="Not Selected">Not Selected</Option>
@@ -205,8 +267,11 @@ const User = ({user}) => {
                             placeholder="username" 
                             style={{width:'90%', borderRadius:'8px', border:'transparent', background:'#2f3136'}}/>
                     </div>
+
+                    
                   </div>
                 </div> 
+                </form>
                 : 
                 null}
             </div>

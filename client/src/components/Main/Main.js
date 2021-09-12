@@ -39,7 +39,6 @@ const Main = () => {
                     <div className="logo">
                         <img src="DanceOnLogo.svg" style={{height:'40px'}}/>
                         {collapse ? null : <div style={{marginLeft:'10px'}}>DANCE<span style={{fontWeight:'bold', color:'#5a65ea'}}>DANCE</span></div>}
-                        
                     </div>
                     <Menu
                         style={{ height: '100%', borderRightColor:'transparent', 
