@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Layout, Menu, Avatar, Button, Select, Dropdown } from 'antd';
 import { DashboardOutlined, UserOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
@@ -8,6 +8,7 @@ import Session from '../Session/Session'
 import User from '../User/User'
 import '../../style/custom-antd.css'
 import './styles.css'
+import * as api from '../api/index'
 
 const Main = () => {
     const { Option } = Select;
@@ -16,6 +17,15 @@ const Main = () => {
     const { Header, Content, Sider } = Layout;
     const [collapse, setCollapse] = React.useState(false)
     const [user, setUser] = React.useState('Alex')
+    const [profile, setProfile] = useState({
+        id: '',
+        name: '',
+        username: localStorage.getItem('username'),
+        password: '',
+        wearable_name: '',
+        wearable_id: '',
+        image:''
+      })
     const handleCollapse = () => {setCollapse(!collapse)}
     const handleChange = (value) => { 
         if(value == 'Logout'){
@@ -25,6 +35,30 @@ const Main = () => {
             setUser(value)
         }
     }
+    const getUser = async() => {
+        try {
+          await api.getUser(user).then(user => {
+            console.log(user)
+            setProfile({
+              id: user.data.id,
+              name: user.data.name,
+              username: user.data.username,
+              password: user.data.password,
+              wearable_name: user.data.wearable_name,
+              wearable_id: user.data.wearable_id,
+              image: user.data.image
+            })
+            console.log(user)
+          })
+        } catch (error) {
+          alert(error)
+        }
+        
+      }
+    useEffect(() => {
+        getUser()
+        
+    }, [])
     return ( 
         <div>
             <Layout style={{ height: '100vh', overflow:'hidden'}}>
@@ -64,7 +98,7 @@ const Main = () => {
                     <Header className="header">
                         {location.pathname == '/overview' ? 'Overview' : (location.pathname == '/users' ? 'Users' : (location.pathname == '/session' ? 'Session': null))}
                         <div style={{position:'absolute', right:'0', marginRight:'20px',  fontWeight:'normal', fontSize:'15px', display:'flex', flexDirection:'row', alignItems:'center'}}>
-                        <Avatar size={40} src={`${user}.jpeg`} icon={<UserOutlined />} />
+                        <Avatar size={40} src={profile.image} icon={<UserOutlined />} />
                         {/* {localStorage.getItem('username')} */}
                             <div style={{marginRight:'0px'}}> 
 
