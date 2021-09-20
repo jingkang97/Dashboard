@@ -1,23 +1,56 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Card, Skeleton, Row, Col, Spin} from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, ComposedChart, Legend } from 'recharts';
 import { UserOutlined, LikeOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
+import {io} from 'socket.io-client'
+import moment from 'moment'
 
 import './styles.css'
 import * as dummy from './dummydata'
+import BarChart from './BarChart'
 
 const Overview = ({user}) => {
+    const socket = io("http://localhost:5000")
     const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#5a65ea' }} spin />;
-    const [loading, setLoading] = React.useState(true)
+    const [loading, setLoading] = useState(true)
+    const [test, setTest] = useState(0)
+    const [array, setArray] = useState([])
+    // let array = []
+            
+    useEffect(() => {
+        // socket.on("newUser", (user) => {
+        //   console.log(user)
+        // })
+        socket.on("newData", (data) => {
+            // console.log(data.ax)
+            // array.push(data.ax)
+            // setTest(array)
+        setArray(prevArray => [...prevArray, data])
+          console.log(data)
+        })
+        
+
+      }, [])
+
+    //   useEffect(() => {
+    //       console.log(array.length)
+    //     //   if(array.length >= 5){
+    //     //       setArray(array.slice(1))
+    //     //   }
+    //     // if(array.length >= 3){
+    //     //     setArray(prevArray => [prevArray.slice(1)])
+    //     // }
+    //     //   console.log(array)
+    //   }, [array])
     return ( 
         <div className="content">
+            {/* {array} */}
             <Row gutter={21} style={{ marginBottom: 0, marginTop:'-25px'}}>
                 <div style={{fontSize:'15px', margin:'0px 0px 10px 15px'}}>
                     {/* Good Afternoon,<span className="name"> {user}!</span> */}
                     Good Afternoon,<span className="name"> {localStorage.getItem('username')}!</span>
-
                 </div>
                 <div className="description" style={{fontSize:'12px', backgroundColor:'pink', margin:'0px 10px 15px 10px'}}>
                 <div style={{fontSize:'15px', fontWeight:'bold'}}>Keep up the good work!</div>
@@ -32,7 +65,10 @@ const Overview = ({user}) => {
       <Card  bordered={false} style={{ width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225'}}>
                 <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Total Sessions <CollectionPlay /></div>
                 <div style={{height:'130px'}}>
-                <Skeleton size="large" active />
+                <div style={{fontSize:'50px', height:'100px'}}>
+                        {/* {test} */}
+                    </div>
+                {/* <Skeleton size="large" active /> */}
                 </div>
         </Card>
       </Col>
@@ -44,10 +80,12 @@ const Overview = ({user}) => {
                 loading={false}
                 active
                 >
-                    <div style={{fontSize:'50px', height:'100px'}}>
+                    {/* <div style={{fontSize:'50px', height:'100px'}}>
                         16
-                    </div>
+                    </div> */}
+                   
                 </Skeleton>
+                
             </Card>
       </Col>
       
@@ -70,7 +108,7 @@ const Overview = ({user}) => {
                     <div style={{width:'400px', height:'200px'}}>
                     <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart
-                        data={dummy.data}
+                        data={array}
                         margin={{
                             top: 10,
                             right: 0,
@@ -80,17 +118,31 @@ const Overview = ({user}) => {
                         >		
                         <defs>
                             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#5A65EA" stopOpacity={0.5}/>
-                                <stop offset="95%" stopColor="#5A65EA" stopOpacity={0}/>
+                                <stop offset="5%" stopColor="#5A65EA" stopOpacity={0.9}/>
+                                <stop offset="95%" stopColor="#5A65EA" stopOpacity={0.2}/>
                             </linearGradient>
                         </defs>
                         {/* <CartesianGrid strokeDasharray="3" /> */}
-                        <XAxis dataKey="name" />
-                        <YAxis />
+                        {/* <XAxis dataKey="name" /> */}
+                        <XAxis 
+                        // dataKey="createdAt" 
+                        dataKey="createdAt"
+                        tickFormatter={timeStr => moment(timeStr).format('ss')} 
+                        />
+
+
+                        <YAxis type="number" 
+                        // domain={['auto', 'dataMax + 20']}
+                        domain={['dataMin - 50', 'dataMax + 50']}
+
+                        />
                         <Tooltip />
                         <Legend layout="horizontal" verticalAlign="top" align="right" />
-                        <Line type="monotone" dataKey="pv" stroke="#E46389" dot={false} strokeWidth={3}/>
-                        <Area type="monotone" dataKey="uv" stroke="#5A65EA" 
+                        <Line type="monotone" dataKey="ay" stroke="#E46389" dot={false} strokeWidth={3}/>
+                        <Area type="monotone" dataKey="ax" stroke="#5A65EA" 
+                        // animationDuration={500}
+                        animationDuration={500}
+
                         fill="url(#colorUv)" 
                         strokeWidth={3}
                         />

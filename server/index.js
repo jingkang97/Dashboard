@@ -5,6 +5,8 @@ const cors = require("cors")
 const postRoutes = require("./router/post.js")
 const authRoute = require('./router/auth.js')
 const usersRoute = require('./router/users')
+const simulateRoute = require('./router/simulate')
+
 
 const app = express();
 
@@ -16,6 +18,7 @@ app.use(cors())
 app.use('/post', postRoutes)
 app.use('/api', authRoute)
 app.use('/user', usersRoute)
+app.use('/simulate', simulateRoute)
 
 
 
@@ -58,53 +61,34 @@ connection.once("open", () => {
     console.log("MongoDB database connected")
 
     console.log("Setting change streams")
-    const testChangeStream = connection.collection("TestData").watch();
-    const userChangeStream = connection.collection("users").watch();
-    userChangeStream.on("change", (next) => {
+    // const testChangeStream = connection.collection("TestData").watch();
+    const dataChangeStream = connection.collection("datas").watch()
+    dataChangeStream.on("change", (next) => {
         switch(next.operationType) {
             case "insert":
-                const user = {
-                    _id: next.fullDocument._id,
-                    name: next.fullDocument.name,
-                    username: next.fullDocument.username,
-                    wearable_id: next.fullDocument.wearable_id,
-                    wearable_name: next.fullDocument.wearable_name
-                }
-                io.emit('newUser', user)
+                console.log('data: ', next)
+                io.emit('newData', next.fullDocument)
+                // const user = {
+                //     _id: next.fullDocument._id,
+                //     name: next.fullDocument.name,
+                //     username: next.fullDocument.username,
+                //     wearable_id: next.fullDocument.wearable_id,
+                //     wearable_name: next.fullDocument.wearable_name
+                // }
+                // io.emit('newUser', user)
                 // io.emit('receive-message','insert user'+ next)
-                console.log('insert user', user)
+                // console.log('insert user', user)
                 break;
             case "delete":
-                console.log('delete user')
-                io.emit('receive-message','delete user '+ next)
+                console.log('delete data')
+                // io.emit('receive-message','delete user '+ next)
                 break;
 
         }
     })
 
 
-    testChangeStream.on("change", (next) => {
-        switch(next.operationType) {
-            case "insert":
-                const user = {
-                    _id: next.fullDocument._id,
-                    name: next.fullDocument.name,
-                    username: next.fullDocument.username,
-                    wearable_id: next.fullDocument.wearable_id,
-                    wearable_name: next.fullDocument.wearable_name
-                }
-                io.emit('receive-message','newUser'+ user)
-                break;
-            case "delete":
-                io.emit('receive-message','deleteee '+ next)
-                break;
-
-        }
-        console.log(next)
-        // if there's a change, io will emit a message to client side
-        // io.emit('receive-message','hihihihi'+next)
-        
-    })
+    
     console.log('changestream set')
 
 })

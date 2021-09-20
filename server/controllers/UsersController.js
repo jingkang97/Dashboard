@@ -2,8 +2,8 @@ const User = require('../models/User')
 const mongoose = require('mongoose')
 
 const getUser = (req, res) => {
-    var username = req.params.username
-    User.findOne(username)
+    console.log('params: ',req.params.username)
+    User.findOne({username: req.params.username})
     .then(user => {
         if(user){
             // console.log(user)

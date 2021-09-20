@@ -20,8 +20,11 @@ const userSchema = new Schema({
     },
     image:{
         type: String
-    }
-    
+    },
+    sessions: [{
+        session_name: {type: String},
+        session_id: {type: String}
+    }]
 }, {timestamps: true})
 
 const User = mongoose.model('User', userSchema)

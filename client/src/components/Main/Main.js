@@ -11,12 +11,13 @@ import './styles.css'
 import * as api from '../api/index'
 
 const Main = () => {
+    
     const { Option } = Select;
     const location = useLocation();
     const history = useHistory();
     const { Header, Content, Sider } = Layout;
     const [collapse, setCollapse] = React.useState(false)
-    const [user, setUser] = React.useState('Alex')
+    const [user, setUser] = React.useState('')
     const [profile, setProfile] = useState({
         id: '',
         name: '',
@@ -37,7 +38,7 @@ const Main = () => {
     }
     const getUser = async() => {
         try {
-          await api.getUser(user).then(user => {
+          await api.getUser(profile.username).then(user => {
             console.log(user)
             setProfile({
               id: user.data.id,
@@ -53,12 +54,11 @@ const Main = () => {
         } catch (error) {
           alert(error)
         }
-        
       }
     useEffect(() => {
         getUser()
-        
-    }, [])
+    }, [localStorage.getItem('username')])
+
     return ( 
         <div>
             <Layout style={{ height: '100vh', overflow:'hidden'}}>
@@ -103,7 +103,7 @@ const Main = () => {
                             <div style={{marginRight:'0px'}}> 
 
     
-                            <Select defaultValue={localStorage.getItem('username')} style={{ width: '100%', minWidth:'70px'}} onChange={handleChange}>
+                            <Select defaultValue={profile.username} style={{ width: '100%', minWidth:'70px'}} onChange={handleChange}>
                                 {/* <Select defaultValue="Alex" style={{ width: '100%'}} onChange={handleChange}> */}
                                     {/* <Option value="Alex">Alex</Option>
                                     <Option value="Lucy">Lucy</Option>

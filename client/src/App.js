@@ -8,10 +8,13 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
+import BarChart from './components/Overview/BarChart';
+
 
 function App() {
   return (
     <Router>
+
       <Switch>
         {/* <Login /> */}
         {/* <Main /> */}
@@ -20,7 +23,7 @@ function App() {
         <Route exact path="/overview" component = {Main} />
         <Route exact path="/users" component = {Main} />
         <Route exact path="/session" component = {Main} />
-
+        
       </Switch>
       
     </Router>

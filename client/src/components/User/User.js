@@ -52,7 +52,7 @@ const columns = [
     },
   ];
 
-const User = ({user}) => {
+const User = () => {
     const { Option } = Select;
     const [users, setUsers] = useState(null)
     const [profileLoading, setProfileLoading] = useState(false)
@@ -63,18 +63,18 @@ const User = ({user}) => {
     const [close, setClose] = useState(false)
 
     const [preview, setPreview] = useState(null);
-  function onClose() {
-    setPreview(null);
-  }
-  function onCrop(pv) {
-    setPreview(pv);
-  }
-  function onBeforeFileLoad(elem) {
-    if (elem.target.files[0].size > 71680) {
-      alert("File is too big!");
-      elem.target.value = "";
+    function onClose() {
+      setPreview(null);
     }
-  }
+    function onCrop(pv) {
+      setPreview(pv);
+    }
+    function onBeforeFileLoad(elem) {
+      if (elem.target.files[0].size > 71680) {
+        alert("File is too big!");
+        elem.target.value = "";
+      }
+    }
 
 
     const [profile, setProfile] = useState({
@@ -107,7 +107,8 @@ const User = ({user}) => {
         console.log(profile)
         await api.editUser(profile).then(prof=>{
           console.log(prof)
-          setProfile(prof)       
+          setProfile(prof) 
+          localStorage.setItem('username',profile.username)      
           getUser()
         }
         )
@@ -132,7 +133,7 @@ const User = ({user}) => {
     const getUser = async() => {
       try {
         setProfileLoading(true)
-        await api.getUser(user).then(user => {
+        await api.getUser(profile.username).then(user => {
           console.log(user)
           setProfile({
             id: user.data.id,
@@ -168,29 +169,20 @@ const User = ({user}) => {
       }
     }
 
-    const socket = io("http://localhost:5000")
-    
+      
     useEffect(() => {
         getUser()
         getUsers()
-
     },[])
 
-    useEffect(() => {
-      socket.on("newUser", (user) => {
-        console.log(user)
-      })
-    }, [socket])
+
 
     return ( 
         <div style={{fontSize:'10px', color:'white'}}>
             <div style={{height:'100%', borderRadius:'20px', overflow:'hidden',  boxShadow: '0px 0px 20px 1px #202225', marginTop:'20px', backgroundColor:'#3A3C41'}}>
             <Spin spinning={loading} size="large">
-
                 {edit ? null : 
-
                 <div style={{position:'relative', display:'flex', flexDirection:'row', width:'100%', padding:'20px'}}>
-
                     <Button type="primary" style={{position:'absolute', right:'0', marginRight:'20px'}} onClick={handleEdit}>Edit</Button>
                       <Avatar style={{borderRadius:'10px', height:'100px', width:'100px'}} shape="square" src={profile.image}/>
                       <div style={{marginLeft:'20px', display:'flex', flexDirection:'column', backgroundColor:'transparent'}}>
@@ -198,9 +190,6 @@ const User = ({user}) => {
                       <div style={{marginTop:'5px', display:'flex', flexDirection:'row', justifyContent:'flex-start', alignItems:'center'}}><IoWatchOutline fontSize="15px"/><div style={{marginLeft:'7px'}}>{profile.wearable_id}</div></div>
                       <div> <Tag color={profile.wearable_name == "Dance Band Pro" ? "pink" : (profile.wearable_name == "Dance Band Lite" ? "green" : null)} style={{marginTop:'10px', backgroundColor:"transparent", color:'white', width:'100%', justifyContent:'center', display:'flex'}}>{profile.wearable_name}</Tag></div>
                       </div>
-
-                  
-
                   </div>
                 }
                 </Spin>
