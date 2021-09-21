@@ -6,6 +6,7 @@ import { UserOutlined, LikeOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
 import {io} from 'socket.io-client'
 import moment from 'moment'
+import Authorisation from '../Authorisation/Authorisation'
 
 import './styles.css'
 import * as dummy from './dummydata'
@@ -163,4 +164,4 @@ const Overview = ({user}) => {
      );
 }
  
-export default Overview;
+export default Authorisation(Overview);

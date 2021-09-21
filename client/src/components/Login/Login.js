@@ -1,13 +1,16 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory} from "react-router-dom";
 import { Spin, Button, Input } from 'antd';
 import { UserOutlined, LockOutlined, LoadingOutlined, IdcardOutlined } from '@ant-design/icons';
 import * as api from '../api/index'
-
 import './styles.css'
+
+import {signin, signup} from '../../actions/auth'
 
 const Login = () => {
     const history = useHistory()
+    const dispatch = useDispatch()
     const [type, setType] = useState('login')
     const [loading, setLoading] = useState(false)
     const [name, setName] = useState(null)
@@ -26,17 +29,10 @@ const Login = () => {
         }else{
             try {
                 setLoading(true)
-                await api.login({username: username, password: password}).then(resp => {
-                    console.log(resp)
-                    localStorage.setItem('token', resp.data.token)
-                    localStorage.setItem('username', resp.data.username)
-                    if(resp.data.authorised){
-                        history.push('/overview')
-                    }else{
-                        alert(resp.data.message)
-                        setLoading(false)
-                    }
-                })
+                console.log('using dispatch')
+                dispatch(signin({username: username, password:password}, history))
+                console.log('dispatch')
+                
             } catch (error) {
                 alert(error)
             }
@@ -53,17 +49,19 @@ const Login = () => {
             try {
                 e.preventDefault()
                 setLoading(true)
-                api.register({username: username, password: password}).then(resp => {
-                    console.log(resp)
-                    localStorage.setItem('token', resp.data.token)
-                    localStorage.setItem('username', resp.data.username)
-                    if(resp.data.authorised){
-                        history.push('/overview')
-                    }else{
-                        alert(resp.data.message)
-                        setLoading(false)
-                    }
-                })
+                dispatch(signup({username: username, password:password}, history))
+
+                // api.register({username: username, password: password}).then(resp => {
+                //     console.log(resp)
+                //     localStorage.setItem('token', resp.data.token)
+                //     localStorage.setItem('username', resp.data.username)
+                //     if(resp.data.authorised){
+                //         history.push('/overview')
+                //     }else{
+                //         alert(resp.data.message)
+                //         setLoading(false)
+                //     }
+                // })
             } catch (error) {
                 alert(error)
             }

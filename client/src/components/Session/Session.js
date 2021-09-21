@@ -6,6 +6,7 @@ import {io} from 'socket.io-client'
 
 import * as dummy from './dummydata'
 import './styles.css'
+import Authorisation from '../Authorisation/Authorisation'
 
 const columns = [
   {
@@ -90,6 +91,6 @@ const Session = () => {
      );
 }
  
-export default Session;
+export default Authorisation(Session);
 
 

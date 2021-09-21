@@ -60,17 +60,18 @@ const login = async(req, res, next) => {
                     return
                 }
                 if(result){
-                    let token = jwt.sign({name: user.username}, 'verySecretValue', {expiresIn: '1h'})
+                    let token = jwt.sign({name: user.username}, 'verySecretValue', {expiresIn: '5h'})
                     res.json({
                         message: 'Login Successful!',
                         token: token,
                         username: user.username,
+                        image: user.image,
                         authorised: true
                     })
                     return
                 }
                 else{
-                    res.json({
+                    const result = res.json({
                         message: 'Wrong password!',
                         authorised: false
                     })

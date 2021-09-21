@@ -6,11 +6,11 @@ import FileBase from 'react-file-base64'
 
 import Avatars from "react-avatar-edit";
 
-
 import './styles.css'
 import * as dummy from './dummydata'
 import {io} from 'socket.io-client'
 import * as api from '../api/index.js'
+import Authorisation from '../Authorisation/Authorisation';
 // import { set } from 'mongoose';
 
 const columns = [
@@ -80,7 +80,7 @@ const User = () => {
     const [profile, setProfile] = useState({
       id: '',
       name: '',
-      username: localStorage.getItem('username'),
+      username: JSON.parse(localStorage.getItem('profile')).username,
       password: '',
       wearable_name: '',
       wearable_id: '',
@@ -108,7 +108,7 @@ const User = () => {
         await api.editUser(profile).then(prof=>{
           console.log(prof)
           setProfile(prof) 
-          localStorage.setItem('username',profile.username)      
+          // localStorage.setItem('profile',profile.username)      
           getUser()
         }
         )
@@ -288,4 +288,4 @@ const User = () => {
         </div>
      );
 }
-export default User;
+export default Authorisation(User);

@@ -9,6 +9,8 @@ import User from '../User/User'
 import '../../style/custom-antd.css'
 import './styles.css'
 import * as api from '../api/index'
+import { useDispatch } from 'react-redux';
+
 
 const Main = () => {
     
@@ -21,11 +23,12 @@ const Main = () => {
     const [profile, setProfile] = useState({
         id: '',
         name: '',
-        username: localStorage.getItem('username'),
+        // username: localStorage.getItem('username'),
+        username: JSON.parse(localStorage.getItem('profile'))?.username,
         password: '',
         wearable_name: '',
         wearable_id: '',
-        image:''
+        image: JSON.parse(localStorage.getItem('profile'))?.image
       })
     const handleCollapse = () => {setCollapse(!collapse)}
     const handleChange = (value) => { 
@@ -57,7 +60,7 @@ const Main = () => {
       }
     useEffect(() => {
         getUser()
-    }, [localStorage.getItem('username')])
+    }, [])
 
     return ( 
         <div>
