@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 
 
 const Main = () => {
-    
+    const dispatch = useDispatch()
     const { Option } = Select;
     const location = useLocation();
     const history = useHistory();
@@ -33,6 +33,7 @@ const Main = () => {
     const handleCollapse = () => {setCollapse(!collapse)}
     const handleChange = (value) => { 
         if(value == 'Logout'){
+            dispatch({type: 'LOGOUT'})
             history.push('/login')
             localStorage.clear()
         }else{

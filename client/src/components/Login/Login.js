@@ -50,7 +50,7 @@ const Login = () => {
                 e.preventDefault()
                 setLoading(true)
                 dispatch(signup({username: username, password:password}, history))
-
+                
                 // api.register({username: username, password: password}).then(resp => {
                 //     console.log(resp)
                 //     localStorage.setItem('token', resp.data.token)

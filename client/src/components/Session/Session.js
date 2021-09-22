@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Table, Tag, Space, Avatar, Spin, Button } from 'antd';
 import { UserOutlined, AntDesignOutlined,LoadingOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
@@ -55,17 +55,56 @@ const columns = [
 ];
 
 const Session = () => {
-
+    const [socket, setSocket] = useState(null)
     const [loading, setLoading] = React.useState(true)
     // const antIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
-    const [buttonLoading, setButtonLoading] = React.useState(false)
+    const [buttonLoading, setButtonLoading] = useState(false)
+    const [array, setArray] = useState([])
+    const [start, setStart] = useState(false)
     setInterval(function(){ setLoading(false) }, 3000);
     const handleCLick = (event) =>{
       setButtonLoading(true)
       setInterval(function(){ setButtonLoading(false) }, 3000);
+      setStart(!start)
     }
+
+    useEffect(() => {
+        
+        // const socketio = io("http://localhost:5000")
+        if(!start){
+          setSocket(null)
+        }
+        else if(start == true){
+          setSocket(io("http://localhost:5000"))
+          
+          // setSocket(io())
+          // // const socket = io("http://localhost:5000")
+          // console.log('taking in ')
+          // socketio.on("newData", (data) => {
+          // setArray(prevArray => [...prevArray, data])
+          //   console.log(data)
+          // })
+        }
+    }, [start])
+
+    useEffect(()=>{
+      const messageListener = (data) => {
+        setArray(prevArray => [...prevArray, data])
+            console.log(data)
+      };
+      if(socket!=null){
+        socket.on('newData', messageListener)
+      return () => {
+        socket.off('newData', messageListener);
+      };
+      }
+      
+    },[socket])
+
     return ( 
         <div style={{justifyContent:'center', width:'100%', position:'relative', marginTop:'0px'}}>
+          {array.length}
+          {`${start}`}
             {/* <div style={{paddingLeft:'20px', paddingRight:'20px'}}>
             <div style={{margin: 'auto', color: 'white', fontWeight:'bold', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'center', height:'70px', width:'100%', borderRadius:'20px', marginBottom:'-80px', backgroundColor:'#5a65ea', fontSize:'20px', position:'relative', zIndex:'1', boxShadow:'0px 0px 20px 1px #5a65ea' }}>
                 All Sessions <CollectionPlay style={{marginLeft:'10px'}}/>

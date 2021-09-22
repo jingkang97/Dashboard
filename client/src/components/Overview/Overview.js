@@ -10,30 +10,31 @@ import Authorisation from '../Authorisation/Authorisation'
 
 import './styles.css'
 import * as dummy from './dummydata'
-import BarChart from './BarChart'
 
 const Overview = ({user}) => {
-    const socket = io("http://localhost:5000")
+    // const socket = io("http://localhost:5000")
     const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#5a65ea' }} spin />;
     const [loading, setLoading] = useState(true)
     const [test, setTest] = useState(0)
-    const [array, setArray] = useState([])
+    // const [array, setArray] = useState([])
     // let array = []
-            
-    useEffect(() => {
-        // socket.on("newUser", (user) => {
-        //   console.log(user)
-        // })
-        socket.on("newData", (data) => {
-            // console.log(data.ax)
-            // array.push(data.ax)
-            // setTest(array)
-        setArray(prevArray => [...prevArray, data])
-          console.log(data)
-        })
-        
+    // useEffect(() => {
+    //     // socket.on("newUser", (user) => {
+    //     //   console.log(user)
+    //     // })
+    //     const socket = io("http://localhost:5000")
 
-      }, [])
+    //     socket.on("newData", (data) => {
+    //         // console.log(data.ax)
+    //         // array.push(data.ax)
+    //         // setTest(array)
+    //     setArray(prevArray => [...prevArray, data])
+    //       console.log(data)
+            
+    //     })
+    //     // socket.close()
+        
+    //   }, [])
 
     //   useEffect(() => {
     //       console.log(array.length)
@@ -47,11 +48,11 @@ const Overview = ({user}) => {
     //   }, [array])
     return ( 
         <div className="content">
-            {/* {array} */}
+            {/* {array.length} */}
             <Row gutter={21} style={{ marginBottom: 0, marginTop:'-25px'}}>
                 <div style={{fontSize:'15px', margin:'0px 0px 10px 15px'}}>
                     {/* Good Afternoon,<span className="name"> {user}!</span> */}
-                    Good Afternoon,<span className="name"> {localStorage.getItem('username')}!</span>
+                    Good Afternoon,<span className="name"> {JSON.parse(localStorage.getItem('profile'))?.username}!</span>
                 </div>
                 <div className="description" style={{fontSize:'12px', backgroundColor:'pink', margin:'0px 10px 15px 10px'}}>
                 <div style={{fontSize:'15px', fontWeight:'bold'}}>Keep up the good work!</div>
@@ -109,7 +110,8 @@ const Overview = ({user}) => {
                     <div style={{width:'400px', height:'200px'}}>
                     <ResponsiveContainer width="100%" height="100%">
                         <ComposedChart
-                        data={array}
+                        data={dummy.data}
+                        // data={array}
                         margin={{
                             top: 10,
                             right: 0,
@@ -130,7 +132,6 @@ const Overview = ({user}) => {
                         dataKey="createdAt"
                         tickFormatter={timeStr => moment(timeStr).format('ss')} 
                         />
-
 
                         <YAxis type="number" 
                         // domain={['auto', 'dataMax + 20']}

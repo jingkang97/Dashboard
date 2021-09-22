@@ -5,7 +5,11 @@ export const getuser = (username) => async (dispatch) => {
   try {
     const { data } = await api.getUser(username);
     console.log(data)
-    dispatch({ type: GET_USER, data });
+    dispatch({type: GET_USER, payload: data})
+    
+    // const action = {type: GET_USER, payload: data}
+    // dispatch(action);
+    // dispatch({ type: GET_USER, data})
 
   } catch (error) {
     console.log(error);
@@ -14,8 +18,11 @@ export const getuser = (username) => async (dispatch) => {
 
 export const getusers = () => async (dispatch) => {
   try {
-    const { data } = await api.getUsers();
-    dispatch({ type: GET_USERS, data });
+    const { data } = await api.getUsers()
+    console.log(data)
+    const action = {type: GET_USERS, payload: data}
+
+    dispatch(action);
     
   } catch (error) {
     console.log(error);

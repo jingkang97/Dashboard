@@ -12,13 +12,22 @@ import {io} from 'socket.io-client'
 import * as api from '../api/index.js'
 import Authorisation from '../Authorisation/Authorisation';
 // import { set } from 'mongoose';
+import { useDispatch } from 'react-redux';
+import {getusers, getuser} from '../../actions/user'
+import { useSelector } from 'react-redux';
 
 const columns = [
     {
       title: 'User',
       dataIndex: 'username',
       key: 'name',
-      render: text => <div style={{color:'white', display:'flex', flexDirection:'row', alignItems:'center'}}><div style={{width:'100px'}}>{text} </div> <Avatar src=''/></div>,
+      render: text => <div style={{color:'white', display:'flex', flexDirection:'row', alignItems:'center'}}><div style={{width:'100%'}}>{text} </div> </div>,
+    },
+    {
+      dataIndex: 'image',
+      key: 'image',
+      render: text => <Avatar src={text}/>
+
     },
     {
         title: 'Wearable Name',
@@ -53,6 +62,8 @@ const columns = [
   ];
 
 const User = () => {
+    const dispatch = useDispatch()
+    // const user_list = useSelector((state) => state.user)
     const { Option } = Select;
     const [users, setUsers] = useState(null)
     const [profileLoading, setProfileLoading] = useState(false)
@@ -76,6 +87,7 @@ const User = () => {
       }
     }
 
+    // console.log(user_list)
 
     const [profile, setProfile] = useState({
       id: '',
@@ -105,6 +117,7 @@ const User = () => {
       try {
         setProfileLoading(true)
         console.log(profile)
+        
         await api.editUser(profile).then(prof=>{
           console.log(prof)
           setProfile(prof) 
@@ -133,6 +146,8 @@ const User = () => {
     const getUser = async() => {
       try {
         setProfileLoading(true)
+        dispatch(getuser(profile.username))  
+
         await api.getUser(profile.username).then(user => {
           console.log(user)
           setProfile({
@@ -156,6 +171,10 @@ const User = () => {
     const getUsers = async() => {
       try {
         setLoading(true)
+        // dispatch(getusers())
+        // setUsers(user_list)
+        // console.log(dispatch({type: 'GET_USERS'}))
+        // setUsers(dispatch({type: 'GET_USERS'}))
         await api.getUsers().then(users => {
           console.log(users)
           setUsers(users.data)
@@ -169,10 +188,11 @@ const User = () => {
       }
     }
 
-      
+
     useEffect(() => {
-        getUser()
         getUsers()
+        getUser()
+
     },[])
 
 
@@ -279,6 +299,7 @@ const User = () => {
                         // dataSource={dummy.data} 
                         dataSource={users} 
 
+                        // dataSource={user_list}
                         />
                     </div>
                     </Spin>

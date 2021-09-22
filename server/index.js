@@ -38,13 +38,13 @@ const io = require('socket.io')(server,{
 io.on("connection", (socket) => {
     
     console.log("socket.io: User connected: ", socket.id);
-    socket.on("send-message", message => {
-        console.log(message)
-        // io.emit('receive-message', message)
-        // take current socket, broadcast message to every other socket but myself
-        socket.broadcast.emit('receive-message', message)
+    // socket.on("send-message", message => {
+    //     console.log(message)
+    //     // io.emit('receive-message', message)
+    //     // take current socket, broadcast message to every other socket but myself
+    //     socket.broadcast.emit('receive-message', message)
         
-    })
+    // })
     
     socket.on("disconnect", () => { 
       console.log("socket.io: User disconnected: ", socket.id);
