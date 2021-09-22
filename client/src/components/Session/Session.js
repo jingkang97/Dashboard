@@ -65,7 +65,7 @@ const Session = () => {
     const [start, setStart] = useState(false)
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const handleCLick = (event) =>{
+    const handleClick = (event) =>{
       setIsModalVisible(true)
     }
 
@@ -77,32 +77,32 @@ const Session = () => {
       setStart(false)
     }
 
-    useEffect(() => {
-        if(!start){
-          setSocket(null)
-        }
-        else if(start == true){
-          setSocket(io("http://localhost:5000"))
+    // useEffect(() => {
+    //     if(!start){
+    //       setSocket(null)
+    //     }
+    //     else if(start == true){
+    //       setSocket(io("http://localhost:5000"))
           
-        }
-      }, [start])
+    //     }
+    //   }, [start])
 
     // }, [start])
 
-    useEffect(()=>{
-      const messageListener = (data) => {
-        // if(data.beetleId == '1234')
-        setArray(prevArray => [...prevArray, data])
-            console.log(data)
-      };
-      if(socket!=null){
-        socket.on('newData', messageListener)
-      return () => {
-        socket.off('newData', messageListener);
-      };
-      }
+    // useEffect(()=>{
+    //   const messageListener = (data) => {
+    //     // if(data.beetleId == '1234')
+    //     setArray(prevArray => [...prevArray, data])
+    //         console.log(data)
+    //   };
+    //   if(socket!=null){
+    //     socket.on('newData', messageListener)
+    //   return () => {
+    //     socket.off('newData', messageListener);
+    //   };
+    //   }
       
-    },[socket])
+    // },[socket])
 
     return ( 
         <div style={{justifyContent:'center', width:'100%', position:'relative', marginTop:'0px'}}>
@@ -136,7 +136,7 @@ const Session = () => {
             <div style={{overflow:'scroll', borderRadius:'20px', backgroundColor:'#3A3C41', padding:'20px', marginTop:'0px'}}>
                 <div style={{marginLeft:'10px', fontSize:'20px', marginBottom:'10px', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                     <div style={{display:'flex', alignItems:'center', color:'white'}}>All Sessions <CollectionPlay style={{marginLeft:'10px'}}/></div>
-                    <Button onClick={handleCLick} type="primary" className="new-session"><PlusCircleOutlined /> New Session <Spin indicator={<LoadingOutlined style={{marginLeft:'10px', color:'white'}}/>} spinning={buttonLoading}/></Button>
+                    <Button onClick={handleClick} type="primary" className="new-session"><PlusCircleOutlined /> New Session <Spin indicator={<LoadingOutlined style={{marginLeft:'10px', color:'white'}}/>} spinning={buttonLoading}/></Button>
                   </div>
                 <Table 
                 pagination={false}

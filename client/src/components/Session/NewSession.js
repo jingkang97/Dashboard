@@ -4,7 +4,14 @@ import {UserOutlined} from '@ant-design/icons';
 
 import * as api from '../api/index'
 
-const columns = [
+import {io} from 'socket.io-client'
+
+
+const NewSession = ({userList, test, start}) => {
+  const [socket, setSocket] = useState(null)
+  // const [start, setStart] = useState(false)
+
+  const columns = [
     {
       title: 'User',
       dataIndex: 'username',
@@ -40,12 +47,14 @@ const columns = [
     
     {
         title: 'Position',
-        render: (text, record) =>
+        render: (text, record, key) =>
             <Input 
-            // disabled
-            // onChange={}
+            // disabled={rows.find(o => o.key == key) ? false : true}
+            disabled = {keys.find(o => o == record._id) ? false : true}
+            onChange={(value)=>{handlePositionsChange(value, key)}}
             style={{width:'100%', borderRadius:'8px', border:'transparent', background:'#2f3136'}}
-            placeholder="position" 
+            // placeholder={key} 
+            placeholder='1, 2, 3, ...'
             type="text"/>
           
       },
@@ -54,23 +63,29 @@ const columns = [
         title: 'Expected Moves',
         render: (text, record) =>
             <Input 
+            disabled = {keys.find(o => o == record._id) ? false : true}
             style={{width:'100%', borderRadius:'8px', border:'transparent', background:'#2f3136'}}
             placeholder="expected moves" 
             type="text"/>
           
       },
   ];
-
-const NewSession = ({userList, test, start}) => {
-
     const [users, setUsers] = useState(null)
     const [sessionName, setSessionName] = useState('')
     const [loading, setLoading] = useState(false)
-    const [selectedRowKeys, setSelectedRowKeys] = useState([])
+    const [rows, setRows] = useState([])
+    const [keys, setKeys] = useState([])
+    const [positions, setPositions] = useState([])
+    const [array, setArray] = useState([])
 
     const handleSessionNameChange = (e) => {
         setSessionName(e.target.value)
     }
+    const handlePositionsChange = (value, key) => {
+      console.log(value.target.value)
+      console.log(key)
+    } 
+  
     const getUsers = async() => {
         try {
             setLoading(true)
@@ -85,23 +100,51 @@ const NewSession = ({userList, test, start}) => {
             setLoading(false)
           }
     }
-    const onSelectChange = selectedRowKeys => {
-        console.log('selectedRowKeys changed: ', selectedRowKeys);
-        setSelectedRowKeys(selectedRowKeys)
-        // this.setState({ selectedRowKeys });
-      };
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-      };
+    // const onSelectChange = selectedRowKeys => {
+    //     console.log('selectedRowKeys changed: ', selectedRowKeys);
+    //     setRows(...rows, selectedRowKeys)
+    //     // this.setState({ selectedRowKeys });
+    //   };
+    // const rowSelection = {
+    //     r,
+    //     onChange: onSelectChange,
+    //   };
     useEffect(() => {
         getUsers()
     }, [])
+
+    useEffect(() => {
+      if(!start){
+        setSocket(null)
+      }
+      else if(start == true){
+        setSocket(io("http://localhost:5000"))
+        
+      }
+    }, [start])
+
+    useEffect(()=>{
+      const messageListener = (data) => {
+        // if(data.beetleId == '1234')
+        setArray(prevArray => [...prevArray, data])
+            console.log(data)
+      };
+      if(socket!=null){
+        socket.on('newData', messageListener)
+      return () => {
+        socket.off('newData', messageListener);
+      };
+      }
+      
+    },[socket])
     return ( 
         <div style={{height:'100%', width:'100%'}}>
+          {/* {rows.length} */}
+          {console.log(keys)}
             {start ? 
             <div>
                 DASHBOARD
+                {sessionName}
                 {/* array of users selected, three divs */}
                 <div>
                     {/* user selected */}
@@ -109,7 +152,7 @@ const NewSession = ({userList, test, start}) => {
                     {/* expected dance move now */}
                     {/* wearable id */}
                     {/* fatigue check */}
-                    {test}
+                    {array.length}
                 </div>
             </div>
             : 
@@ -136,11 +179,17 @@ const NewSession = ({userList, test, start}) => {
                 // rowSelection={true}
                 rowSelection ={{
                     onSelect:(record) => {
+                        // setRows(record)
+                        // setRows(...rows, record)
                         console.log({record})
                     },
                     onChange: (keys, record) => {
+                      setRows(record)
+                      setKeys(keys)
                         // console.log(keys)
+                        // setRows(...rows, record)
                         console.log(record)
+                        
                     }
                 }}
                 style={{margin:'10px'}}
