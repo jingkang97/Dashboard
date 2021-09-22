@@ -1,23 +1,39 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+// const dataSchema = new Schema({
+//     ax:{
+//         type: String
+//     },
+//     ay:{
+//         type: String
+//     },
+//     az:{
+//         type: String,
+//     },
+//     gx:{
+//         type: String
+//     },
+//     gy:{
+//         type: String
+//     },
+//     gz:{
+//         type: String
+//     }
+    
+// }, {timestamps: true})
+
 const dataSchema = new Schema({
-    ax:{
+    danceMove:{
         type: String
     },
-    ay:{
+    position:{
         type: String
     },
-    az:{
-        type: String,
-    },
-    gx:{
+    bettleId:{
         type: String
     },
-    gy:{
-        type: String
-    },
-    gz:{
+    emg:{
         type: String
     }
     
