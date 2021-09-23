@@ -30,7 +30,7 @@ const dataSchema = new Schema({
     position:{
         type: String
     },
-    bettleId:{
+    userId:{
         type: String
     },
     emg:{

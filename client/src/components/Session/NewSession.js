@@ -78,7 +78,8 @@ const NewSession = ({userList, test, start}) => {
   const [positions, setPositions] = useState([])
   const [array, setArray] = useState([])
   const moves = ['dancemove1', 'dancemove2', 'dancemove3']
-  const dancer_position = [1,2,3]
+  const dancer_position = [2,1,3]
+  const [testPosition, setTestPosition] = useState([1,2,3])
   const fatigue = ['tired', 'not_tired']
   const [changeMoves, setChangeMoves] = useState('Get ready...')
   const [changePositions, setChangePositions] = useState('Get ready...')
@@ -175,8 +176,8 @@ const NewSession = ({userList, test, start}) => {
             {start ? 
             <div>
                 {/* DASHBOARD */}
-                <div style={{fontSize:'30px', color:'white', marginBottom:'20px'}}>
-                {sessionName}
+                <div style={{fontSize:'30px', color:'white', marginBottom:'10px'}}>
+                Session: {sessionName}
 
                 </div>
                 <Row gutter={[20, 20]} style={{width:'inherit', background:'transparent'}}>                
@@ -187,7 +188,6 @@ const NewSession = ({userList, test, start}) => {
                           <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'column', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225',}}>
                           
                           <div style={{display:'flex', flexDirection:'row', marginTop:'10px', justifyContent:'center', alignItems:'center', marginBottom:'10px'}}>
-                            {/* <Avatar icon={<UserOutlined style={{fontSize:'30px', marginTop:'5px'}}/>} src={item.image} style={{height:'40px', width:'40px'}}/> */}
                             <div className={index+1 == 1 ? 'one': (index+1 == 2 ? 'two': 'three')}>{index + 1}</div>
                             <div style={{color:'white', marginBottom:'10px', fontSize:'15px', marginTop:'10px', marginLeft:'10px', fontSize:'20px'}}>{item.username}</div>
 
@@ -200,7 +200,9 @@ const NewSession = ({userList, test, start}) => {
                                   Detected Move
                                 </div>
                                 <div style={{fontSize:'30px', color:'white'}}>
-                                  {changeMoves}
+                                  {/* {array.length} */}
+                                  {array.length ? array[array.length-1].danceMove: null}
+                                  {/* {changeMoves} */}
                                 </div>
                                 </div>
                               </Col>  
@@ -209,7 +211,7 @@ const NewSession = ({userList, test, start}) => {
                                 <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
                                   Expected Move
                                 </div>
-                                <div style={{fontSize:'30px', color:'#FF6D98', fontWeight:'bold', textShadow:'0 0 10px 10px #5a64ea'}}>
+                                <div  className={index+1 == 1 ? 'onedance': (index+1 == 2 ? 'twodance': 'threedance')}>
                                   {changeMoves}
                                 </div>
                                 </div>
@@ -228,28 +230,41 @@ const NewSession = ({userList, test, start}) => {
                       <div >
                         Fatigue Check
                       </div>
-                      {tired == 'tired' ? <div className="tired"> <AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/> Time to take a break!</div>  : (tired == 'not_tired' ? <div style={{fontSize:'50px', display:'flex', flexDirection:'row', alignItems:'center'}}><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/><div className="notTired">Keep Going!</div></div> : null)}
-                      {tired == 'tired' ? <div className="fatigue">Your muscle fatigue level is high</div>  : (tired == 'not_tired' ? <div  className="fatigue">Your muscle fatigue level is normal</div>: <div style={{fontSize:'30px'}}>Get Ready ...</div>)}
+                      {(array.length ? array[array.length-1].emg: 1) == 'tired' ? <div className="tired"> <AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/> Time to take a break!</div>  : ((array.length ? array[array.length-1].emg: 1) == 'ok' ? <div style={{fontSize:'50px', display:'flex', flexDirection:'row', alignItems:'center'}}><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/><div className="notTired">Keep Going!</div></div> : null)}
+                      {(array.length ? array[array.length-1].emg: 1) == 'tired' ? <div className="fatigue">Your muscle fatigue level is high</div>  : ((array.length ? array[array.length-1].emg: 1) == 'ok' ? <div  className="fatigue">Your muscle fatigue level is normal</div>: <div style={{fontSize:'30px'}}>Get Ready ...</div>)}
 
                     </div>
                   </Col>
                 </Row>
                 <Row gutter={[30]}  style={{marginTop:'20px'}}>
                   <Col md={12}>
-                  <div className='expectedPosition'>
-                      <div>
+                  <div className='detectedPosition'>
+                      <div style={{color:'white'}}>
                           Detected Position
                         </div>
-                        <div class="blob white">1</div>
-
+                        <Row gutter={40} style={{margin:'20px'}}>
+                          {dancer_position.map((number) => 
+                              <Col key={number}>
+          
+                              <div className={`blob${(array.length ? array[array.length-1].position: null) == 1 ? 'one' : ((array.length ? array[array.length-1].position: null) == 2 ? 'two': 'three')}`}>{array.length ? array[array.length-1].position: null}</div>
+                            </Col>
+                          )}
+                        </Row>
                     </div>
                   </Col>
                   <Col md={12}>
-                  <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'column', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225', padding:'10px'}}>
+                  <div className='expectedPosition'>
                       <div >
                         Expected Position
                       </div>
-
+                      <Row gutter={40} style={{margin:'20px'}}>
+                          {testPosition.map((number) => 
+                              <Col key={number}>
+                              <div className={`positions${number == 1 ? 'One' : (number == 2 ? 'Two': 'Three')}`}>{number}</div>
+                            </Col>
+                          )}
+                        </Row>
+                          
                     </div>
                   </Col>
                 </Row>

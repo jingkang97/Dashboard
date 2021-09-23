@@ -64,11 +64,14 @@ connection.once("open", () => {
     console.log("Setting change streams")
     // const testChangeStream = connection.collection("TestData").watch();
     const dataChangeStream = connection.collection("datas").watch()
-    dataChangeStream.on("change", (next) => {
-        switch(next.operationType) {
+    dataChangeStream.on("change", (change) => {
+        switch(change.operationType) {
             case "insert":
-                console.log('data: ', next)
-                io.emit('newData', next.fullDocument)
+                console.log('data: ', change.fullDocument)
+
+                // io.emit('newData', next.fullDocument)
+                io.emit('newData', change.fullDocument)
+
                 // const user = {
                 //     _id: next.fullDocument._id,
                 //     name: next.fullDocument.name,
