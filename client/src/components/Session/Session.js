@@ -64,6 +64,7 @@ const Session = () => {
     const [array, setArray] = useState([])
     const [start, setStart] = useState(false)
     const [isModalVisible, setIsModalVisible] = useState(false);
+    
 
     const handleClick = (event) =>{
       setIsModalVisible(true)
@@ -77,32 +78,7 @@ const Session = () => {
       setStart(false)
     }
 
-    // useEffect(() => {
-    //     if(!start){
-    //       setSocket(null)
-    //     }
-    //     else if(start == true){
-    //       setSocket(io("http://localhost:5000"))
-          
-    //     }
-    //   }, [start])
-
-    // }, [start])
-
-    // useEffect(()=>{
-    //   const messageListener = (data) => {
-    //     // if(data.beetleId == '1234')
-    //     setArray(prevArray => [...prevArray, data])
-    //         console.log(data)
-    //   };
-    //   if(socket!=null){
-    //     socket.on('newData', messageListener)
-    //   return () => {
-    //     socket.off('newData', messageListener);
-    //   };
-    //   }
-      
-    // },[socket])
+    
 
     return ( 
         <div style={{justifyContent:'center', width:'100%', position:'relative', marginTop:'0px'}}>

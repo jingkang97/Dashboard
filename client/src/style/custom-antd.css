@@ -22508,7 +22508,10 @@ span.ant-radio + * {
 .ant-table-tbody > tr.ant-table-row-selected > td {
   /* background: #f0f4ff; */
   /* background: transparent; */
-  border-color: rgba(0, 0, 0, 0.03);
+  /* border-color: rgba(0, 0, 0, 0.03); */
+  background-color: rgba(89, 101, 233, 0.48);
+  border-color: #9BA6B3;
+
 }
 .ant-table-tbody > tr.ant-table-row-selected:hover > td {
   /* background: #e6edff; */
