@@ -1,14 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import { Table, Avatar, Tag, Space, Input, Spin, Row, Col} from 'antd'
-import {UserOutlined, WarningOutlined } from '@ant-design/icons';
+import { Table, Avatar, Tag, Input, Spin, Row, Col} from 'antd'
+import {UserOutlined } from '@ant-design/icons';
 import { AiOutlineWarning, AiOutlineLike } from 'react-icons/ai';
-
-
-import * as api from '../api/index'
-
 import {io} from 'socket.io-client'
-
+import * as api from '../api/index'
 import './styles.css'
+
 const NewSession = ({userList, test, start}) => {
   const columns = [
     {
@@ -108,6 +105,9 @@ const NewSession = ({userList, test, start}) => {
       setChangeMoves(moves[Math.floor(Math.random()*moves.length)])
       setChangePositions(dancer_position[Math.floor(Math.random()*dancer_position.length)])
       setTired(fatigue[Math.floor(Math.random()*fatigue.length)])
+      let list = [1,2,3]
+      list.sort(() => Math.random() - 0.5)
+      setTestPosition(list)
     },5000)
     
   }
@@ -127,15 +127,7 @@ const NewSession = ({userList, test, start}) => {
             setLoading(false)
           }
     }
-    // const onSelectChange = selectedRowKeys => {
-    //     console.log('selectedRowKeys changed: ', selectedRowKeys);
-    //     setRows(...rows, selectedRowKeys)
-    //     // this.setState({ selectedRowKeys });
-    //   };
-    // const rowSelection = {
-    //     r,
-    //     onChange: onSelectChange,
-    //   };
+ 
     useEffect(() => {
 
         getUsers()
@@ -189,7 +181,7 @@ const NewSession = ({userList, test, start}) => {
                           
                           <div style={{display:'flex', flexDirection:'row', marginTop:'10px', justifyContent:'center', alignItems:'center', marginBottom:'10px'}}>
                             <div className={index+1 == 1 ? 'one': (index+1 == 2 ? 'two': 'three')}>{index + 1}</div>
-                            <div style={{color:'white', marginBottom:'10px', fontSize:'15px', marginTop:'10px', marginLeft:'10px', fontSize:'20px'}}>{item.username}</div>
+                            <div style={{color:'white', marginBottom:'10px', fontSize:'15px', marginTop:'10px', marginLeft:'10px', fontSize:'20px'}}>{item.username}{item.userId}</div>
 
                           </div>
                             <Row gutter={10} style={{width:'inherit', paddingBottom:'10px'}}>
@@ -237,6 +229,21 @@ const NewSession = ({userList, test, start}) => {
                   </Col>
                 </Row>
                 <Row gutter={[30]}  style={{marginTop:'20px'}}>
+                <Col md={12}>
+                  <div className='expectedPosition'>
+                      <div >
+                        Expected Position
+                      </div>
+                      <Row gutter={40} style={{margin:'20px'}}>
+                          {testPosition.map((number) => 
+                              <Col key={number}>
+                              <div className={`positions${number == 1 ? 'One' : (number == 2 ? 'Two': 'Three')}`}>{number}</div>
+                            </Col>
+                          )}
+                        </Row>
+                          
+                    </div>
+                  </Col>
                   <Col md={12}>
                   <div className='detectedPosition'>
                       <div style={{color:'white'}}>
@@ -252,24 +259,9 @@ const NewSession = ({userList, test, start}) => {
                         </Row>
                     </div>
                   </Col>
-                  <Col md={12}>
-                  <div className='expectedPosition'>
-                      <div >
-                        Expected Position
-                      </div>
-                      <Row gutter={40} style={{margin:'20px'}}>
-                          {testPosition.map((number) => 
-                              <Col key={number}>
-                              <div className={`positions${number == 1 ? 'One' : (number == 2 ? 'Two': 'Three')}`}>{number}</div>
-                            </Col>
-                          )}
-                        </Row>
-                          
-                    </div>
-                  </Col>
+                  
                 </Row>
                 <div>
-                    {/* wearable id */}
                 </div>
             </div>
             : 

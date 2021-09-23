@@ -1,49 +1,17 @@
-/* .ant-table-content {
-  background-color: #3a3c41;
-  color: white;
-}
-
-.ant-table-thead {
-  background-color: pink;
-} */
-
-/* .new-session {
-  background-color: pink;
-  border-radius: 20px;
-} */
-
-/* .ant-btn-primary {
-  background-color: red;
-} */
-
 .tired {
   animation: blinker 1s linear infinite;
   font-size: 40px;
   color: red;
-  /* color: white; */
   font-weight: bold;
   text-shadow: 0 0 20px red;
 }
 
 .notTired {
   font-size: 40px;
-  /* color: lightgreen; */
   font-weight: bold;
-  /* background: linear-gradient(
-    77deg,
-    rgba(255, 109, 152, 1) 0%,
-    rgba(90, 101, 234, 1) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradient 3s ease infinite; */
-
-  /* color: white; */
   font-weight: bold;
   text-shadow: 0 0 30px #5a64ea;
   text-shadow: 0 0 20px white;
-
-  /* text-shadow: 0 0 30px rgba(90, 101, 234, 1); */
   background: linear-gradient(
     to right,
     #fff 20%,
@@ -228,6 +196,8 @@
     rgba(255, 109, 152, 1) 0%,
     rgba(90, 101, 234, 1) 100%
   );
+  background-size: 150% 150%;
+  animation: gradient 3s ease infinite;
   border-radius: 10px;
   display: flex;
   flex-direction: column;

@@ -43,9 +43,7 @@ io.on("connection", (socket) => {
     //     // io.emit('receive-message', message)
     //     // take current socket, broadcast message to every other socket but myself
     //     socket.broadcast.emit('receive-message', message)
-        
     // })
-    
     socket.on("disconnect", () => { 
       console.log("socket.io: User disconnected: ", socket.id);
     });
@@ -62,16 +60,12 @@ connection.once("open", () => {
     console.log("MongoDB database connected")
 
     console.log("Setting change streams")
-    // const testChangeStream = connection.collection("TestData").watch();
     const dataChangeStream = connection.collection("datas").watch()
     dataChangeStream.on("change", (change) => {
         switch(change.operationType) {
             case "insert":
                 console.log('data: ', change.fullDocument)
-
-                // io.emit('newData', next.fullDocument)
                 io.emit('newData', change.fullDocument)
-
                 // const user = {
                 //     _id: next.fullDocument._id,
                 //     name: next.fullDocument.name,
@@ -85,14 +79,8 @@ connection.once("open", () => {
                 break;
             case "delete":
                 console.log('delete data')
-                // io.emit('receive-message','delete user '+ next)
                 break;
-
         }
-    })
-
-
-    
+    })    
     console.log('changestream set')
-
 })
