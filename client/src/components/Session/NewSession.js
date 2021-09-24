@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { Table, Avatar, Tag, Input, Spin, Row, Col} from 'antd'
-import {UserOutlined } from '@ant-design/icons';
+import {UserOutlined, SyncOutlined} from '@ant-design/icons';
 import { AiOutlineWarning, AiOutlineLike } from 'react-icons/ai';
+import {IoIosSync} from 'react-icons/io'
 import {io} from 'socket.io-client'
 import * as api from '../api/index'
 import './styles.css'
@@ -39,31 +40,6 @@ const NewSession = ({userList, test, start}) => {
             <>
               <div>{text}</div>
             </>
-      },
-    
-    {
-        title: 'Position',
-        render: (text, record, key) =>
-            <Input 
-            // disabled={rows.find(o => o.key == key) ? false : true}
-            disabled = {keys.find(o => o == record._id) ? false : true}
-            onChange={(value)=>{handlePositionsChange(value, key)}}
-            style={{width:'100%', borderRadius:'8px', border:'transparent', background:'#2f3136'}}
-            // placeholder={key} 
-            placeholder='1, 2, 3, ...'
-            type="text"/>
-          
-      },
-
-     {
-        title: 'Expected Moves',
-        render: (text, record) =>
-            <Input 
-            disabled = {keys.find(o => o == record._id) ? false : true}
-            style={{width:'100%', borderRadius:'8px', border:'transparent', background:'#2f3136'}}
-            placeholder="expected moves" 
-            type="text"/>
-          
       },
   ];
   const [socket, setSocket] = useState(null)
@@ -148,7 +124,18 @@ const NewSession = ({userList, test, start}) => {
 
     useEffect(()=>{
       const messageListener = (data) => {
-        // if(data.beetleId == '1234')
+        // list of users selected, userId
+        // console.log(rows)
+        // const index = rows.findIndex(item => item.userId === data.userId),
+        // rows = [...rows]
+        // rows[index] = row
+
+        // for(let i = 0; i < rows.length; i ++){
+        //   if(rows[i].userId == data.userId){
+
+        //   }
+        // }
+
         setArray(prevArray => [...prevArray, data])
             console.log(data)
       };
@@ -178,14 +165,14 @@ const NewSession = ({userList, test, start}) => {
                       <Col md={rows.length == 1 ? 24 : (rows.length == 2 ? 12 : 8)}>
                       <div key={index}>
                           <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'column', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225',}}>
-                          
                           <div style={{display:'flex', flexDirection:'row', marginTop:'10px', justifyContent:'center', alignItems:'center', marginBottom:'10px'}}>
                             <div className={index+1 == 1 ? 'one': (index+1 == 2 ? 'two': 'three')}>{index + 1}</div>
-                            <div style={{color:'white', marginBottom:'10px', fontSize:'15px', marginTop:'10px', marginLeft:'10px', fontSize:'20px'}}>{item.username}{item.userId}</div>
-
+                            <div style={{color:'white', marginBottom:'10px', fontSize:'15px', marginTop:'10px', marginLeft:'10px', fontSize:'20px'}}>{item.username}
+                            {item.userId}
+                            </div>
                           </div>
                             <Row gutter={10} style={{width:'inherit', paddingBottom:'10px'}}>
-                              <Col md={12}>
+                              <Col md={24}>
                               
                               <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
                                 <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
@@ -193,21 +180,18 @@ const NewSession = ({userList, test, start}) => {
                                 </div>
                                 <div style={{fontSize:'30px', color:'white'}}>
                                   {/* {array.length} */}
-                                  {array.length ? array[array.length-1].danceMove: null}
+                                  {array.length ? (item.userId == array[array.length-1].userId ? (array.length ? array[array.length-1].danceMove: (
+                                    
+                                    
+                                    null
+                                  )) : null) : null}
+
+                                  {/* {array.length ? array[array.length-1].danceMove: null} */}
                                   {/* {changeMoves} */}
                                 </div>
                                 </div>
                               </Col>  
-                              <Col md={12}>
-                              <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
-                                <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
-                                  Expected Move
-                                </div>
-                                <div  className={index+1 == 1 ? 'onedance': (index+1 == 2 ? 'twodance': 'threedance')}>
-                                  {changeMoves}
-                                </div>
-                                </div>
-                              </Col>  
+                              
                             </Row>   
                             
                           </div>
@@ -232,15 +216,22 @@ const NewSession = ({userList, test, start}) => {
                 <Col md={12}>
                   <div className='expectedPosition'>
                       <div >
-                        Expected Position
+                        Synchronisation Delay
                       </div>
-                      <Row gutter={40} style={{margin:'20px'}}>
-                          {testPosition.map((number) => 
-                              <Col key={number}>
-                              <div className={`positions${number == 1 ? 'One' : (number == 2 ? 'Two': 'Three')}`}>{number}</div>
-                            </Col>
-                          )}
-                        </Row>
+                      <Row gutter={40} style={{margin:'0px'}}>
+                        <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
+                          <div>
+                            Good Synchronisation between dancers
+                          </div>
+                          <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
+                            Off By
+                            <div style={{display:'flex', flexDirection:'column',height:'100%', background:'transparent', position:'relative', color:'white'}}>
+                              <IoIosSync className="syncMove"/>
+                              <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'35px', fontWeight:'bold'}}>1s</div>
+                            </div>
+                          </div>
+                          </div>
+                      </Row>
                           
                     </div>
                   </Col>
@@ -252,8 +243,8 @@ const NewSession = ({userList, test, start}) => {
                         <Row gutter={40} style={{margin:'20px'}}>
                           {dancer_position.map((number) => 
                               <Col key={number}>
-          
-                              <div className={`blob${(array.length ? array[array.length-1].position: null) == 1 ? 'one' : ((array.length ? array[array.length-1].position: null) == 2 ? 'two': 'three')}`}>{array.length ? array[array.length-1].position: null}</div>
+                              
+                              <div className={`blob${(array.length ? array[array.length-1].position: '?') == 1 ? 'one' : ((array.length ? array[array.length-1].position: '?') == 2 ? 'two': ((array.length ? array[array.length-1].position: '?') == 3 ? 'three' : 'empty'))}`}>{array.length ? array[array.length-1].position: '?'}</div>
                             </Col>
                           )}
                         </Row>
