@@ -237,7 +237,7 @@
 }
 
 .syncMove {
-  font-size: 130px;
+  font-size: 118px;
   color: #9ba6b2;
   animation: rotation 3s linear infinite;
 }
@@ -246,6 +246,12 @@
   font-size: 130px;
   color: #9ba6b2;
   /* animation: rotation 3s linear infinite; */
+}
+
+.syncStatus {
+  font-size: 30px;
+  color: white;
+  font-weight: bold;
 }
 
 @keyframes blinker {

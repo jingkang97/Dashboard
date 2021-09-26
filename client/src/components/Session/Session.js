@@ -100,8 +100,9 @@ const Session = () => {
 
             <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent', marginTop:'20px'}}>
                 <Button type="primary" style={{marginTop:'10px', background:'transparent', marginRight:'10px'}} onClick={()=>{setIsModalVisible(false)}}> Cancel</Button>
-                <Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={startSession}>Start Session</Button>
-                <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey'}} onClick={pauseSession}>Pause Session</Button>
+                {start ? null : <Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={startSession}>Start Session</Button>}
+                {/* <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey'}} onClick={pauseSession}>Pause Session</Button> */}
+                {start ?  <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey'}} onClick={pauseSession}>Stop Session</Button> : null}
               </div>
             </div>
 

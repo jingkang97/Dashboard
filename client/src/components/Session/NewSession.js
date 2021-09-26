@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Table, Avatar, Tag, Input, Spin, Row, Col} from 'antd'
 import {UserOutlined, SyncOutlined} from '@ant-design/icons';
-import { AiOutlineWarning, AiOutlineLike } from 'react-icons/ai';
+import { AiOutlineWarning, AiOutlineLike, AiOutlineUser } from 'react-icons/ai';
 import {IoIosSync} from 'react-icons/io'
 import {io} from 'socket.io-client'
 import * as api from '../api/index'
@@ -51,12 +51,14 @@ const NewSession = ({userList, test, start}) => {
   const [positions, setPositions] = useState([])
   const [array, setArray] = useState([])
   const moves = ['dancemove1', 'dancemove2', 'dancemove3']
-  const dancer_position = [2,1,3]
+  const dancer_position = [1,2,3]
   const [testPosition, setTestPosition] = useState([1,2,3])
   const fatigue = ['tired', 'not_tired']
   const [changeMoves, setChangeMoves] = useState('Get ready...')
   const [changePositions, setChangePositions] = useState('Get ready...')
   const [tired, setTired] = useState(null)
+  
+  const [session, setSession] = useState([])
 
   const handleSessionNameChange = (e) => {
       setSessionName(e.target.value)
@@ -76,17 +78,7 @@ const NewSession = ({userList, test, start}) => {
     console.log(key)
   } 
 
-  const change = () => {
-    setInterval(()=>{
-      setChangeMoves(moves[Math.floor(Math.random()*moves.length)])
-      setChangePositions(dancer_position[Math.floor(Math.random()*dancer_position.length)])
-      setTired(fatigue[Math.floor(Math.random()*fatigue.length)])
-      let list = [1,2,3]
-      list.sort(() => Math.random() - 0.5)
-      setTestPosition(list)
-    },5000)
-    
-  }
+  
 
   
     const getUsers = async() => {
@@ -105,7 +97,6 @@ const NewSession = ({userList, test, start}) => {
     }
  
     useEffect(() => {
-
         getUsers()
     }, [])
 
@@ -114,30 +105,38 @@ const NewSession = ({userList, test, start}) => {
         setSocket(null)
       }
       else if(start == true){
-        change()
         setSocket(io("http://localhost:5000"))
       }
     }, [start])
 
-
+    useEffect(() => {
+      console.log(session)
+    },[session])
 
 
     useEffect(()=>{
       const messageListener = (data) => {
-        // list of users selected, userId
-        // console.log(rows)
-        // const index = rows.findIndex(item => item.userId === data.userId),
-        // rows = [...rows]
-        // rows[index] = row
+        // let tempObj = []
+        setSession(prevSess => prevSess.map(el => (el.userId == data.userId ? {...el,session:[...el.session, data]} : el)))
 
-        // for(let i = 0; i < rows.length; i ++){
-        //   if(rows[i].userId == data.userId){
+        // for(let i = 0; i < session.length; i ++){
+        //   if(session[i].userId == data.userId){
+        //     // let tempObj = session[i].session
+        //     // setSession(prevSess => [...prevSess, data])
 
+
+        //     // tempObj.session.push(data)
+        //     // setSession(tempObj)
+        //     // console.log(session)
+        //     // console.log(tempObj)
         //   }
+          
         // }
-
-        setArray(prevArray => [...prevArray, data])
-            console.log(data)
+        // console.log(session)
+        // setSession()
+        
+        // setArray(prevArray => [...prevArray, data])
+            // console.log(data)
       };
       if(socket!=null){
         socket.on('newData', messageListener)
@@ -149,9 +148,10 @@ const NewSession = ({userList, test, start}) => {
     },[socket])
     return ( 
         <div style={{height:'100%', width:'100%'}}>
+          {/* {console.log(session.length)} */}
           {/* {rows.length} */}
           {/* {console.log(keys)} */}
-          {console.log(positions)}
+          {/* {console.log(positions)} */}
             {start ? 
             <div>
                 {/* DASHBOARD */}
@@ -160,7 +160,7 @@ const NewSession = ({userList, test, start}) => {
 
                 </div>
                 <Row gutter={[20, 20]} style={{width:'inherit', background:'transparent'}}>                
-                {rows.map((item,index)=>{
+                {session.map((item,index)=>{
                     return (
                       <Col md={rows.length == 1 ? 24 : (rows.length == 2 ? 12 : 8)}>
                       <div key={index}>
@@ -179,15 +179,10 @@ const NewSession = ({userList, test, start}) => {
                                   Detected Move
                                 </div>
                                 <div style={{fontSize:'30px', color:'white'}}>
-                                  {/* {array.length} */}
-                                  {array.length ? (item.userId == array[array.length-1].userId ? (array.length ? array[array.length-1].danceMove: (
-                                    
-                                    
-                                    null
-                                  )) : null) : null}
-
-                                  {/* {array.length ? array[array.length-1].danceMove: null} */}
-                                  {/* {changeMoves} */}
+                                {/* {session.length } */}
+                                 {item.session.length ? item.session[item.session.length - 1].danceMove : '?'}
+                                  {/* {session.length ? () : '?'} */}
+                                  {/* {array.length ? array[array.length-1].danceMove: '?'} */}
                                 </div>
                                 </div>
                               </Col>  
@@ -218,16 +213,19 @@ const NewSession = ({userList, test, start}) => {
                       <div >
                         Synchronisation Delay
                       </div>
-                      <Row gutter={40} style={{margin:'0px'}}>
-                        <div style={{display:'flex', flexDirection:'row', alignItems:'center'}}>
-                          <div>
-                            Good Synchronisation between dancers
+                      <Row gutter={40} style={{margin:'0px', width:'100%'}}>
+                        <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-around', width:'inherit', background:'transparent'}}>
+                          <div className="syncStatus">
+                            Well Synchronised!
+                            {/* Perfect Sync! */}
+                            {/* Watch your speed! */}
+                            {/*  */}
                           </div>
                           <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
                             Off By
                             <div style={{display:'flex', flexDirection:'column',height:'100%', background:'transparent', position:'relative', color:'white'}}>
                               <IoIosSync className="syncMove"/>
-                              <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'35px', fontWeight:'bold'}}>1s</div>
+                              <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'32px', fontWeight:'bold'}}>0.5s</div>
                             </div>
                           </div>
                           </div>
@@ -241,9 +239,9 @@ const NewSession = ({userList, test, start}) => {
                           Detected Position
                         </div>
                         <Row gutter={40} style={{margin:'20px'}}>
-                          {dancer_position.map((number) => 
+                          {dancer_position.map((key, number) => 
                               <Col key={number}>
-                              
+                              {number+1}
                               <div className={`blob${(array.length ? array[array.length-1].position: '?') == 1 ? 'one' : ((array.length ? array[array.length-1].position: '?') == 2 ? 'two': ((array.length ? array[array.length-1].position: '?') == 3 ? 'three' : 'empty'))}`}>{array.length ? array[array.length-1].position: '?'}</div>
                             </Col>
                           )}
@@ -281,14 +279,23 @@ const NewSession = ({userList, test, start}) => {
                     onSelect:(record) => {
                         // setRows(record)
                         // setRows(...rows, record)
-                        console.log({record})
+                        // setSession(record)
                     },
                     onChange: (keys, record) => {
+                      // setSession(...session, {userId: record.userId, session:[]})
                       setRows(record)
                       setKeys(keys)
                         // console.log(keys)
                         // setRows(...rows, record)
                         console.log(record)
+                        setSession(record.map((item)=>({username: item.username, userId: item.userId, session:[]})))
+                        // record.map((item) => {
+                        //   setSession([{username: item.username, userId: item.userId, session: []}])
+                        // })
+                        console.log(session)
+                        // console.log(record)
+
+                        // console.log(session)
                         
                     }
                 }}
