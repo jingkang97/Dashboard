@@ -1,5 +1,6 @@
-const Analytics = () => {
+const Analytics = ({rows, session, emg, syncDelay}) => {
     return ( 
+
         <div>Analytics</div>
      );
 }

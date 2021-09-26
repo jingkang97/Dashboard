@@ -254,6 +254,31 @@
   font-weight: bold;
 }
 
+.notSync {
+  font-size: 40px;
+  color: red;
+  text-shadow: 0 0 20px red;
+  font-weight: bold;
+  animation-delay: 1s;
+  animation: bigshake 1s ease infinite;
+}
+
+.okSync {
+  font-size: 40px;
+  color: white;
+  font-weight: bold;
+  animation-delay: 1s;
+  animation: smallshake 1s ease infinite;
+}
+
+.perfectSync {
+  font-size: 40px;
+  color: #5a64ea;
+  font-weight: bold;
+  animation-delay: 1s;
+  animation: glow 2s linear infinite;
+}
+
 @keyframes blinker {
   50% {
     opacity: 0;
@@ -312,5 +337,66 @@
   }
   to {
     transform: rotate(359deg);
+  }
+}
+
+/* when not sync */
+@keyframes smallshake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(0px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(2px, 0, 0);
+  }
+}
+
+@keyframes bigshake {
+  10%,
+  90% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(3px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-10px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 10px #5a64ea;
+  }
+
+  50% {
+    text-shadow: 0 0 50px #5a64ea;
+  }
+
+  100% {
+    text-shadow: 0 0 10px #5a64ea;
   }
 }
