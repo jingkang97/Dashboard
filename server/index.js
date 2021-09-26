@@ -66,16 +66,6 @@ connection.once("open", () => {
             case "insert":
                 console.log('data: ', change.fullDocument)
                 io.emit('newData', change.fullDocument)
-                // const user = {
-                //     _id: next.fullDocument._id,
-                //     name: next.fullDocument.name,
-                //     username: next.fullDocument.username,
-                //     wearable_id: next.fullDocument.wearable_id,
-                //     wearable_name: next.fullDocument.wearable_name
-                // }
-                // io.emit('newUser', user)
-                // io.emit('receive-message','insert user'+ next)
-                // console.log('insert user', user)
                 break;
             case "delete":
                 console.log('delete data')

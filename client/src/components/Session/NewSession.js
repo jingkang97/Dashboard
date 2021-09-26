@@ -6,6 +6,7 @@ import {IoIosSync} from 'react-icons/io'
 import {io} from 'socket.io-client'
 import * as api from '../api/index'
 import './styles.css'
+import Analytics from './Analytics'
 
 const NewSession = ({userList, test, start}) => {
   const columns = [
@@ -158,8 +159,10 @@ const NewSession = ({userList, test, start}) => {
                       <div >
                         Fatigue Check
                       </div>
-                      {emg.length ? (emg[emg.length-1] =='tired' ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
-                      {emg.length ? (emg[emg.length-1] =='tired' ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'}
+                      {emg.length ? (Number(emg[emg.length-1]) > 3 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
+                      {emg.length ? (Number(emg[emg.length-1]) > 3 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'}
+                      {/* {emg.length ? (emg[emg.length-1] =='tired' ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
+                      {emg.length ? (emg[emg.length-1] =='tired' ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'} */}
                     </div>
                   </Col>
                 </Row>
@@ -261,7 +264,17 @@ const NewSession = ({userList, test, start}) => {
             </div>
             </div>
             }
+            {
+              start ? 
+              null
+              : 
+              <div>
+                <Analytics rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
+              </div>
+            }
+            
         </div>
+
      );
 }
  
