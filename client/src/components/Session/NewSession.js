@@ -47,7 +47,7 @@ const NewSession = ({userList, test, start}) => {
   const [sessionName, setSessionName] = useState('')
   const [loading, setLoading] = useState(false)
   const [rows, setRows] = useState([])
-  const [keys, setKeys] = useState([])
+  const [keyss, setKeys] = useState([])
   const [positions, setPositions] = useState([])
   const [array, setArray] = useState([])
   const moves = ['dancemove1', 'dancemove2', 'dancemove3']
@@ -57,7 +57,7 @@ const NewSession = ({userList, test, start}) => {
   const [changeMoves, setChangeMoves] = useState('Get ready...')
   const [changePositions, setChangePositions] = useState('Get ready...')
   const [tired, setTired] = useState(null)
-  
+  const [emg, setEmg] = useState([])
   const [session, setSession] = useState([])
 
   const handleSessionNameChange = (e) => {
@@ -135,8 +135,12 @@ const NewSession = ({userList, test, start}) => {
         // console.log(session)
         // setSession()
         
-        // setArray(prevArray => [...prevArray, data])
-            // console.log(data)
+        setArray(prevArray => [...prevArray, data])
+        if(data.hasOwnProperty('emg')){
+          setEmg([...emg, data.emg])
+        }
+        // console.log(emg)
+        console.log(data)
       };
       if(socket!=null){
         socket.on('newData', messageListener)
@@ -201,8 +205,12 @@ const NewSession = ({userList, test, start}) => {
                       <div >
                         Fatigue Check
                       </div>
-                      {(array.length ? array[array.length-1].emg: 1) == 'tired' ? <div className="tired"> <AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/> Time to take a break!</div>  : ((array.length ? array[array.length-1].emg: 1) == 'ok' ? <div style={{fontSize:'50px', display:'flex', flexDirection:'row', alignItems:'center'}}><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/><div className="notTired">Keep Going!</div></div> : null)}
-                      {(array.length ? array[array.length-1].emg: 1) == 'tired' ? <div className="fatigue">Your muscle fatigue level is high</div>  : ((array.length ? array[array.length-1].emg: 1) == 'ok' ? <div  className="fatigue">Your muscle fatigue level is normal</div>: <div style={{fontSize:'30px'}}>Get Ready ...</div>)}
+                      {/* {session.length ? } */}
+                      {emg.length ? (emg[emg.length-1] =='tired' ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
+                      {emg.length ? (emg[emg.length-1] =='tired' ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'}
+
+                      {/* {(emg.length ? emg[emg.length-1]) == 'tired' ? <div className="tired"> <AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/> Time to take a break!</div>  : ((emg.length ? emg[emg.length-1].emg: 1) == 'ok' ? <div style={{fontSize:'50px', display:'flex', flexDirection:'row', alignItems:'center'}}><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/><div className="notTired">Keep Going!</div></div> : null)} */}
+                      {/* {(emg.length ? (emg[emg.length-1]) == 'tired' ? <div className="fatigue">Your muscle fatigue level is high</div>  : ((emg.length ? emg[emg.length-1].emg: 1) == 'ok' ? <div  className="fatigue">Your muscle fatigue level is normal</div>: <div style={{fontSize:'30px'}}>Get Ready ...</div>)} */}
 
                     </div>
                   </Col>
@@ -225,7 +233,9 @@ const NewSession = ({userList, test, start}) => {
                             Off By
                             <div style={{display:'flex', flexDirection:'column',height:'100%', background:'transparent', position:'relative', color:'white'}}>
                               <IoIosSync className="syncMove"/>
-                              <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'32px', fontWeight:'bold'}}>0.5s</div>
+                              <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'32px', fontWeight:'bold'}}>
+                                
+                                0.5s</div>
                             </div>
                           </div>
                           </div>
@@ -239,10 +249,23 @@ const NewSession = ({userList, test, start}) => {
                           Detected Position
                         </div>
                         <Row gutter={40} style={{margin:'20px'}}>
-                          {dancer_position.map((key, number) => 
+                          {rows.map((item, number) => 
                               <Col key={number}>
-                              {number+1}
-                              <div className={`blob${(array.length ? array[array.length-1].position: '?') == 1 ? 'one' : ((array.length ? array[array.length-1].position: '?') == 2 ? 'two': ((array.length ? array[array.length-1].position: '?') == 3 ? 'three' : 'empty'))}`}>{array.length ? array[array.length-1].position: '?'}</div>
+
+                                {/* {number+1} */}
+                                {/* {session.length} */}
+                                {array.length ? null : <div className="blobempty">?</div>}
+                                {session.map((item) => (item.session.length ? (item.session[item.session.length-1].position == number + 1 ?  
+                                
+                                <div className={`blob${(rows.findIndex(x => x.userId == item.userId) + 1) == 1 ? 'one' : (rows.findIndex(x => x.userId == item.userId) + 1) == 2 ? 'two' : 'three'}`}>{rows.findIndex(x => x.userId == item.userId) + 1}</div>
+                                  
+                                  : null) : null))}
+
+                                {/* {item.session.length ? (item.session[item.session.length-1].position == number+1 ? item.session[item.session.length-1].position : null) :'none'} */}
+                              {/* {number+1} */}
+                              {/* {item.session.length ? item.session[item.session.length - 1].position : '?'} */}
+
+                              {/* <div className={`blob${(item.session.length ? item.session[item.session.length - 1].position : '?') == 1 ? 'one' : ((item.session.length ? item.session[item.session.length - 1].position : '?') == 2 ? 'two': ((item.session.length ? item.session[item.session.length - 1].position : '?') == 3 ? 'three' : 'empty'))}`}>{item.session.length ? item.session[item.session.length-1].position: '?'}</div> */}
                             </Col>
                           )}
                         </Row>
@@ -282,20 +305,13 @@ const NewSession = ({userList, test, start}) => {
                         // setSession(record)
                     },
                     onChange: (keys, record) => {
-                      // setSession(...session, {userId: record.userId, session:[]})
                       setRows(record)
-                      setKeys(keys)
-                        // console.log(keys)
-                        // setRows(...rows, record)
-                        console.log(record)
-                        setSession(record.map((item)=>({username: item.username, userId: item.userId, session:[]})))
-                        // record.map((item) => {
-                        //   setSession([{username: item.username, userId: item.userId, session: []}])
-                        // })
-                        console.log(session)
-                        // console.log(record)
-
-                        // console.log(session)
+                      // setKeys(keys)
+                      
+                      // setRows(...rows, record)
+                      console.log(record)
+                      setSession(record.map((item)=>({ username: item.username, userId: item.userId, session:[]})))
+                      console.log(session)
                         
                     }
                 }}
