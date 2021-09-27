@@ -63,22 +63,36 @@ const Session = () => {
     const [buttonLoading, setButtonLoading] = useState(false)
     const [array, setArray] = useState([])
     const [stop, setStop] = useState(false)
-    const [start, setStart] = useState(false)
+    const [back, setBack] = useState(false)
+    const [startSession, setStartSession] = useState(false)
+    const [start, setStart] = useState(true)
+    const [select, setSelect] = useState(true)
     const [isModalVisible, setIsModalVisible] = useState(false);
-    
 
+    const closeSession = (event) => {
+      setStart(false)
+      setIsModalVisible(false)
+    }
     const handleClick = (event) =>{
       setIsModalVisible(true)
     }
 
-
-    const startSession = (event) =>{
-      setStart(true)
-    }
-    const pauseSession = (event) =>{
+    const startTheSession = (event) =>{
+      setStartSession(true)
       setStart(false)
+      setBack(true)
+      setSelect(false)
     }
-
+    const backSelect = (event) =>{
+      setStart(false)
+      setBack(false)
+      setSelect(true)
+    }
+    const stopSession = (event) => {
+      setStart(false)
+      setStop(true)
+      setStartSession(false)
+    }
     
 
     return ( 
@@ -97,14 +111,13 @@ const Session = () => {
            contentLabel="Example Modal"
           >
             <div>
-            <NewSession userList={null} test={array.length} start={start} />
+            <NewSession startSession={startSession} start={start} stop={stop} back={back} select={select}/>
 
             <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent', marginTop:'20px'}}>
-                <Button type="primary" style={{marginTop:'10px', background:'transparent', marginRight:'10px'}} onClick={()=>{setIsModalVisible(false)}}> Cancel</Button>
-                {start ? <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px'}} onClick={startSession}>Back</Button> : null}
-
-                {start ? null : <Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={startSession}>Start Session</Button>}
-                {start ?  <Button type="primary" style={{marginTop:'10px'}} onClick={pauseSession}>Stop Session</Button> : null}
+                <Button type="primary" style={{marginTop:'10px', background:'transparent', marginRight:'10px'}} onClick={closeSession}> Cancel</Button>
+                {back ? <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px'}} onClick={backSelect}>Back</Button> : null}
+                {start ? <Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={startTheSession}>Start Session</Button> : null}
+                {startSession ?  <Button type="primary" style={{marginTop:'10px'}} onClick={stopSession}>Stop Session</Button> : null}
               </div>
             </div>
 

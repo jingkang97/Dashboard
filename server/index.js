@@ -6,7 +6,7 @@ const postRoutes = require("./router/post.js")
 const authRoute = require('./router/auth.js')
 const usersRoute = require('./router/users')
 const simulateRoute = require('./router/simulate')
-
+const evalRoute = require('./router/eval.js')
 
 const app = express();
 
@@ -19,6 +19,7 @@ app.use('/post', postRoutes)
 app.use('/api', authRoute)
 app.use('/user', usersRoute)
 app.use('/simulate', simulateRoute)
+app.use('/', evalRoute)
 
 
 

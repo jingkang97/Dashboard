@@ -8,7 +8,7 @@ import * as api from '../api/index'
 import './styles.css'
 import Analytics from './Analytics'
 
-const NewSession = ({userList, test, start}) => {
+const NewSession = ({start, stop, back, select, startSession}) => {
   const columns = [
     {
       title: 'User',
@@ -79,13 +79,14 @@ const NewSession = ({userList, test, start}) => {
     }, [])
 
     useEffect(() => {
-      if(!start){
+      if(!startSession){
         setSocket(null)
       }
-      else if(start == true){
+      else if(startSession == true){
+        setStartTime(Date.now())
         setSocket(io("http://localhost:5000"))
       }
-    }, [start])
+    }, [startSession])
 
     useEffect(() => {
       console.log(session)
@@ -94,7 +95,6 @@ const NewSession = ({userList, test, start}) => {
     useEffect(()=>{
       const messageListener = (data) => {
         // set start time
-        setStartTime(Date.now())
         setSession(prevSess => prevSess.map(el => (el.userId == data.userId ? {...el,session:[...el.session, data]} : el)))        
         setArray(prevArray => [...prevArray, data])
         if(data.hasOwnProperty('emg')){
@@ -113,9 +113,17 @@ const NewSession = ({userList, test, start}) => {
       }
       
     },[socket])
+
+    useEffect(() => {
+      if(stop){
+        setEndTime(Date.now())
+      }
+     
+    }, [stop])
+
     return ( 
         <div style={{height:'100%', width:'100%'}}>
-            {start ? 
+            {startSession ? 
             <div>
                 {/* DASHBOARD */}
                 <div style={{fontSize:'30px', color:'white', marginBottom:'10px'}}>
@@ -142,10 +150,7 @@ const NewSession = ({userList, test, start}) => {
                                   Detected Move
                                 </div>
                                 <div style={{fontSize:'30px', color:'white'}}>
-                                {/* {session.length } */}
                                  {item.session.length ? item.session[item.session.length - 1].danceMove : '?'}
-                                  {/* {session.length ? () : '?'} */}
-                                  {/* {array.length ? array[array.length-1].danceMove: '?'} */}
                                 </div>
                                 </div>
                               </Col>  
@@ -229,6 +234,8 @@ const NewSession = ({userList, test, start}) => {
                 </div>
             </div>
             : 
+            null}
+            {select ? 
             <div>
             <div>
                 <h3 style={{color:'white'}}>New Session</h3>
@@ -268,14 +275,14 @@ const NewSession = ({userList, test, start}) => {
             </Spin>
             </div>
             </div>
-            }
+            : null}
             {
-              start ? 
-              null
-              : 
+              stop ? 
               <div>
-                <Analytics rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
+              <Analytics start={startTime} end={endTime} rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
               </div>
+              : 
+              null
             }
             
         </div>
