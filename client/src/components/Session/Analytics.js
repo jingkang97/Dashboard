@@ -9,14 +9,18 @@ import './styles.css'
 
 const Analytics = ({rows, session, emg, syncDelay}) => {
 
+
+
     return ( 
 
         <div>
             {/* individual  */}
             <Row>
-
+                {session.map((item)=>(
+                    <div></div>
+                ))}
             </Row>
-            
+
             {/* Group */}
             <Row>
                 
@@ -24,7 +28,8 @@ const Analytics = ({rows, session, emg, syncDelay}) => {
 
             {/* emg */}
             <Row>
-                
+                {/* Rechart area graph here
+                with timestamp here */}
             </Row>
 
         </div>

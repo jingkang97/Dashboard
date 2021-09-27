@@ -62,6 +62,7 @@ const Session = () => {
     const [loading, setLoading] = React.useState(false)    
     const [buttonLoading, setButtonLoading] = useState(false)
     const [array, setArray] = useState([])
+    const [stop, setStop] = useState(false)
     const [start, setStart] = useState(false)
     const [isModalVisible, setIsModalVisible] = useState(false);
     
@@ -100,9 +101,10 @@ const Session = () => {
 
             <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent', marginTop:'20px'}}>
                 <Button type="primary" style={{marginTop:'10px', background:'transparent', marginRight:'10px'}} onClick={()=>{setIsModalVisible(false)}}> Cancel</Button>
+                {start ? <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px'}} onClick={startSession}>Back</Button> : null}
+
                 {start ? null : <Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={startSession}>Start Session</Button>}
-                {/* <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey'}} onClick={pauseSession}>Pause Session</Button> */}
-                {start ?  <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey'}} onClick={pauseSession}>Stop Session</Button> : null}
+                {start ?  <Button type="primary" style={{marginTop:'10px'}} onClick={pauseSession}>Stop Session</Button> : null}
               </div>
             </div>
 

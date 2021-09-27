@@ -52,6 +52,9 @@ const NewSession = ({userList, test, start}) => {
   const [emg, setEmg] = useState([])
   const [syncDelay, setSyncDelay] = useState([])
   const [session, setSession] = useState([])
+  const [startTime, setStartTime] = useState(null)
+  const [endTime, setEndTime] = useState(null)
+
 
   const handleSessionNameChange = (e) => {
       setSessionName(e.target.value)
@@ -90,6 +93,8 @@ const NewSession = ({userList, test, start}) => {
 
     useEffect(()=>{
       const messageListener = (data) => {
+        // set start time
+        setStartTime(Date.now())
         setSession(prevSess => prevSess.map(el => (el.userId == data.userId ? {...el,session:[...el.session, data]} : el)))        
         setArray(prevArray => [...prevArray, data])
         if(data.hasOwnProperty('emg')){
