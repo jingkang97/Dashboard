@@ -29,19 +29,22 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
         let total = 0
         for(let j = 0; j < session.length; j += 1){
             score = 0
+            total = 0
             if(evaluation != null){
                 for(let i = 0; i < evaluation.datas.length; i++){
                     // console.log('no?')
                     if(i < session[j].session.length){
-                        console.log('hihi')
+                        // console.log('hihi')
+                        // console.log('fromsession',session[j].userId)
+                        // console.log('fromuserdance',userDance[j].userId)
                         total += 1
                         if(session[j].session[i].danceMove == evaluation.datas[i].danceMove){
-                            console.log('yes')
+                            // console.log('yes')
                             score += 1
-                            userDance[j].percent = `${(score/total)*100}%`
+                            userDance[j].percent = `${((score/total)*100).toFixed(1)}%`
                         }
                         else{
-                            console.log('no')
+                            // console.log('no')
                         }
                     }
                 }
@@ -68,15 +71,15 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     return ( 
         <div style={{width:'100%', background:'transparent'}}>
             {/* {danceScore} */}
-            dancer1:
+            {/* {danceScore ? danceScore[0].username : null}
             {danceScore ? danceScore[0].percent : null}
-            dancer2:
-            {danceScore ? danceScore[1].percent : null}
+            {danceScore ? danceScore[1].username : null}
+            {danceScore ? danceScore[1].percent : null} */}
             {/* {evaluation.datas.length} */}
             <div style={{fontSize:'30px', color:'white', marginBottom:'10px'}}>Analytics</div>
             {/* individual  */}
             <Row gutter={[20, 20]} style={{width:'inherit', background:'transparent'}}>                
-                {session.map((item,index)=>{
+                {danceScore ? danceScore.map((item,index)=>{
                     return (
                       <Col md={rows.length == 1 ? 24 : (rows.length == 2 ? 12 : 8)}>
                       <div key={index}>
@@ -94,7 +97,7 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                                     Move Analytics
                                     </div>
                                     <div style={{fontSize:'30px', color:'white'}}>
-                                    89% Correct
+                                    {item.percent}
                                     </div>
                                 </div>
                               </Col>  
@@ -117,7 +120,7 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                       </div>
                     </Col>
                     )
-                })}
+                }): '?'}
 
                 {/* Group */}
                 <Col md={24}>
