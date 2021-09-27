@@ -34,17 +34,6 @@ const getEval = async(res, next) => {
     
 }
 
-const postEval = (req, res) => {
-    try{
-        let eval = new Evaluation ({
-            sessionId: 123,
-            datas: 1
-        })
-        eval.save()
-    }catch{
-
-    }
-}
 
 module.exports = {
     getEval

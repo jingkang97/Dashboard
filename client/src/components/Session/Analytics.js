@@ -3,32 +3,76 @@ import { Table, Avatar, Tag, Input, Spin, Row, Col} from 'antd'
 import {UserOutlined, SyncOutlined} from '@ant-design/icons';
 import { AiOutlineWarning, AiOutlineLike, AiOutlineUser } from 'react-icons/ai';
 import {IoIosSync} from 'react-icons/io'
-import {io} from 'socket.io-client'
 import * as api from '../api/index'
 import './styles.css'
 import axios from 'axios'
 
 const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
-    const [evaluation, setEvaluation] = useState([])
+    const [evaluation, setEvaluation] = useState(null)
+    const [danceScore, setDanceScore] = useState(0)
     const getEvaluation = async() => {
         try {
             await api.getEval().then(data => {
-            alert('hi')
-              console.log(data.data)
-              setEvaluation(data)
-              alert(data)
+              console.log(data.data.data)
+              setEvaluation(data.data.data)
             })
-
           } catch (error) {
             alert(error)
           }
     }
+    const calculateIndividualDance = () => {
+        let userDance = []
+        for(let i = 0; i < session.length; i += 1){
+            userDance.push({username: session[i].username, userId: session[i].userId, percent: '0%'})
+        }
+        let score = 0
+        let total = 0
+        for(let j = 0; j < session.length; j += 1){
+            score = 0
+            if(evaluation != null){
+                for(let i = 0; i < evaluation.datas.length; i++){
+                    // console.log('no?')
+                    if(i < session[j].session.length){
+                        console.log('hihi')
+                        total += 1
+                        if(session[j].session[i].danceMove == evaluation.datas[i].danceMove){
+                            console.log('yes')
+                            score += 1
+                            userDance[j].percent = `${(score/total)*100}%`
+                        }
+                        else{
+                            console.log('no')
+                        }
+                    }
+                }
+            }
+        }
+        setDanceScore(userDance)
+        // setDanceScore(score)
+    }
+
+    const calculateIndividualPosition = () => {
+
+    }
+
+    useEffect(()=>{
+        if(evaluation != null){
+            calculateIndividualDance()
+        }
+    },[evaluation])
+
     useEffect(() => {
        getEvaluation() 
     }, [stop])
 
     return ( 
         <div style={{width:'100%', background:'transparent'}}>
+            {/* {danceScore} */}
+            dancer1:
+            {danceScore ? danceScore[0].percent : null}
+            dancer2:
+            {danceScore ? danceScore[1].percent : null}
+            {/* {evaluation.datas.length} */}
             <div style={{fontSize:'30px', color:'white', marginBottom:'10px'}}>Analytics</div>
             {/* individual  */}
             <Row gutter={[20, 20]} style={{width:'inherit', background:'transparent'}}>                
