@@ -169,8 +169,8 @@ const NewSession = ({start, stop, back, select, startSession}) => {
                       <div >
                         Fatigue Check
                       </div>
-                      {emg.length ? (Number(emg[emg.length-1]) > 3 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
-                      {emg.length ? (Number(emg[emg.length-1]) > 3 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'}
+                      {emg.length ? (Number(emg[emg.length-1]) > 3 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : <div style={{fontSize:'30px', color:'white'}}>?</div>}
+                      {emg.length ? (Number(emg[emg.length-1]) > 3 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : <div style={{fontSize:'30px'}}>Get ready...</div>}
                       {/* {emg.length ? (emg[emg.length-1] =='tired' ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
                       {emg.length ? (emg[emg.length-1] =='tired' ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'} */}
                     </div>
@@ -279,7 +279,7 @@ const NewSession = ({start, stop, back, select, startSession}) => {
             {
               stop ? 
               <div>
-              <Analytics start={startTime} end={endTime} rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
+              <Analytics stop={stop} start={startTime} end={endTime} rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
               </div>
               : 
               null
