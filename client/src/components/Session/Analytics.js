@@ -56,12 +56,14 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                     if(i < session[j].session.length){
                         danceTotal += 1
                         // CHANGE CSV DATA FIRST
-                        let temp = evaluation.datas[i].position.split()
-                        if(temp.findIndex(session[j].session[i].position) == session[j].session[i].position){
+                        let temp = evaluation.datas[i].position.split(',')
+                        console.log(temp)
+                        // console.log(session[j].session[i].position)
+                        console.log(temp.indexOf(session[j].session[i].position))
+                        if(temp.indexOf(session[j].session[i].position) + 1 == session[j].session[i].position){
                             danceScore += 1
                             userDance[j].positionPercent = `${((danceScore/danceTotal)*100).toFixed(1)}% Correct`
                         }
-                        
                         else{
                             // console.log('no')
                         }
@@ -137,7 +139,7 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                     {session.map((item, index)=>(
                          <Col md={rows.length == 1 ? 24 : (rows.length == 2 ? 12 : 8)}>
                          <div key={index}>
-                             <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'column', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225',}}>
+                             <div style={{width:'inherit', height:'200px', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'column', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225',}}>
                                  Loading...
                              </div>
                          </div>
