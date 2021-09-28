@@ -60,7 +60,7 @@ const FatigueGraph = ({emgData}) => {
     return ( 
         <div style={styles}>
             {console.log(emgData)}
-            {alert(percentage)}
+            {/* {alert(percentage)} */}
             <AreaChart
             width={500}
             height={300}
@@ -69,11 +69,8 @@ const FatigueGraph = ({emgData}) => {
             >
             <defs>
             <linearGradient id="gradient" x1="0" y1="1" x2="0" y2="0">
-                {/* <stop offset="0%" stopColor="#5A65EA" /> */}
                 <stop offset={`${100-percentage}%`} stopColor="#5A65EA"  />
                 <stop offset={`${percentage}%`} stopColor="#ff6d98" />
-
-                {/* <stop offset="100%" stopColor="#ff6d98" /> */}
             </linearGradient>
                 
             </defs>
@@ -81,9 +78,9 @@ const FatigueGraph = ({emgData}) => {
             <Area type={type} dataKey="emg" fill="url(#gradient)" stroke="url(#gradient)" strokeWidth={3}/>
             <XAxis dataKey="time" />
             <YAxis dataKey="emg"/>
-            <ReferenceLine x={tiredTime} label={<div style={{color:'white'}}>{tiredTime}</div>} />
+            {/* <ReferenceLine x={tiredTime} label={<div style={{color:'white'}}>{tiredTime}</div>} /> */}
             {/* <ReferenceLine x={tiredTime}  */}
-            <ReferenceLine y={4} label={<div style={{color:'white'}}>Fatigue</div>} />
+            <ReferenceLine y={3} label={<div style={{color:'white'}}>Fatigue</div>} />
             </AreaChart>
         </div>
      );

@@ -31,16 +31,20 @@ const type = "monotone";
 const percentage = 100 - ((7 - 4 - 1) / (7 - 1)) * 100;
 
 const SyncGraph = ({syncData}) => {
-    const [percent, setPercent] = useState(100)
+    const [percent, setPercent] = useState(0)
+
     const calculatePercentage = () => {
         let maximum = 0
         for(let i = 0; i < syncData.length; i ++){
             maximum = Math.max(syncData[i].sync, maximum)
         }
-        if(maximum > 1){
-            setPercent((maximum - 1) * 100)
+        if(maximum > 0.75){
+            setPercent((maximum - 0.75)/maximum * 100)
+
         }
     }
+
+
     useEffect(() => {
         if(syncData.length){
             calculatePercentage()
@@ -57,20 +61,17 @@ const SyncGraph = ({syncData}) => {
             data={syncData}
             margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
             >
-                <defs>
-            <linearGradient id="gradients" x1="0" y1="0" x2="0" y2="1">
-                {/* <stop offset="0%" stopColor="#5A65EA" /> */}
-                <stop offset={`${percent}%`} stopColor="#ff6d98" />
-                <stop offset={`${100}%`} stopColor="#5A65EA"  />
-
-                {/* <stop offset="100%" stopColor="#ff6d98" /> */}
+            <defs>
+            <linearGradient id="gradient" x1="0" y1="1" x2="0" y2="0">
+                <stop offset={`${100-percentage}%`} stopColor="#5A65EA"  />
+                <stop offset={`${percentage}%`} stopColor="#ff6d98" />
             </linearGradient>
                 
             </defs>
             <Tooltip />
-            <ReferenceLine y={1} label={<div style={{color:'white'}}>Exceed Threshold</div>} />
+            <ReferenceLine y={0.75} label={<div style={{color:'white'}}>Exceed Threshold</div>} />
             {/* <Area type={type} dataKey="sync" fill="#5A65EA" stroke="#5A65EA"/> */}
-            <Area type={type} dataKey="sync" fill="url(#gradients)" stroke="url(#gradients)"/>
+            <Area type={type} dataKey="sync" fill="url(#gradient)" stroke="url(#gradient)"/>
             <XAxis dataKey="time" />
             <YAxis dataKey="sync"/>
             </AreaChart>
