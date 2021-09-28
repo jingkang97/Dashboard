@@ -7,6 +7,7 @@ import {io} from 'socket.io-client'
 import * as api from '../api/index'
 import './styles.css'
 import Analytics from './Analytics'
+import moment from 'moment'
 
 const NewSession = ({start, stop, back, select, startSession}) => {
   const columns = [
@@ -97,12 +98,14 @@ const NewSession = ({start, stop, back, select, startSession}) => {
         // set start time
         setSession(prevSess => prevSess.map(el => (el.userId == data.userId ? {...el,session:[...el.session, data]} : el)))        
         setArray(prevArray => [...prevArray, data])
+        let current_time = moment().format("HH:mm:ss")
         if(data.hasOwnProperty('emg')){
-          setEmg([...emg, data.emg])
+          setEmg(prevArray => [...prevArray, {emg:data.emg, time: current_time}])
         }
         if(data.hasOwnProperty('syncDelay')){
-          setSyncDelay([...syncDelay, data.syncDelay])
+          setSyncDelay(prevArray => [...prevArray, {sync: data.syncDelay, time: current_time}])
         }
+        
         console.log(data)
       };
       if(socket!=null){
@@ -123,6 +126,7 @@ const NewSession = ({start, stop, back, select, startSession}) => {
 
     return ( 
         <div style={{height:'100%', width:'100%'}}>
+          {console.log(emg)}
             {startSession ? 
             <div>
                 {/* DASHBOARD */}
@@ -169,8 +173,8 @@ const NewSession = ({start, stop, back, select, startSession}) => {
                       <div >
                         Fatigue Check
                       </div>
-                      {emg.length ? (Number(emg[emg.length-1]) > 3 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : <div style={{fontSize:'30px', color:'white'}}>?</div>}
-                      {emg.length ? (Number(emg[emg.length-1]) > 3 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : <div style={{fontSize:'30px'}}>Get ready...</div>}
+                      {emg.length ? (Number(emg[emg.length-1].emg) > 3 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : <div style={{fontSize:'30px', color:'white'}}>?</div>}
+                      {emg.length ? (Number(emg[emg.length-1].emg) > 3 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : <div style={{fontSize:'30px'}}>Get ready...</div>}
                       {/* {emg.length ? (emg[emg.length-1] =='tired' ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
                       {emg.length ? (emg[emg.length-1] =='tired' ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'} */}
                     </div>
@@ -185,10 +189,10 @@ const NewSession = ({start, stop, back, select, startSession}) => {
                       <Row gutter={40} style={{margin:'0px', width:'100%'}}>
                         <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-around', width:'inherit', background:'transparent'}}>
                           
-                          {syncDelay.length ?  (syncDelay[syncDelay.length-1] == 0 ? 
+                          {syncDelay.length ?  (syncDelay[syncDelay.length-1].sync == 0 ? 
                           <div className="perfectSync">Perfect Sync</div> : (
-                            syncDelay[syncDelay.length-1] > 0 && syncDelay[syncDelay.length-1] <= 0.5 ? 
-                            <div className="okSync">Almost Perfect Sync</div> : (syncDelay[syncDelay.length-1] > 0.5 ? <div className="notSync">Please Match Up!</div> : null)
+                            syncDelay[syncDelay.length-1].sync > 0 && syncDelay[syncDelay.length-1].sync <= 0.5 ? 
+                            <div className="okSync">Almost Perfect Sync</div> : (syncDelay[syncDelay.length-1].sync > 0.5 ? <div className="notSync">Please Match Up!</div> : null)
                             
                           )) : <div style={{fontSize:'30px'}}>Get Ready...</div>}
                           
@@ -202,7 +206,7 @@ const NewSession = ({start, stop, back, select, startSession}) => {
                               <IoIosSync className="syncMove"/>
                               <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'32px', fontWeight:'bold'}}>
                                 {syncDelay.length ? 
-                                <div>{syncDelay[syncDelay.length-1]}s </div> 
+                                <div>{syncDelay[syncDelay.length-1].sync}s </div> 
                                 : '?'}
                                 </div>
                             </div>

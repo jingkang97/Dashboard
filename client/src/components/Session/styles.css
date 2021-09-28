@@ -242,6 +242,12 @@
   animation: rotation 3s linear infinite;
 }
 
+.syncMoveBig {
+  font-size: 150px;
+  color: #9ba6b2;
+  animation: rotation 3s linear infinite;
+}
+
 .syncStop {
   font-size: 130px;
   color: #9ba6b2;
@@ -277,6 +283,26 @@
   font-weight: bold;
   animation-delay: 1s;
   animation: glow 2s linear infinite;
+}
+
+.perfect {
+  color: #5a64ea;
+  font-size: 25px;
+}
+
+.excellent {
+  color: #ff6d98;
+  font-size: 25px;
+}
+
+.average {
+  color: white;
+  font-size: 25px;
+}
+
+.poor {
+  color: red;
+  font-size: 25px;
 }
 
 @keyframes blinker {

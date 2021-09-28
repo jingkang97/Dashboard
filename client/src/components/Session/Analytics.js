@@ -6,12 +6,17 @@ import {IoIosSync} from 'react-icons/io'
 import * as api from '../api/index'
 import './styles.css'
 import DoughnutChart from './DoughnutChart';
+import SyncGraph from './SyncGraph';
+import FatigueGraph from './FatigueGraph'
 
 const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     const [evaluation, setEvaluation] = useState(null)
     const [danceScore, setDanceScore] = useState(0)
     const [moveChart, setMoveChart] = useState([])
     const [syncDelayDisplay, setSyncDelayDisplay] = useState(0)
+    const [groupDanceScore, setGroupDanceScore] = useState([])
+    const [groupPositionScore, setGroupPositionScore] = useState([])
+
 
     const [loading, setLoading] = useState(false)
     const getEvaluation = async() => {
@@ -27,8 +32,8 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     const calculateSyncDelay = () => {
         let count = 0;
         for(let i = 0; i < syncDelay.length; i++){
-            console.log(syncDelay[i])
-            count += syncDelay[i]
+            console.log(syncDelay[i].sync)
+            count += syncDelay[i].sync
         }
         if(syncDelay.length != 0){
             setSyncDelayDisplay((count/syncDelay.length).toFixed(1))
@@ -46,6 +51,14 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
             moveChartList.push({username: session[i].username, userId: session[i].userId, dataMove: [{name: 'correct', value: 0}, {name: 'wrong', value: 0}], dataPosition: [{name: 'correct', value: 0}, {name: 'wrong', value: 0}]})
         }
         
+        let totalMoveScore = 0
+        let totalCorrectMoveScore = 0
+        let totalWrongMoveScore = 0
+
+        let totalPositionScore = 0
+        let totalCorrectPositionScore = 0
+        let totalWrongPositionScore = 0
+
 
         let moveScore = 0
         let moveTotal = 0
@@ -57,12 +70,15 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
             wrongMoveScore = 0
             for(let i = 0; i < session[j].session.length; i++){
                 moveTotal += 1
+                totalMoveScore += 1
                 if(session[j].session[i].danceMove == evaluation.datas[i].danceMove){
                     moveScore += 1
+                    totalCorrectMoveScore += 1
                           
                 }
                 else{
                     wrongMoveScore += 1
+                    totalWrongMoveScore += 1
                 }
 
                 console.log('wrongscore', wrongMoveScore)
@@ -72,7 +88,6 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
             userDance[j].movePercent = ((moveScore/moveTotal)*100).toFixed(1)              
             moveChartList[j].dataMove[0].value = parseFloat(((moveScore/moveTotal)*100).toFixed(1))
             moveChartList[j].dataMove[1].value = parseFloat(((wrongMoveScore/moveTotal)*100).toFixed(1))
-
         }
         
         let danceScore = 0
@@ -84,12 +99,15 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
             wrongDanceScore = 0
             for(let i = 0; i < session[j].session.length; i++){
                     danceTotal += 1
+                    totalPositionScore += 1
                     let temp = evaluation.datas[i].position.split(',')
                     if(temp.indexOf(session[j].session[i].position) + 1 == session[j].session[i].position){
                         danceScore += 1
+                        totalCorrectPositionScore += 1
                     }
                     else{
                         wrongDanceScore += 1
+                        totalWrongPositionScore += 1
                         moveChartList[j].dataPosition[1].value = parseFloat((wrongDanceScore).toFixed(1))
                     }
                 }
@@ -99,9 +117,18 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
         }
         setMoveChart(moveChartList)
         setDanceScore(userDance)
-    }
 
-    
+
+        // Group Scores
+        let totalWrongMoveScorePercentage = parseFloat(((totalWrongMoveScore/totalMoveScore)*100).toFixed(1))
+        let totalCorrectMoveScorePercentage = parseFloat(((totalCorrectMoveScore/totalMoveScore)*100).toFixed(1))
+
+        let totalWrongPositionScorePercentage = parseFloat(((totalWrongPositionScore/totalPositionScore)*100).toFixed(1))
+        let totalCorrectPositionScorePercentage = parseFloat(((totalCorrectPositionScore/totalPositionScore)*100).toFixed(1))
+
+        setGroupDanceScore([{name: 'correct', value: totalCorrectMoveScorePercentage},{name: 'wrong', value: totalWrongMoveScorePercentage}])
+        setGroupPositionScore([{name: 'correct', value: totalCorrectPositionScorePercentage},{name: 'wrong', value: totalWrongPositionScorePercentage}])
+    }
 
     useEffect(()=>{
         if(evaluation != null){
@@ -121,8 +148,9 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
 
     return ( 
         <div style={{width:'100%', background:'transparent'}}>
-            <div style={{fontSize:'30px', color:'white', marginBottom:'10px'}}>Analytics</div>
+            <div style={{fontSize:'30px', color:'white', marginBottom:'10px', fontWeight:'bold'}}>Analytics</div>
             {/* individual  */}
+            <div style={{fontSize:'25px', color:'white', marginBottom:'10px'}}>Individual Analytics</div>
             <Row gutter={[20, 20]} style={{width:'inherit', background:'transparent'}}>                
                 {danceScore ? danceScore.map((item,index)=>{
                     return (
@@ -141,13 +169,16 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                                     <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
                                     Move Analytics
                                     </div>
-                                    <div style={{fontSize:'20px', color:'white', position:'relative', width:'100%', height:'100%', background:'transparent', alignItems:'center', display:'flex', flexDirection:'column'}}>
+                                    <div style={{fontSize:'15px', color:'white', position:'relative', width:'100%', height:'100%', background:'transparent', alignItems:'center', display:'flex', flexDirection:'column'}}>
                                     <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%, -50%', display:'flex', flexDirection:'column', alignItems:'center', fontWeight:'bold', justifyContent:'center', width:'100%'}}>
                                         <div>{item.movePercent}%</div>
                                         <div>Correct</div>
                                         {/* TODO */}
-                                        {item.movePercent == 100.0 ? <div>Perfect</div> : (item.movePercent < 100.0 )} 
-
+                                        {item.movePercent == 100.0 ? <div className="perfect">Perfect</div> : 
+                                        (item.movePercent < 100.0 && item.movePercent >= 70.0 ? <div className="excellent">Excellent</div>:    
+                                        (item.movePercent < 70.0 && item.movePercent >= 50.0 ? <div className="average">Average</div> : 
+                                        (item.movePercent < 50.0 ? <div className="poor">Poor</div> : null)))
+                                        } 
                                     </div>
                                     <DoughnutChart data={moveChart[moveChart.findIndex(x=> x.userId == item.userId)].dataMove}/>
                                     
@@ -161,10 +192,15 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                                     <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
                                     Position Analytics
                                     </div>
-                                    <div style={{fontSize:'20px', color:'white', position:'relative', width:'100%', height:'100%', background:'transparent', alignItems:'center', display:'flex', flexDirection:'column'}}>
+                                    <div style={{fontSize:'15px', color:'white', position:'relative', width:'100%', height:'100%', background:'transparent', alignItems:'center', display:'flex', flexDirection:'column'}}>
                                     <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%, -50%', display:'flex', flexDirection:'column', alignItems:'center', fontWeight:'bold', justifyContent:'center', width:'100%'}}>
                                         <div>{item.positionPercent}%</div>
                                         <div>Correct</div>
+                                        {item.positionPercent == 100.0 ? <div className="perfect">Perfect</div> : 
+                                        (item.positionPercent < 100.0 && item.positionPercent >= 70.0 ? <div className="excellent">Excellent</div>:    
+                                        (item.positionPercent < 70.0 && item.positionPercent >= 50.0 ? <div className="average">Average</div> : 
+                                        (item.positionPercent < 50.0 ? <div className="poor">Poor</div> : null)))
+                                        } 
                                     </div>
                                     <DoughnutChart data={moveChart[moveChart.findIndex(x=> x.userId == item.userId)].dataPosition}/>
     
@@ -193,15 +229,51 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                 }
 
                 {/* Group */}
+                <div style={{fontSize:'25px', color:'white', marginBottom:'10px', marginLeft:'10px'}}>Group Analytics</div>
+
                 <Col md={24}>
-                    <div style={{width:'100%', height:'100px', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'row', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225', justifyContent:'space-evenly', padding:'10px'}}>                                    
+
+                    <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'row', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225', justifyContent:'space-evenly', padding:'10px'}}>                                    
+
                         <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                            Moves Analytics
-                            <div>...</div>
+                            <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
+                                    Move Analytics
+                            </div>
+                            {groupDanceScore.length ? 
+                            <div style={{fontSize:'15px', color:'white', position:'relative', width:'100%', height:'100%', background:'transparent', alignItems:'center', display:'flex', flexDirection:'column'}}>
+                                    <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%, -50%', display:'flex', flexDirection:'column', alignItems:'center', fontWeight:'bold', justifyContent:'center', width:'100%'}}>
+                                        <div>{groupDanceScore[0].value}%</div>
+                                        <div>Correct</div>
+                                        {groupDanceScore[0].value == 100.0 ? <div className="perfect">Perfect</div> : 
+                                        (groupDanceScore[0].value < 100.0 && groupDanceScore[0].value >= 70.0 ? <div className="excellent">Excellent</div>:    
+                                        (groupDanceScore[0].value < 70.0 && groupDanceScore[0].value >= 50.0 ? <div className="average">Average</div> : 
+                                        (groupDanceScore[0].value < 50.0 ? <div className="poor">Poor</div> : null)))
+                                        } 
+                                    </div>
+                                    <DoughnutChart data={groupDanceScore}/>
+                            </div>
+                            : <div>?</div>}
                         </div>
                         <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                            Position Analytics
-                            <div>...</div>
+                            <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
+                                    Position Analytics
+                            </div>
+                            {groupPositionScore.length ? 
+                            <div style={{fontSize:'15px', color:'white', position:'relative', width:'100%', height:'100%', background:'transparent', alignItems:'center', display:'flex', flexDirection:'column'}}>
+                                    <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%, -50%', display:'flex', flexDirection:'column', alignItems:'center', fontWeight:'bold', justifyContent:'center', width:'100%'}}>
+                                        <div>{groupPositionScore[0].value}%</div>
+                                        <div>Correct</div>
+                                        {groupPositionScore[0].value == 100.0 ? <div className="perfect">Perfect</div> : 
+                                        (groupPositionScore[0].value < 100.0 && groupPositionScore[0].value >= 70.0 ? <div className="excellent">Excellent</div>:    
+                                        (groupPositionScore[0].value < 70.0 && groupPositionScore[0].value >= 50.0 ? <div className="average">Average</div> : 
+                                        (groupPositionScore[0].value < 50.0 ? <div className="poor">Poor</div> : null)))
+                                        } 
+                                    </div>
+                                    <DoughnutChart data={groupPositionScore}/>
+    
+                            </div>
+                            :
+                            <div>?</div>}
                         </div>
                     </div>
                 </Col>
@@ -209,40 +281,59 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
 
                 {/* emg */}
                 <Col md={24}>
-                    <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'row', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225', justifyContent:'space-evenly'}}>
-                    <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                        Fatigue Level
-                        <div>...</div>
-                    
-                    </div>
-                    <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                        Average Sync Delay
-                        <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-around', width:'inherit', background:'transparent', width:'100%'}}>
-                          
-                          {/* {syncDelay.length ?  (syncDelay[syncDelay.length-1] == 0 ? 
-                          <div className="perfectSync">Perfect Sync</div> : (
-                            syncDelay[syncDelay.length-1] > 0 && syncDelay[syncDelay.length-1] <= 0.5 ? 
-                            <div className="okSync">Almost Perfect Sync</div> : (syncDelay[syncDelay.length-1] > 0.5 ? <div className="notSync">Please Match Up!</div> : null)
-                            
-                          )) : <div style={{fontSize:'30px'}}>Get Ready...</div>}
-                           */}
-                          
-                            {/* Almost Perfect Sync! */}
-                            {/* Please Match Up! */}
-                            {/*  */}
-                          <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
-                            Off By
-                            <div style={{display:'flex', flexDirection:'column',height:'100%', background:'transparent', position:'relative', color:'white'}}>
-                              <IoIosSync className="syncMove"/>
-                              <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'32px', fontWeight:'bold'}}>
-                                {/* {syncDelay.length ? 
-                                <div>{syncDelay[syncDelay.length-1]}s </div> 
-                                : '?'} */}
+                    <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'row', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225', justifyContent:'space-evenly', padding:'10px'}}>
+                        <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                            <div style={{color:'#9BA6B2', fontSize:'20px', marginBottom:'30px'}}> 
+                                Fatigue Level
+                            </div>
+                            <div style={{display:'flex', flexDirection:'row', justifyContent:'space-evenly', width:'100%', marginTop:'10px'}}>
+                                <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                                    <FatigueGraph emgData={emg}/>
+                                </div>
+                                <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                                    You Got Tired At Around ...
+                                    <div style={{height:'100%', width:'100%', background:'transparent', fontWeight:'bold', color:'white', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'50px'}}>5mins</div>
                                 </div>
                             </div>
-                          </div>
-                          </div>
+                        </div>
                     </div>
+                </Col>
+
+                <Col md={24}>
+                    <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'column', alignItems:'center', boxShadow: '0px 0px 20px 1px #202225', justifyContent:'space-evenly', padding:'10px'}}>
+                        <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
+                            Sync Delay
+                        </div>
+                        <div style={{display:'flex', flexDirection:'row', width:'100%', justifyContent:'space-evenly'}}>
+                        <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                            <SyncGraph />
+                        </div>
+                        <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
+                            
+                            <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'space-around', width:'inherit', background:'transparent', width:'100%'}}>
+                            
+                            
+                                
+                            <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
+                                Average Sync Delay Off By
+                                <div style={{display:'flex', flexDirection:'column',height:'100%', background:'transparent', position:'relative', color:'white'}}>
+                                <IoIosSync className="syncMoveBig"/>
+                                <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'32px', fontWeight:'bold'}}>
+                                    {syncDelayDisplay ? `${syncDelayDisplay}s` : '?'}
+                                    </div>
+                                </div>
+                            </div>
+                            <div style={{marginTop:'20px'}}>
+                                {syncDelayDisplay ?  (syncDelayDisplay == 0 ? 
+                                <div className="perfectSync">Perfect Sync</div> : (
+                                    syncDelayDisplay > 0 && syncDelayDisplay <= 0.5 ? 
+                                    <div className="okSync">Almost Perfect Sync</div> : (syncDelayDisplay > 0.5 ? <div className="notSync">Please Match Up!</div> : null)
+                                    
+                                )) : <div style={{fontSize:'30px'}}>Get Ready...</div>}
+                            </div>
+                            </div>
+                        </div>
+                        </div>
                          
                     </div>
                     
