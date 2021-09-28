@@ -16,22 +16,29 @@ const type = "monotone";
 
 
 const FatigueGraph = ({emgData}) => {
-    const [percentage, setPercentage] = useState(100)
-    const [tired, setTired] = useState(0)
+    const [percentage, setPercentage] = useState(0)
+    // const [tired, setTired] = useState(0)
     const [tiredTime, setTiredTime] = useState(null)
     const [startTime, setStartTime] = useState(null)
-    const [tiredTimeDuration, setTiredTimeDuration] = useState(null)
+    // const [tiredTimeDuration, setTiredTimeDuration] = useState(null)
 
-    const calculatePercentage = (startTime, tiredTime) => {
-        
+    const calculatePercentage = () => {
+        let maximum = 0
+        for(let i = 0; i < emgData.length; i ++){
+            maximum = Math.max(emgData[i].emg, maximum)
+        }
+        if(maximum > 3){
+            setPercentage((maximum - 3)/maximum * 100)
+
+        }
     }
 
     const findTiredTime = () => {
         for(let i = 0; i < emgData.length; i++){
             if( emgData[i].emg > 3){
                 setTiredTime(emgData[i].time)
-                setTiredTimeDuration(emgData[i].time - startTime)
-                calculatePercentage(startTime, emgData[i].time)
+                // setTiredTimeDuration(emgData[i].time - startTime)
+                calculatePercentage()
                 break;
             }
         }
@@ -53,6 +60,7 @@ const FatigueGraph = ({emgData}) => {
     return ( 
         <div style={styles}>
             {console.log(emgData)}
+            {alert(percentage)}
             <AreaChart
             width={500}
             height={300}
@@ -60,10 +68,11 @@ const FatigueGraph = ({emgData}) => {
             margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
             >
             <defs>
-            <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#5A65EA" />
-                <stop offset={`${percentage}%`} stopColor="#5A65EA"  />
+            <linearGradient id="gradient" x1="0" y1="1" x2="0" y2="0">
+                {/* <stop offset="0%" stopColor="#5A65EA" /> */}
+                <stop offset={`${100-percentage}%`} stopColor="#5A65EA"  />
                 <stop offset={`${percentage}%`} stopColor="#ff6d98" />
+
                 {/* <stop offset="100%" stopColor="#ff6d98" /> */}
             </linearGradient>
                 

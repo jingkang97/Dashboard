@@ -291,12 +291,12 @@
 }
 
 .excellent {
-  color: #ff6d98;
+  color: white;
   font-size: 25px;
 }
 
 .average {
-  color: white;
+  color: #ff6d98;
   font-size: 25px;
 }
 

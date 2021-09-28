@@ -31,19 +31,25 @@ const type = "monotone";
 const percentage = 100 - ((7 - 4 - 1) / (7 - 1)) * 100;
 
 const SyncGraph = ({syncData}) => {
-    const [percent, setPercent] = useState(0)
+    const [percent, setPercent] = useState(100)
     const calculatePercentage = () => {
         let maximum = 0
         for(let i = 0; i < syncData.length; i ++){
             maximum = Math.max(syncData[i].sync, maximum)
         }
         if(maximum > 1){
-            setPercent((maximum - 1 * 100))
+            setPercent((maximum - 1) * 100)
         }
     }
-
+    useEffect(() => {
+        if(syncData.length){
+            calculatePercentage()
+        }
+        
+    }, [syncData])
     return ( 
         <div style={styles}>
+            {alert(percent)}
             {console.log(syncData)}
             <AreaChart
             width={500}
@@ -55,7 +61,7 @@ const SyncGraph = ({syncData}) => {
             <linearGradient id="gradients" x1="0" y1="0" x2="0" y2="1">
                 {/* <stop offset="0%" stopColor="#5A65EA" /> */}
                 <stop offset={`${percent}%`} stopColor="#ff6d98" />
-                <stop offset={`${0}%`} stopColor="#5A65EA"  />
+                <stop offset={`${100}%`} stopColor="#5A65EA"  />
 
                 {/* <stop offset="100%" stopColor="#ff6d98" /> */}
             </linearGradient>
