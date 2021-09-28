@@ -17,8 +17,19 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     const [groupDanceScore, setGroupDanceScore] = useState([])
     const [groupPositionScore, setGroupPositionScore] = useState([])
 
+    const [tired, setTired] = useState(null)
 
     const [loading, setLoading] = useState(false)
+
+    const calculateTired = () => {
+        for(let i = 0; i < emg.length; i ++){
+            if(emg[i].emg > 3){
+                setTired(emg[i].time)
+                break;
+            }
+        }
+    }
+
     const getEvaluation = async() => {
         try {
             await api.getEval().then(data => {
@@ -32,9 +43,11 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     const calculateSyncDelay = () => {
         let count = 0;
         for(let i = 0; i < syncDelay.length; i++){
-            console.log(syncDelay[i].sync)
-            count += syncDelay[i].sync
+            // console.log(syncDelay[i].sync)
+            count += parseFloat(syncDelay[i].sync)
+            console.log(count)
         }
+        
         if(syncDelay.length != 0){
             setSyncDelayDisplay((count/syncDelay.length).toFixed(1))
         }
@@ -81,9 +94,9 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                     totalWrongMoveScore += 1
                 }
 
-                console.log('wrongscore', wrongMoveScore)
-                console.log('move', moveScore)
-                console.log('outside movetotal',moveTotal)
+                // console.log('wrongscore', wrongMoveScore)
+                // console.log('move', moveScore)
+                // console.log('outside movetotal',moveTotal)
             }           
             userDance[j].movePercent = ((moveScore/moveTotal)*100).toFixed(1)              
             moveChartList[j].dataMove[0].value = parseFloat(((moveScore/moveTotal)*100).toFixed(1))
@@ -146,8 +159,15 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
        getEvaluation() 
     }, [stop])
 
+    useEffect(() => {
+       if(emg.length > 0){
+           calculateTired()
+       }
+    }, [emg])
+
     return ( 
         <div style={{width:'100%', background:'transparent'}}>
+            {/* {alert(syncDelayDisplay)} */}
             <div style={{fontSize:'30px', color:'white', marginBottom:'10px', fontWeight:'bold'}}>Analytics</div>
             {/* individual  */}
             <div style={{fontSize:'25px', color:'white', marginBottom:'10px'}}>Individual Analytics</div>
@@ -290,10 +310,16 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                                 <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                                     <FatigueGraph emgData={emg}/>
                                 </div>
+                                {tired != null ?
                                 <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                                    You Got Tired At Around ...
-                                    <div style={{height:'100%', width:'100%', background:'transparent', fontWeight:'bold', color:'white', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'50px'}}>5mins</div>
+                                You Got Tired At Around ...
+                                <div style={{height:'100%', width:'100%', background:'transparent', fontWeight:'bold', color:'white', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'50px'}}>{tired}</div>
                                 </div>
+                                : 
+                                <div style={{fontSize:'30px', color:'white', height:'100%', width:'100%', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                                Fatigue Level did not reach Critical Level
+                                </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -306,7 +332,7 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                         </div>
                         <div style={{display:'flex', flexDirection:'row', width:'100%', justifyContent:'space-evenly'}}>
                         <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
-                            <SyncGraph />
+                            <SyncGraph syncData={syncDelay}/>
                         </div>
                         <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                             

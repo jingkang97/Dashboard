@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { LineChart, Line, XAxis, YAxis, ReferenceLine, AreaChart, Area, Tooltip} from "recharts";
 
 const styles = {
@@ -11,11 +11,45 @@ const styles = {
 const type = "monotone";
 
 // calculate percentage for launchDate - index = 4, total = 7
-const percentage = 100 - ((7 - 4 - 1) / (7 - 1)) * 100;
+// const percentage = 90.1;
 
 
 
 const FatigueGraph = ({emgData}) => {
+    const [percentage, setPercentage] = useState(100)
+    const [tired, setTired] = useState(0)
+    const [tiredTime, setTiredTime] = useState(null)
+    const [startTime, setStartTime] = useState(null)
+    const [tiredTimeDuration, setTiredTimeDuration] = useState(null)
+
+    const calculatePercentage = (startTime, tiredTime) => {
+        
+    }
+
+    const findTiredTime = () => {
+        for(let i = 0; i < emgData.length; i++){
+            if( emgData[i].emg > 3){
+                setTiredTime(emgData[i].time)
+                setTiredTimeDuration(emgData[i].time - startTime)
+                calculatePercentage(startTime, emgData[i].time)
+                break;
+            }
+        }
+    }
+
+    useEffect(() => {
+        if(emgData.length > 0){
+            setStartTime(emgData[0].time)
+        }
+    }, [emgData])
+
+    useEffect(() => {
+        if(startTime != null){
+            findTiredTime()
+        }
+       
+    }, [startTime])
+
     return ( 
         <div style={styles}>
             {console.log(emgData)}
@@ -30,7 +64,7 @@ const FatigueGraph = ({emgData}) => {
                 <stop offset="0%" stopColor="#5A65EA" />
                 <stop offset={`${percentage}%`} stopColor="#5A65EA"  />
                 <stop offset={`${percentage}%`} stopColor="#ff6d98" />
-                <stop offset="100%" stopColor="#ff6d98" />
+                {/* <stop offset="100%" stopColor="#ff6d98" /> */}
             </linearGradient>
                 
             </defs>
@@ -38,7 +72,9 @@ const FatigueGraph = ({emgData}) => {
             <Area type={type} dataKey="emg" fill="url(#gradient)" stroke="url(#gradient)" strokeWidth={3}/>
             <XAxis dataKey="time" />
             <YAxis dataKey="emg"/>
-            <ReferenceLine x={launchDate} label={<div style={{color:'white'}}>Fatigue</div>} />
+            <ReferenceLine x={tiredTime} label={<div style={{color:'white'}}>{tiredTime}</div>} />
+            {/* <ReferenceLine x={tiredTime}  */}
+            <ReferenceLine y={4} label={<div style={{color:'white'}}>Fatigue</div>} />
             </AreaChart>
         </div>
      );
