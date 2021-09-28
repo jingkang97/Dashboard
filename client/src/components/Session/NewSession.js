@@ -98,7 +98,7 @@ const NewSession = ({start, stop, back, select, startSession}) => {
         // set start time
         setSession(prevSess => prevSess.map(el => (el.userId == data.userId ? {...el,session:[...el.session, data]} : el)))        
         setArray(prevArray => [...prevArray, data])
-        let current_time = moment().format("HH:mm:ss")
+        let current_time = moment().format("h:mm:ss A")
         if(data.hasOwnProperty('emg')){
           setEmg(prevArray => [...prevArray, {emg:data.emg, time: current_time}])
         }

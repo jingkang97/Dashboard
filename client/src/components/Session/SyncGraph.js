@@ -53,7 +53,7 @@ const SyncGraph = ({syncData}) => {
     }, [syncData])
     return ( 
         <div style={styles}>
-            {alert(percent)}
+            {/* {alert(percent)} */}
             {console.log(syncData)}
             <AreaChart
             width={500}

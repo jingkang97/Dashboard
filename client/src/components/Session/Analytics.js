@@ -8,6 +8,7 @@ import './styles.css'
 import DoughnutChart from './DoughnutChart';
 import SyncGraph from './SyncGraph';
 import FatigueGraph from './FatigueGraph'
+import moment from 'moment'
 
 const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     const [evaluation, setEvaluation] = useState(null)
@@ -18,16 +19,39 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     const [groupPositionScore, setGroupPositionScore] = useState([])
 
     const [tired, setTired] = useState(null)
-
+    const [tiredDuration, setTiredDuration] = useState(null)
+    const [tiredDurationMinutes, setTiredDurationMinutes] = useState(null)
     const [loading, setLoading] = useState(false)
 
     const calculateTired = () => {
         for(let i = 0; i < emg.length; i ++){
             if(emg[i].emg > 3){
                 setTired(emg[i].time)
+                calculateTiredDuration(emg[i].time)
                 break;
             }
         }
+    }
+
+    const calculateTiredDuration = (tiredTime) => {
+        let duration = 0
+        let start = moment(emg[0].time, 'h:mm:ss A')
+        let end = moment(tiredTime, 'h:mm:ss A')
+
+        // duration = moment.duration(end.diff(start))
+        duration = end.diff(start)
+        // let seconds = duration.asSeconds().toFixed(2)
+
+        let f = moment.utc(duration).format("mm:ss");
+
+        // let minutes = duration.asMinutes().toFixed(2)
+        // alert(emg[0].time)
+        // alert(tiredTime)
+        // alert(start)
+        // alert(end)
+        // alert(start, end, duration)
+        setTiredDuration(f)
+        // setTiredDurationMinutes(minutes)
     }
 
     const getEvaluation = async() => {
@@ -314,6 +338,8 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                                 <div style={{height:'100%', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>
                                 You Got Tired At Around ...
                                 <div style={{height:'100%', width:'100%', background:'transparent', fontWeight:'bold', color:'white', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'50px'}}>{tired}</div>
+                                <div style={{marginTop:'10px', fontSize:'30px', color:'white'}}>{tiredDuration} minutes</div>
+                                <div>from the start</div>
                                 </div>
                                 : 
                                 <div style={{fontSize:'30px', color:'white', height:'100%', width:'100%', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
