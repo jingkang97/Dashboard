@@ -1,4 +1,5 @@
-# ![CG4002 Capstone Dashboard]
+# ![DanceDance](DanceOnLogo.svg?raw=true "DanceDance")
+
 
 A dashboard web application to visualise real time dance move stats and provide offline analytics
 
