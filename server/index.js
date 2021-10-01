@@ -59,7 +59,6 @@ const connection = mongoose.connection
 
 connection.once("open", () => {
     console.log("MongoDB database connected")
-
     console.log("Setting change streams")
     const dataChangeStream = connection.collection("datas").watch()
     dataChangeStream.on("change", (change) => {

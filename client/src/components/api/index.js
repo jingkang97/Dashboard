@@ -6,5 +6,4 @@ export const register = (body) => API.post("/api/register", body)
 export const getUsers = () => API.get("/user/getUsers")
 export const getUser = (user) => API.get(`/user/getUser/${user}`)
 export const editUser = (body) => API.put(`/user/editUser`, body)
-
 export const getEval = () => API.get('/eval')

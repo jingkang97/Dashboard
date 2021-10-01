@@ -112,7 +112,6 @@ const Session = () => {
           >
             <div>
             <NewSession startSession={startSession} start={start} stop={stop} back={back} select={select}/>
-
             <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent', marginTop:'20px'}}>
                 <Button type="primary" style={{marginTop:'10px', background:'transparent', marginRight:'10px'}} onClick={closeSession}> Cancel</Button>
                 {back ? <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px'}} onClick={backSelect}>Back</Button> : null}
