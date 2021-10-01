@@ -1,4 +1,4 @@
-# ![DanceDance](DanceOnLogo.svg?raw=true "DanceDance")
+# DanceDance ![DanceDance](DanceOnLogo.svg?=100x "DanceDance")
 
 
 A dashboard web application to visualise real time dance move stats and provide offline analytics
