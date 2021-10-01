@@ -1,4 +1,4 @@
-# DanceDance ![DanceDance](DanceOnLogo.svg?=100x "DanceDance")
+# DanceDance <img src="DanceOnLogo.svg" width="50">
 
 
 A dashboard web application to visualise real time dance move stats and provide offline analytics
