@@ -376,7 +376,7 @@ import Modal from 'react-modal';
                     onChange: (keys, record) => {
                       setRows(record)
                       console.log(record)
-                      setSession(record.map((item)=>({ username: item.username, userId: item.userId, session:[]})))
+                      setSession(record.map((item)=>({ username: item.username, userId: item.userId, userImage: item.image, session:[]})))
                       console.log(session)
                     }
                 }}

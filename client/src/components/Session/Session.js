@@ -12,72 +12,81 @@ import NewSession from './NewSession'
 import * as api from '../api/index'
 import Modal from 'react-modal';
 
-const columns = [
-  {
-    title: 'Session Name',
-    dataIndex: 'sessionName',
-    key: 'sessionName',
-    render: text => <a style={{color:'white'}}>{text}</a>,
-  },
-  {
-    title: 'Start Time',
-    dataIndex: 'startTime',
-    key: 'startTime',
-  },
-  {
-    title: 'End Time',
-    dataIndex: 'endTime',
-    key: 'endTime',
-  },
-  {
-    title: 'Total Participants',
-    dataIndex: 'numberOfUsers',
-    key: 'numberOfUsers',
-    align: 'center',
-  },
-  {
-    title: 'Users',
-    key: 'users',
-    render: (text) => (
-      <div>
-      <Avatar.Group>{text.users.map((u)=>{return(
-        <Avatar>{u.username}</Avatar>
-      )
-        }
-      )}</Avatar.Group>
-      </div>
-      
-    
-      //   // <Avatar.Group>
-      //     {/* {text.users.map((u)=>{
-      //       <Avatar style={{ backgroundColor: '#59BDF3' }}>{u}</Avatar>
 
-      //     })
-      //     } */}
-      //   {/* <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-      //   <Avatar style={{ backgroundColor: '#59BDF3' }}>{text.username}</Avatar>
-      //   <Avatar style={{ backgroundColor: '#E66286' }} icon={<UserOutlined />} />
-      //   <Avatar style={{ backgroundColor: '#FF935A' }} icon={<AntDesignOutlined />} /> */}
-      // {/* </Avatar.Group> */}
-    ),
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    render: (text, record) => (
-      <Space size="middle">
-        <a>View</a>
-      </Space>
-    ),
-  },
-];
 
 const Session = () => {
+  const columns = [
+    {
+      title: 'Session Name',
+      dataIndex: 'sessionName',
+      key: 'sessionName',
+      render: text => <a style={{color:'white'}}>{text}</a>,
+    },
+    {
+      title: 'Start Time',
+      dataIndex: 'startTime',
+      key: 'startTime',
+    },
+    {
+      title: 'End Time',
+      dataIndex: 'endTime',
+      key: 'endTime',
+    },
+    {
+      title: 'Total Participants',
+      dataIndex: 'numberOfUsers',
+      key: 'numberOfUsers',
+      align: 'center',
+    },
+    {
+      title: 'Users',
+      key: 'users',
+      render: (text) => (
+        <div>
+        <Avatar.Group>{text.users.map((u)=>{return(
+          <Avatar src={u.userImage}>{u.userImage}</Avatar>
+        )
+          }
+        )}</Avatar.Group>
+        
+        </div>
+      ),
+    },
+    {
+      title: 'Usernames',
+      key: 'users',
+      align: 'center',
+      render: (text) => (
+        <div>
+        {text.users.map((u)=>{return (
+           <Tag color='pink' style={{background:'transparent', color:'pink'}}>
+              {u.username}
+           </Tag>
+        
+        )})} 
+        </div>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <Space size="middle">
+          <a onClick={handleView}>View</a>
+        </Space>
+      ),
+    },
+  ];
     const [loading, setLoading] = useState(false)    
     const [buttonLoading, setButtonLoading] = useState(false)
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [sessionList, setSessionList] = useState([])
+    const [sessionLoading, setSessionLoading] = useState(false)
     const [socket, setSocket] = useState(null)
+
+    const handleView = () => {
+      alert('clicked!')
+    }
     const handleClick = (event) =>{
       setIsModalVisible(true)
       setInterval(()=>{setIsModalVisible(false)},1)
@@ -85,9 +94,11 @@ const Session = () => {
     }
     const getSessions = async() => {
       try {
+        setSessionLoading(true)
         await api.getSessions().then((data)=>{
           console.log(data.data)
           setSessionList(data.data)
+          setSessionLoading(false)
         })
         
       } catch (error) {
@@ -123,7 +134,7 @@ const Session = () => {
             <NewSession openModal={isModalVisible}/>
           </div>
         <div style={{borderRadius:'20px', overflow:'hidden',  boxShadow: '0px 0px 20px 1px #202225', marginTop:'20px', backgroundColor:'#3A3C41'}}>
-          <Spin spinning={loading} delay={500} size="large">
+          <Spin spinning={sessionLoading} delay={500} size="large">
             <div style={{overflow:'scroll', borderRadius:'20px', backgroundColor:'#3A3C41', padding:'20px', marginTop:'0px'}}>
                 <div style={{marginLeft:'10px', fontSize:'20px', marginBottom:'10px', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
                     <div style={{display:'flex', alignItems:'center', color:'white'}}>All Sessions <CollectionPlay style={{marginLeft:'10px'}}/></div>
