@@ -11,7 +11,7 @@ import Authorisation from '../Authorisation/Authorisation'
 import NewSession from './NewSession'
 import * as api from '../api/index'
 import Modal from 'react-modal';
-
+import Analytics from './Analytics'
 
 
 const Session = () => {
@@ -69,10 +69,13 @@ const Session = () => {
     },
     {
       title: 'Action',
-      key: 'action',
+      dataIndex: 'sessionName',
+      key: 'sessionName',
       render: (text, record) => (
         <Space size="middle">
-          <a onClick={handleView}>View</a>
+          <a onClick={()=>{handleView(record)}}>
+            View 
+          </a>
         </Space>
       ),
     },
@@ -84,13 +87,31 @@ const Session = () => {
     const [sessionLoading, setSessionLoading] = useState(false)
     const [socket, setSocket] = useState(null)
 
-    const handleView = () => {
-      alert('clicked!')
+    const [openView, setOpenView] = useState(false)
+    const [emg, setEmg] = useState([])
+    const [syncDelay, setSyncDelay] = useState([])
+    const [session, setSession] = useState([])
+    const [rows, setRows] = useState([])
+    
+    // const Analytics = ({stop, rows, session, emg, syncDelay}) => {
+
+    const handleView = (record) => {
+      // alert(text)
+      console.log(record)
+      setOpenView(true)
+      setEmg(record.emg)
+      setSyncDelay(record.syncDelay)
+      setSession(record.users)
+      setRows(record.users)
     }
     const handleClick = (event) =>{
       setIsModalVisible(true)
       setInterval(()=>{setIsModalVisible(false)},1)
 
+    }
+
+    const closeModal = (event) => {
+      setOpenView(false)
     }
     const getSessions = async() => {
       try {
@@ -130,6 +151,28 @@ const Session = () => {
 
     return ( 
         <div style={{justifyContent:'center', width:'100%', position:'relative', marginTop:'0px'}}>
+           <Modal 
+           isOpen={openView}
+          style={{
+            content: {
+              backgroundColor:'#3A3C41',
+              border:'solid 1px #3A3C41',
+              borderRadius:'20px',
+              padding:'20px'
+              // paddingBottom:'30px',
+            },
+            overlay: {
+              backgroundColor: 'rgba(0, 0, 0, 0.45)'
+            }}}
+           contentLabel="Example Modal"
+          >
+            <div style={{display:'flex', flexDirection:'row', position:'relative'}}>
+            <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px', position:'absolute', right:'0', top:'0'}} shape="circle" icon={<CloseOutlined />} size='big' onClick={closeModal}/>
+            </div>
+            {/* Analytics */}
+            <Analytics stop={true} rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
+            
+          </Modal>
           <div>
             <NewSession openModal={isModalVisible}/>
           </div>
