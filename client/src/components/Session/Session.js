@@ -44,7 +44,7 @@ const Session = () => {
       render: (text) => (
         <div>
         <Avatar.Group>{text.users.map((u)=>{return(
-          <Avatar src={u.userImage}>{u.userImage}</Avatar>
+          <Avatar src={u.userImage} >{u.userImage}</Avatar>
         )
           }
         )}</Avatar.Group>
@@ -74,7 +74,7 @@ const Session = () => {
       render: (text, record) => (
         <Space size="middle">
           <a onClick={()=>{handleView(record)}}>
-            View 
+            View Analytics
           </a>
         </Space>
       ),
