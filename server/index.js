@@ -63,6 +63,22 @@ connection.once("open", () => {
     console.log("MongoDB database connected")
     console.log("Setting change streams")
     const dataChangeStream = connection.collection("datas").watch()
+    const sessionsChangeStream = connection.collection("sessions").watch()
+
+    sessionsChangeStream.on("change", (change) => {
+        switch(change.operationType) {
+            case "insert":
+                console.log('data: ', change.fullDocument)
+                io.emit('newSessions', change.fullDocument)
+                break;
+            case "delete":
+                console.log('delete changestream')
+                io.emit('deleteSessions', change.fullDocument)
+                break;
+        }
+    })  
+
+
     dataChangeStream.on("change", (change) => {
         switch(change.operationType) {
             case "insert":

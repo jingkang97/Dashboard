@@ -8,7 +8,7 @@ const getSessions = async(ctx) => {
         ctx.res.json(sessions) 
         ctx.res.status(200).json({message: 'success', sessions: sessions})
     } catch (error) {
-        // ctx.res.json({message: error.message})
+        ctx.res.json({message: error.message})
         // ctx.res.status(404).json({message: error.message})
     }
 }
@@ -16,7 +16,9 @@ const getSessions = async(ctx) => {
 const postSession = (req, res, next) => {
     let session = new Session ({
         sessionName: req.body.sessionName,
+        users: req.body.users,
         owner: req.body.owner,
+        numberOfUsers: req.body.numberOfUsers,
         syncDelay: req.body.syncDelay,
         emg: req.body.emg,
         startTime: req.body.startTime,

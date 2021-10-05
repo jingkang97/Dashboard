@@ -11,4 +11,4 @@ export const getEval = () => API.get('/eval')
 // need to define
 export const getUserCount = () => API.get("/user/getUserCount")
 export const postSession = (body) => API.post("/session/postSession", body)
-export const getSession = () => API.get("/session/getSession")
+export const getSessions = () => API.get("/session/getSessions")

@@ -9,7 +9,10 @@ const sessionSchema = new Schema({
         type: String
     },
     users:{
-        type: String
+        type: Array
+    },
+    numberOfUsers:{
+        type: Number
     },
     emg:{
         type: Array

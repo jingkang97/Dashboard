@@ -102,6 +102,7 @@ import Modal from 'react-modal';
         sessionName: sessionName,
         owner: JSON.parse(localStorage.getItem('profile'))?.username,
         users: session,
+        numberOfUsers: session.length ,
         syncDelay: syncDelay,
         emg: emg,
         startTime: moment(startTime).format("h:mm:ss A"),
