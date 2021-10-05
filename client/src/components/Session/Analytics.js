@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Table, Avatar, Tag, Input, Spin, Row, Col} from 'antd'
+import { Table, Avatar, Tag, Input, Spin, Row, Col, Button} from 'antd'
 import {UserOutlined, SyncOutlined} from '@ant-design/icons';
 import { AiOutlineWarning, AiOutlineLike, AiOutlineUser } from 'react-icons/ai';
 import {IoIosSync} from 'react-icons/io'
@@ -22,6 +22,7 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     const [tiredDuration, setTiredDuration] = useState(null)
     const [tiredDurationMinutes, setTiredDurationMinutes] = useState(null)
     const [loading, setLoading] = useState(false)
+
 
     const calculateTired = () => {
         for(let i = 0; i < emg.length; i ++){
@@ -391,6 +392,7 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                     
                 </Col>
             </Row>
+
         </div>
      );
 }

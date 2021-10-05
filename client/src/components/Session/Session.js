@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Table, Tag, Space, Avatar, Spin, Button } from 'antd';
 
-import { UserOutlined, AntDesignOutlined,LoadingOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { UserOutlined, AntDesignOutlined,LoadingOutlined, PlusCircleOutlined, CloseOutlined } from '@ant-design/icons';
 import { CollectionPlay } from 'react-bootstrap-icons';
 import {io} from 'socket.io-client'
 
@@ -58,46 +58,53 @@ const columns = [
 ];
 
 const Session = () => {
-    const [socket, setSocket] = useState(null)
-    const [loading, setLoading] = React.useState(false)    
+    const [loading, setLoading] = useState(false)    
     const [buttonLoading, setButtonLoading] = useState(false)
-    const [array, setArray] = useState([])
-    const [stop, setStop] = useState(false)
-    const [back, setBack] = useState(false)
-    const [startSession, setStartSession] = useState(false)
-    const [start, setStart] = useState(true)
-    const [select, setSelect] = useState(true)
     const [isModalVisible, setIsModalVisible] = useState(false);
-
-    const closeSession = (event) => {
-      setStart(false)
-      setIsModalVisible(false)
-    }
     const handleClick = (event) =>{
       setIsModalVisible(true)
+      setInterval(()=>{setIsModalVisible(false)},1)
+
     }
 
-    const startTheSession = (event) =>{
-      setStartSession(true)
-      setStart(false)
-      setBack(true)
-      setSelect(false)
-    }
-    const backSelect = (event) =>{
-      setStart(false)
-      setBack(false)
-      setSelect(true)
-    }
-    const stopSession = (event) => {
-      setStart(false)
-      setStop(true)
-      setStartSession(false)
-    }
+    // const [socket, setSocket] = useState(null)
+    // const [array, setArray] = useState([])
+    // const [stop, setStop] = useState(false)
+    // const [back, setBack] = useState(false)
+    // const [startSession, setStartSession] = useState(false)
+    // const [start, setStart] = useState(true)
+    // const [select, setSelect] = useState(true)
+
+    // const closeSession = (event) => {
+    //   setStart(false)
+    //   setIsModalVisible(false)
+    // }
+
+    // const startTheSession = (event) =>{
+
+    //   setStartSession(true)
+    //   setStart(false)
+    //   setBack(true)
+    //   setSelect(false)
+    // }
+    // const backSelect = (event) =>{
+    //   setStart(false)
+    //   setBack(false)
+    //   setSelect(true)
+    // }
+    // const close = (event) => {
+    //   setIsModalVisible(false)
+    // }
+    // const stopSession = (event) => {
+    //   setStart(false)
+    //   setStop(true)
+    //   setStartSession(false)
+    // }
     
 
     return ( 
         <div style={{justifyContent:'center', width:'100%', position:'relative', marginTop:'0px'}}>
-          <Modal 
+          {/* <Modal 
            isOpen={isModalVisible}
           style={{
             content: {
@@ -109,18 +116,22 @@ const Session = () => {
               backgroundColor: 'rgba(0, 0, 0, 0.45)'
             }}}
            contentLabel="Example Modal"
-          >
+          > */}
             <div>
-            <NewSession startSession={startSession} start={start} stop={stop} back={back} select={select}/>
-            <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent', marginTop:'20px'}}>
+            
+            <NewSession openModal={isModalVisible}/>
+            {/* <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent', marginTop:'20px'}}>
                 <Button type="primary" style={{marginTop:'10px', background:'transparent', marginRight:'10px'}} onClick={closeSession}> Cancel</Button>
                 {back ? <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px'}} onClick={backSelect}>Back</Button> : null}
                 {start ? <Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={startTheSession}>Start Session</Button> : null}
                 {startSession ?  <Button type="primary" style={{marginTop:'10px'}} onClick={stopSession}>Stop Session</Button> : null}
-              </div>
+              </div> */}
+              {/* <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px', position:'absolute', right:'0', top:'0'}} onClick={close}>Close</Button> */}
+              {/* <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px', position:'absolute', right:'0', top:'0'}} shape="circle" icon={<CloseOutlined />} size='big' onClick={close}/> */}
+
             </div>
 
-          </Modal>
+          {/* </Modal> */}
           
         <div style={{borderRadius:'20px', overflow:'hidden',  boxShadow: '0px 0px 20px 1px #202225', marginTop:'20px', backgroundColor:'#3A3C41'}}>
           <Spin spinning={loading} delay={500} size="large">

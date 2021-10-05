@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { Table, Avatar, Tag, Input, Spin, Row, Col} from 'antd'
-import {UserOutlined, SyncOutlined} from '@ant-design/icons';
+import { Table, Avatar, Tag, Input, Spin, Row, Col, Button} from 'antd'
+import {UserOutlined, SyncOutlined,CloseOutlined} from '@ant-design/icons';
 import { AiOutlineWarning, AiOutlineLike, AiOutlineUser } from 'react-icons/ai';
 import {IoIosSync} from 'react-icons/io'
 import {io} from 'socket.io-client'
@@ -8,8 +8,11 @@ import * as api from '../api/index'
 import './styles.css'
 import Analytics from './Analytics'
 import moment from 'moment'
+import Modal from 'react-modal';
 
-const NewSession = ({start, stop, back, select, startSession}) => {
+
+// const NewSession = ({start, stop, back, select, startSession}) => {
+  const NewSession = ({openModal}) => {
   const columns = [
     {
       title: 'User',
@@ -56,6 +59,88 @@ const NewSession = ({start, stop, back, select, startSession}) => {
   const [startTime, setStartTime] = useState(null)
   const [endTime, setEndTime] = useState(null)
 
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  // const [start, setStart] = useState(false)
+  // const [select, setSelect] = useState(true)
+  // const [startTheSession] = useState(false)
+
+  const [startSession, setStartSession] = useState(false)
+  const [stop, setStop] = useState(false)
+  const [post, setPost] = useState(false)
+  const [select, setSelect] = useState(true)
+  const [postLoading, setPostLoading] = useState(false)
+ 
+
+  const startSessionHandler = (e) => {
+    if(sessionName == ''){
+      alert('Please fill in the name first!')
+    }
+    else if(rows.length == 0){
+      alert('Please choose at least one user')
+    }
+    else if(rows.length > 3){
+      alert('Please choose at most three users')
+    }
+    else{
+      // alert('success!')
+      let current_time = moment().format("h:mm:ss A")
+      setStartTime(current_time)
+      setSelect(false)
+      setStartSession(true)
+    }
+
+  }
+
+  const endSessionHandler = async(e) => {
+    e.preventDefault()
+    try{
+      let current_time = moment().format("h:mm:ss A")
+      setEndTime(current_time)
+      setPostLoading(true)
+      const body = {
+        sessionName: sessionName,
+        owner: JSON.parse(localStorage.getItem('profile'))?.username,
+        users: session,
+        syncDelay: syncDelay,
+        emg: emg,
+        startTime: moment(startTime).format("h:mm:ss A"),
+        endTime: moment().format("h:mm:ss A")
+      }
+      console.log(body)
+      await api.postSession(body).then((data)=>{
+        // alert(data)
+        console.log(data)
+        close()    
+        setPostLoading(false)
+      })
+    }catch{
+
+    }
+  }
+
+  const close = (e) => {
+    setSelect(true)
+    setStartSession(false)
+    setIsModalVisible(false)
+    setStartSession(false)
+    setStop(false)
+    // reset all datas
+    setRows([])
+    setSessionName('')
+    setSession([])
+    setArray([])
+    setEmg([])
+    setSyncDelay([])
+
+  }
+
+  const handleGetResults = (e) => {
+    setStartSession(false)
+    // alert('results!')
+    setStop(true)
+
+  }
 
   const handleSessionNameChange = (e) => {
       setSessionName(e.target.value)
@@ -94,6 +179,12 @@ const NewSession = ({start, stop, back, select, startSession}) => {
     },[session])
 
     useEffect(()=>{
+      if(openModal == true){
+        setIsModalVisible(true)
+      }
+    },[openModal])
+
+    useEffect(()=>{
       const messageListener = (data) => {
         // set start time
         setSession(prevSess => prevSess.map(el => (el.userId == data.userId ? {...el,session:[...el.session, data]} : el)))        
@@ -125,7 +216,25 @@ const NewSession = ({start, stop, back, select, startSession}) => {
     }, [stop])
 
     return ( 
-        <div style={{height:'100%', width:'100%'}}>
+      <Modal 
+           isOpen={isModalVisible}
+          style={{
+            content: {
+              backgroundColor:'#3A3C41',
+              border:'solid 1px #3A3C41',
+              borderRadius:'20px',
+              padding:'0px'
+              // paddingBottom:'30px',
+            },
+            overlay: {
+              backgroundColor: 'rgba(0, 0, 0, 0.45)'
+            }}}
+           contentLabel="Example Modal"
+          >
+          <Spin style={{height:'100%', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}} spinning={postLoading} size="large">
+          <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px', position:'absolute', right:'0', top:'0'}} shape="circle" icon={<CloseOutlined />} size='big' onClick={close}/>
+
+        <div style={{height:'100%', width:'100%', padding:'20px'}}>
           {console.log(emg)}
             {startSession ? 
             <div>
@@ -148,7 +257,6 @@ const NewSession = ({start, stop, back, select, startSession}) => {
                           </div>
                             <Row gutter={10} style={{width:'inherit', paddingBottom:'10px'}}>
                               <Col md={24}>
-                              
                               <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
                                 <div style={{color:'#9BA6B2', fontSize:'20px'}}> 
                                   Detected Move
@@ -236,6 +344,8 @@ const NewSession = ({start, stop, back, select, startSession}) => {
                 </Row>
                 <div>
                 </div>
+                <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent'}}><Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={handleGetResults}>Get Results</Button></div>
+
             </div>
             : 
             null}
@@ -276,21 +386,26 @@ const NewSession = ({start, stop, back, select, startSession}) => {
                 rowKey='_id'
                 />
             </div>
+
             </Spin>
             </div>
+            <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent'}}><Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={startSessionHandler}>Start Session</Button></div>
+
             </div>
             : null}
             {
               stop ? 
               <div>
               <Analytics stop={stop} start={startTime} end={endTime} rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
+                <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', marginBottom:'0px', background:'transparent', height:'100%'}}><Button type="primary" style={{marginTop:'20px', marginRight:'20px', marginBottom:'20px'}} onClick={endSessionHandler}>End Session</Button></div>
               </div>
               : 
               null
             }
             
         </div>
-
+        </Spin>
+        </Modal>
      );
 }
  
