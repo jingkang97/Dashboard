@@ -22,7 +22,11 @@ const postSession = (req, res, next) => {
         syncDelay: req.body.syncDelay,
         emg: req.body.emg,
         startTime: req.body.startTime,
-        endTime: req.body.endTime
+        endTime: req.body.endTime,
+        groupDanceScore: req.body.groupDanceScore,
+        groupPositionScore: req.body.groupPositionScore,
+        individualDanceScore: req.body.individualDanceScore,
+        individualMoveScore: req.body.individualMoveScore
     })
     session.save()
     .then(sess => {

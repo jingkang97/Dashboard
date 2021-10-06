@@ -10,7 +10,7 @@ import SyncGraph from './SyncGraph';
 import FatigueGraph from './FatigueGraph'
 import moment from 'moment'
 
-const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
+const Analytics = ({stop, rows, session, emg, syncDelay, start, end, sendPost, obj}) => {
     const [evaluation, setEvaluation] = useState(null)
     const [danceScore, setDanceScore] = useState(0)
     const [moveChart, setMoveChart] = useState([])
@@ -22,7 +22,7 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
     const [tiredDuration, setTiredDuration] = useState(null)
     const [tiredDurationMinutes, setTiredDurationMinutes] = useState(null)
     const [loading, setLoading] = useState(false)
-
+    const [object, setObject] = useState(null)
 
     const calculateTired = () => {
         for(let i = 0; i < emg.length; i ++){
@@ -38,21 +38,9 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
         let duration = 0
         let start = moment(emg[0].time, 'h:mm:ss A')
         let end = moment(tiredTime, 'h:mm:ss A')
-
-        // duration = moment.duration(end.diff(start))
         duration = end.diff(start)
-        // let seconds = duration.asSeconds().toFixed(2)
-
         let f = moment.utc(duration).format("mm:ss");
-
-        // let minutes = duration.asMinutes().toFixed(2)
-        // alert(emg[0].time)
-        // alert(tiredTime)
-        // alert(start)
-        // alert(end)
-        // alert(start, end, duration)
         setTiredDuration(f)
-        // setTiredDurationMinutes(minutes)
     }
 
     const getEvaluation = async() => {
@@ -77,8 +65,6 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
             setSyncDelayDisplay((count/syncDelay.length).toFixed(1))
         }
     }
-
-
     
     const calculateIndividualDance = () => {
         let userDance = []
@@ -167,6 +153,39 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
         setGroupDanceScore([{name: 'correct', value: totalCorrectMoveScorePercentage},{name: 'wrong', value: totalWrongMoveScorePercentage}])
         setGroupPositionScore([{name: 'correct', value: totalCorrectPositionScorePercentage},{name: 'wrong', value: totalWrongPositionScorePercentage}])
     }
+
+    const handleSubmit = async() => {
+        console.log(object)
+        alert(object)
+        // var finalObj = obj
+        // finalObj['groupDanceScore'] = groupDanceScore
+        // finalObj['groupPositionScore'] = groupPositionScore
+        // finalObj['individualDanceScore'] = danceScore
+        // finalObj['individualMoveScore'] = moveChart
+        // console.log(finalObj)
+        // alert(finalObj)
+        // try {
+        //     await api.postSession(finalObj).then((data)=>{
+        //         // alert(data)
+        //         console.log(data)
+        //       //   setPostLoading(false)
+        //     })
+        // } catch (error) {
+        //     console.log(error)
+        // }
+        
+    }
+
+    useEffect(() => {
+        if(sendPost == true){
+            alert(sendPost)
+            // alert('hihi')
+        }
+    }, [sendPost])
+
+
+
+    
 
     useEffect(()=>{
         if(evaluation != null){
@@ -392,7 +411,7 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end}) => {
                     
                 </Col>
             </Row>
-
+                                    
         </div>
      );
 }

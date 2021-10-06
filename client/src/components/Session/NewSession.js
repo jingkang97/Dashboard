@@ -61,16 +61,17 @@ import Modal from 'react-modal';
 
   const [isModalVisible, setIsModalVisible] = useState(false)
 
-  // const [start, setStart] = useState(false)
-  // const [select, setSelect] = useState(true)
-  // const [startTheSession] = useState(false)
-
   const [startSession, setStartSession] = useState(false)
   const [stop, setStop] = useState(false)
-  const [post, setPost] = useState(false)
   const [select, setSelect] = useState(true)
   const [postLoading, setPostLoading] = useState(false)
- 
+  const [sendPost, setSendPost] = useState(false)
+
+  const [danceScore, setDanceScore] = useState(0)
+  const [moveChart, setMoveChart] = useState([])
+  const [groupDanceScore, setGroupDanceScore] = useState([])
+  const [groupPositionScore, setGroupPositionScore] = useState([])
+  const [evaluation, setEvaluation] = useState(null)
 
   const startSessionHandler = (e) => {
     if(sessionName == ''){
@@ -92,6 +93,103 @@ import Modal from 'react-modal';
 
   }
 
+  const getEvaluation = async() => {
+    try {
+        await api.getEval().then(data => {
+          console.log(data.data.data)
+          setEvaluation(data.data.data)
+        })
+      } catch (error) {
+        alert(error)
+      }
+}
+
+
+
+const calculateIndividualDance = () => {
+  let userDance = []
+  let moveChartList = []
+
+  for(let i = 0; i < session.length; i += 1){
+      userDance.push({username: session[i].username, userId: session[i].userId, movePercent: '0%', positionPercent:'0%'})
+      moveChartList.push({username: session[i].username, userId: session[i].userId, dataMove: [{name: 'correct', value: 0}, {name: 'wrong', value: 0}], dataPosition: [{name: 'correct', value: 0}, {name: 'wrong', value: 0}]})
+  }
+  
+  let totalMoveScore = 0
+  let totalCorrectMoveScore = 0
+  let totalWrongMoveScore = 0
+
+  let totalPositionScore = 0
+  let totalCorrectPositionScore = 0
+  let totalWrongPositionScore = 0
+
+
+  let moveScore = 0
+  let moveTotal = 0
+  let wrongMoveScore = 0
+
+  for(let j = 0; j < session.length; j += 1){
+      moveScore = 0
+      moveTotal = 0
+      wrongMoveScore = 0
+      for(let i = 0; i < session[j].session.length; i++){
+          moveTotal += 1
+          totalMoveScore += 1
+          if(session[j].session[i].danceMove == evaluation.datas[i].danceMove){
+              moveScore += 1
+              totalCorrectMoveScore += 1
+                    
+          }
+          else{
+              wrongMoveScore += 1
+              totalWrongMoveScore += 1
+          }
+      }           
+      userDance[j].movePercent = ((moveScore/moveTotal)*100).toFixed(1)              
+      moveChartList[j].dataMove[0].value = parseFloat(((moveScore/moveTotal)*100).toFixed(1))
+      moveChartList[j].dataMove[1].value = parseFloat(((wrongMoveScore/moveTotal)*100).toFixed(1))
+  }
+  
+  let danceScore = 0
+  let danceTotal = 0
+  let wrongDanceScore = 0
+  for(let j = 0; j < session.length; j += 1){
+      danceScore = 0
+      danceTotal = 0
+      wrongDanceScore = 0
+      for(let i = 0; i < session[j].session.length; i++){
+              danceTotal += 1
+              totalPositionScore += 1
+              let temp = evaluation.datas[i].position.split(',')
+              if(temp.indexOf(session[j].session[i].position) + 1 == session[j].session[i].position){
+                  danceScore += 1
+                  totalCorrectPositionScore += 1
+              }
+              else{
+                  wrongDanceScore += 1
+                  totalWrongPositionScore += 1
+                  moveChartList[j].dataPosition[1].value = parseFloat((wrongDanceScore).toFixed(1))
+              }
+          }
+      moveChartList[j].dataPosition[1].value = parseFloat(((wrongDanceScore/danceTotal)*100).toFixed(1))
+      userDance[j].positionPercent = ((danceScore/danceTotal)*100).toFixed(1)
+      moveChartList[j].dataPosition[0].value = parseFloat(((danceScore/danceTotal)*100).toFixed(1))
+  }
+  setMoveChart(moveChartList)
+  setDanceScore(userDance)
+
+
+  // Group Scores
+  let totalWrongMoveScorePercentage = parseFloat(((totalWrongMoveScore/totalMoveScore)*100).toFixed(1))
+  let totalCorrectMoveScorePercentage = parseFloat(((totalCorrectMoveScore/totalMoveScore)*100).toFixed(1))
+
+  let totalWrongPositionScorePercentage = parseFloat(((totalWrongPositionScore/totalPositionScore)*100).toFixed(1))
+  let totalCorrectPositionScorePercentage = parseFloat(((totalCorrectPositionScore/totalPositionScore)*100).toFixed(1))
+
+  setGroupDanceScore([{name: 'correct', value: totalCorrectMoveScorePercentage},{name: 'wrong', value: totalWrongMoveScorePercentage}])
+  setGroupPositionScore([{name: 'correct', value: totalCorrectPositionScorePercentage},{name: 'wrong', value: totalWrongPositionScorePercentage}])
+}
+
   const endSessionHandler = async(e) => {
     e.preventDefault()
     try{
@@ -106,17 +204,20 @@ import Modal from 'react-modal';
         syncDelay: syncDelay,
         emg: emg,
         startTime: moment(startTime).format("h:mm:ss A"),
-        endTime: moment().format("h:mm:ss A")
+        endTime: moment().format("h:mm:ss A"),
+        groupDanceScore: groupDanceScore,
+        groupPositionScore: groupPositionScore,
+        individualDanceScore: danceScore,
+        individualMoveScore: moveChart
       }
-      console.log(body)
       await api.postSession(body).then((data)=>{
         // alert(data)
         console.log(data)
         close()    
         setPostLoading(false)
       })
-    }catch{
-
+    }catch(e){
+      console.log(e)
     }
   }
 
@@ -126,6 +227,7 @@ import Modal from 'react-modal';
     setIsModalVisible(false)
     setStartSession(false)
     setStop(false)
+    setSendPost(false)
     // reset all datas
     setRows([])
     setSessionName('')
@@ -140,6 +242,7 @@ import Modal from 'react-modal';
     setStartSession(false)
     // alert('results!')
     setStop(true)
+    getEvaluation()
 
   }
 
@@ -160,6 +263,12 @@ import Modal from 'react-modal';
             setLoading(false)
           }
     }
+
+    useEffect(() => {
+      if(evaluation!=null){
+        calculateIndividualDance()
+      }
+    }, [evaluation])
  
     useEffect(() => {
         getUsers()
@@ -397,7 +506,7 @@ import Modal from 'react-modal';
             {
               stop ? 
               <div>
-              <Analytics stop={stop} start={startTime} end={endTime} rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
+              <Analytics stop={stop} start={startTime} end={endTime} rows={rows} session={session} emg={emg} syncDelay={syncDelay} sendPost={sendPost}/>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', marginBottom:'0px', background:'transparent', height:'100%'}}><Button type="primary" style={{marginTop:'20px', marginRight:'20px', marginBottom:'20px'}} onClick={endSessionHandler}>End Session</Button></div>
               </div>
               : 

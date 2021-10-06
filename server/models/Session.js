@@ -25,8 +25,19 @@ const sessionSchema = new Schema({
     },
     endTime:{
         type: String
+    },
+    groupDanceScore:{
+        type: Array
+    },
+    groupPositionScore:{
+        type: Array
+    },
+    individualDanceScore:{
+        type: Object
+    },
+    individualMoveScore:{
+        type: Object
     }
-    
 }, {timestamps: true})
 
 const Session = mongoose.model('Session', sessionSchema)
