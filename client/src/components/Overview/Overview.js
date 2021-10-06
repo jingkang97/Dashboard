@@ -18,6 +18,16 @@ const Overview = ({user}) => {
     const [userData, setUserData] = useState(null)
     const [totalSessions, setTotalSessions] = useState(null)
     const [averageDuration, setAverageDuration] = useState(0)
+    const [number, setNumber] = useState(0)
+
+    const getUsers = () => {
+        api.getUsers().then(data => {
+            console.log(data.data.length)
+            // alert(data)
+            setNumber(data.data.length)
+        })
+    }
+
     const getUserData = () => {
         setLoading(true)
         const username = JSON.parse(localStorage.getItem('profile'))?.username
@@ -31,10 +41,20 @@ const Overview = ({user}) => {
 
     const calculateAverageDuration = () => {
         var arr = []
+        var addition = 0
         for(var i = 0; i < userData.sessions.length; i++){
-            arr.push(userData.sessions[i].duration)
+            const seconds = moment(userData.sessions[i].duration, 'mm:ss').format('s')
+            // arr.push(userData.sessions[i].duration)
+            arr.push(parseInt(seconds))
+            addition += parseInt(seconds)
         }
-        alert(arr)
+        // alert(addition)
+        setAverageDuration(addition)
+        // alert(arr)
+    }
+
+    const calculateAveragePercentage = () => {
+
     }
 
     useEffect(() => {
@@ -43,6 +63,7 @@ const Overview = ({user}) => {
             console.log(userData)
             setTotalSessions(userData.sessions.length)
             calculateAverageDuration()
+            getUsers()
         }
     }, [userData])
 
@@ -59,12 +80,17 @@ const Overview = ({user}) => {
                     Good Afternoon,<span className="name"> {JSON.parse(localStorage.getItem('profile'))?.username}!</span>
                 </div>
                 <div className="description" style={{fontSize:'12px', backgroundColor:'pink', margin:'0px 10px 15px 10px'}}>
+                <Skeleton 
+                loading={loading}
+                active
+                >
                 <div style={{fontSize:'15px', fontWeight:'bold'}}>
                     {averageDuration > 5 ? 'Keep up the good work!' : 'Dance more!'}
                 </div>
-                You danced an average of <span style={{fontWeight:'bold'}}>24</span> mins everyday and you have achieved an average grade of 
+                You danced an average of <span style={{fontWeight:'bold'}}>{averageDuration}</span> seconds everyday and you have achieved an average grade of 
                  <span style={{fontWeight:'bold'}}> 'Excellent'</span>! 
                 You tend to dance till your muscle is fatigued so do remember to stretch and take adequate rest!
+                </Skeleton>
                 </div>
                 
             </Row>
@@ -91,10 +117,15 @@ const Overview = ({user}) => {
             <Card  bordered={false} style={{height:'200px', width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225' }}>
             <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Number of Users <UserOutlined /></div>
                 <Skeleton 
-                // loading={loading}
-                loading={false}
+                loading={loading}
                 active
                 >
+                    <div style={{height:'130px'}}>
+                    <div style={{fontSize:'50px', height:'100px'}}>
+                    {number}
+
+                    </div>
+                    </div>
                     {/* <div style={{fontSize:'50px', height:'100px'}}>
                         16
                     </div> */}
