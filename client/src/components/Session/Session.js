@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { Table, Tag, Space, Avatar, Spin, Button, Col, Row } from 'antd';
 
 import { UserOutlined, AntDesignOutlined,LoadingOutlined, PlusCircleOutlined, CloseOutlined } from '@ant-design/icons';
-import { AppIndicator, CollectionPlay } from 'react-bootstrap-icons';
+import { AppIndicator, CollectionPlay, PlayBtn } from 'react-bootstrap-icons';
 import { VscDebugStart, VscDebugStop } from 'react-icons/vsc';
 import {io} from 'socket.io-client'
 
@@ -172,63 +172,7 @@ const Session = () => {
             <div style={{display:'flex', flexDirection:'row', position:'relative'}}>
             <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px', position:'absolute', right:'0', top:'0'}} shape="circle" icon={<CloseOutlined />} size='big' onClick={closeModal}/>
             </div>
-            {sessionInformation ? 
-              <div>
-                <div style={{color:'white', fontSize:'40px', fontWeight:'bold'}}>{sessionInformation.sessionName}</div>
-                <Row gutter={[20, 20]} style={{width:'inherit', background:'transparent', marginTop:'20px', marginBottom:'20px'}}>                
-                <Col md={8}>
-                    <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'row', alignItems:'center',justifyContent:'space-evenly', boxShadow: '0px 0px 20px 1px #202225', fontSize:'30px', padding:'30px'}}>
-                    <UserOutlined style={{fontSize:'100px'}}/>
-
-                      <div style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center'}}>
-                        Users
-                        <Avatar.Group>{sessionInformation.users.map((u)=>{return(
-                            <Avatar style={{height:'50px', width:'50px'}} src={u.userImage} >{u.userImage}</Avatar>
-                          )
-                            }
-                          )}</Avatar.Group>
-                        {/* <div style={{color:'white'}}>{sessionInformation.startTime}</div> */}
-                        {/* <div style={{display:'flex', flexDirection:'row', justifyContent:'center', alignItems:'center', marginTop:'10px'}}>
-                          {sessionInformation.users.map((u)=>{return (
-                            <Tag color='pink' style={{background:'transparent', color:'pink', fontSize:'30px'}}>
-                                {u.username}
-                            </Tag>
-                          
-                          )})} 
-                          </div> */}
-                      </div>
-                      
-                    </div>
-
-                  </Col>
-
-                <Col md={8}>
-                    <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'row', alignItems:'center',justifyContent:'space-evenly', boxShadow: '0px 0px 20px 1px #202225', fontSize:'30px', padding:'30px'}}>
-                    <VscDebugStart style={{fontSize:'100px'}}/>
-
-                      <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
-                        Started at 
-                        <div style={{color:'white'}}>{sessionInformation.startTime}</div>
-                      </div>
-                      
-                    </div>
-
-                  </Col>
-                  <Col md={8}>
-                    <div style={{width:'100%', height:'100%', backgroundColor:'#3A3C41', borderRadius:'10px', display:'flex', flexDirection:'row', alignItems:'center',justifyContent:'space-evenly', boxShadow: '0px 0px 20px 1px #202225', fontSize:'30px', padding:'30px'}}>
-                    <VscDebugStop style={{fontSize:'100px'}}/>
-
-                      <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
-                        Ended at 
-                        <div style={{color:'white'}}>{sessionInformation.endTime}</div>
-                      </div>
-                      
-                    </div>
-
-                  </Col>
-                  </Row>
-                  </div>
-            :null}
+           
 
             <Analytics stop={true} rows={rows} session={session} emg={emg} syncDelay={syncDelay}/>
             

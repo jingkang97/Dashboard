@@ -1,5 +1,6 @@
 const User = require('../models/User')
 const mongoose = require('mongoose')
+const { deleteOne } = require('../models/User')
 
 const getUser = (req, res) => {
     console.log('params: ',req.params.username)
@@ -56,8 +57,40 @@ const editUser = async (req, res) => {
     ;
 }
 
+const addSession = async (req, res) => {
+    // const {id: _id} = req.params;
+    const session = req.body.session
+    const username = req.body.username
+    // const userId = req.params.id
+    // if(!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('No user with that id')
+    // async - need await
+    try {
+
+        await User.updateMany(
+            {username:{$in: username}},
+            { $push : {sessions: session}},
+            ).then(data => {
+                res.status(200).json({message:'success', data: data})
+            })
+        
+
+        // await User.findOneAndUpdate(
+        //     {username: username},
+        //     { $push : {sessions: session}},
+        //     ).then(data => {
+        //         res.status(200).json({message:'success', data: data})
+        //     })
+        // res.json(editedUser)
+    } catch (error) {
+        console.log(error)
+    }
+    ;
+}
+
+
+
 
 module.exports = {
-    getUser, getUsers, editUser
+    getUser, getUsers, editUser, addSession
 }
 

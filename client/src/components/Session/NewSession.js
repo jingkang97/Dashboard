@@ -10,9 +10,7 @@ import Analytics from './Analytics'
 import moment from 'moment'
 import Modal from 'react-modal';
 
-
-// const NewSession = ({start, stop, back, select, startSession}) => {
-  const NewSession = ({openModal}) => {
+const NewSession = ({openModal}) => {
   const columns = [
     {
       title: 'User',
@@ -84,13 +82,11 @@ import Modal from 'react-modal';
       alert('Please choose at most three users')
     }
     else{
-      // alert('success!')
-      let current_time = moment().format("h:mm:ss A")
+      let current_time = moment()
       setStartTime(current_time)
       setSelect(false)
       setStartSession(true)
     }
-
   }
 
   const getEvaluation = async() => {
@@ -103,8 +99,6 @@ import Modal from 'react-modal';
         alert(error)
       }
 }
-
-
 
 const calculateIndividualDance = () => {
   let userDance = []
@@ -178,8 +172,6 @@ const calculateIndividualDance = () => {
   setMoveChart(moveChartList)
   setDanceScore(userDance)
 
-
-  // Group Scores
   let totalWrongMoveScorePercentage = parseFloat(((totalWrongMoveScore/totalMoveScore)*100).toFixed(1))
   let totalCorrectMoveScorePercentage = parseFloat(((totalCorrectMoveScore/totalMoveScore)*100).toFixed(1))
 
@@ -193,9 +185,17 @@ const calculateIndividualDance = () => {
   const endSessionHandler = async(e) => {
     e.preventDefault()
     try{
-      let current_time = moment().format("h:mm:ss A")
+      let current_time = moment()
       setEndTime(current_time)
       setPostLoading(true)
+
+      let difference = 0
+      let start_time = startTime
+      let end_time = current_time
+      difference = end_time.diff(start_time)
+      let duration = moment.utc(difference).format("mm:ss")
+
+      var tired = Math.max(...emg.map(o => o.emg)) >= 3
       const body = {
         sessionName: sessionName,
         owner: JSON.parse(localStorage.getItem('profile'))?.username,
@@ -203,19 +203,41 @@ const calculateIndividualDance = () => {
         numberOfUsers: session.length ,
         syncDelay: syncDelay,
         emg: emg,
-        startTime: moment(startTime).format("h:mm:ss A"),
+        startTime: startTime.format("h:mm:ss A"),
         endTime: moment().format("h:mm:ss A"),
         groupDanceScore: groupDanceScore,
         groupPositionScore: groupPositionScore,
         individualDanceScore: danceScore,
-        individualMoveScore: moveChart
+        individualMoveScore: moveChart,
+        tired: tired,
+        duration: duration
+        // tired: , - calculate percentage of times emg hit above 3
+        // duration: moment(startTime).format("h:mm:ss A"), - average, all duration add up/number of durations
+
       }
-      await api.postSession(body).then((data)=>{
-        // alert(data)
-        console.log(data)
-        close()    
-        setPostLoading(false)
+
+      var userList = []
+      for(var i = 0; i < session.length; i++){
+        userList.push(session[i].username)
+      }
+
+      const test = {
+            username: userList,
+            session: body
+      }
+      await api.addUserSession(test).then((data)=>{
+        api.postSession(body).then((data)=>{
+          // alert(data)
+          close()    
+          setPostLoading(false)
+        })
       })
+      // await api.postSession(body).then((data)=>{
+      //   // alert(data)
+      //   console.log(data)
+      //   close()    
+      //   setPostLoading(false)
+      // })
     }catch(e){
       console.log(e)
     }
@@ -240,7 +262,6 @@ const calculateIndividualDance = () => {
 
   const handleGetResults = (e) => {
     setStartSession(false)
-    // alert('results!')
     setStop(true)
     getEvaluation()
 
@@ -279,7 +300,7 @@ const calculateIndividualDance = () => {
         setSocket(null)
       }
       else if(startSession == true){
-        setStartTime(Date.now())
+        // setStartTime(Date.now())
         setSocket(io("http://localhost:5000"))
       }
     }, [startSession])
@@ -414,10 +435,6 @@ const calculateIndividualDance = () => {
                             
                           )) : <div style={{fontSize:'30px'}}>Get Ready...</div>}
                           
-                          
-                            {/* Almost Perfect Sync! */}
-                            {/* Please Match Up! */}
-                            {/*  */}
                           <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
                             Off By
                             <div style={{display:'flex', flexDirection:'column',height:'100%', background:'transparent', position:'relative', color:'white'}}>
@@ -500,7 +517,6 @@ const calculateIndividualDance = () => {
             </Spin>
             </div>
             <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', background:'transparent'}}><Button type="primary" style={{marginTop:'10px', marginRight:'10px'}} onClick={startSessionHandler}>Start Session</Button></div>
-
             </div>
             : null}
             {

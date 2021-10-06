@@ -49,16 +49,16 @@ const columns = [
               <div>{text}</div>
             </>
       },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (text, record) => (
-        <Space size="middle">
-          <a>View</a>
-          {/* <a style={{color:'red'}}>Delete</a> */}
-        </Space>
-      ),
-    },
+    // {
+    //   title: 'Action',
+    //   key: 'action',
+    //   render: (text, record) => (
+    //     <Space size="middle">
+    //       <a>View</a>
+    //       {/* <a style={{color:'red'}}>Delete</a> */}
+    //     </Space>
+    //   ),
+    // },
   ];
 
 const User = () => {

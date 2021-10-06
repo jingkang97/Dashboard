@@ -26,7 +26,9 @@ const postSession = (req, res, next) => {
         groupDanceScore: req.body.groupDanceScore,
         groupPositionScore: req.body.groupPositionScore,
         individualDanceScore: req.body.individualDanceScore,
-        individualMoveScore: req.body.individualMoveScore
+        individualMoveScore: req.body.individualMoveScore,
+        tired: req.body.tired,
+        duration: req.body.duration
     })
     session.save()
     .then(sess => {

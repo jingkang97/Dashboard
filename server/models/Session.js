@@ -37,6 +37,12 @@ const sessionSchema = new Schema({
     },
     individualMoveScore:{
         type: Object
+    },
+    tired:{
+        type: Boolean
+    },
+    duration:{
+        type: String
     }
 }, {timestamps: true})
 
