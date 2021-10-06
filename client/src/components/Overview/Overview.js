@@ -3,49 +3,53 @@ import { Card, Skeleton, Row, Col, Spin} from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, ComposedChart, Legend } from 'recharts';
 import { UserOutlined, LikeOutlined } from '@ant-design/icons';
-import { CollectionPlay } from 'react-bootstrap-icons';
+import { AppIndicator, CollectionPlay } from 'react-bootstrap-icons';
 import {io} from 'socket.io-client'
 import moment from 'moment'
 import Authorisation from '../Authorisation/Authorisation'
+import * as api from '../api/index'
 
 import './styles.css'
 import * as dummy from './dummydata'
 
 const Overview = ({user}) => {
-    // const socket = io("http://localhost:5000")
     const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#5a65ea' }} spin />;
-    const [loading, setLoading] = useState(true)
-    const [test, setTest] = useState(0)
-    // const [array, setArray] = useState([])
-    // let array = []
-    // useEffect(() => {
-    //     // socket.on("newUser", (user) => {
-    //     //   console.log(user)
-    //     // })
-    //     const socket = io("http://localhost:5000")
+    const [loading, setLoading] = useState(false)
+    const [userData, setUserData] = useState(null)
+    const [totalSessions, setTotalSessions] = useState(null)
+    const [averageDuration, setAverageDuration] = useState(0)
+    const getUserData = () => {
+        setLoading(true)
+        const username = JSON.parse(localStorage.getItem('profile'))?.username
+        if(username != null){
+            api.getUser(username).then(data => {
+                setUserData(data.data.data)
+                setLoading(false)
+            })
+        }
+    }    
 
-    //     socket.on("newData", (data) => {
-    //         // console.log(data.ax)
-    //         // array.push(data.ax)
-    //         // setTest(array)
-    //     setArray(prevArray => [...prevArray, data])
-    //       console.log(data)
-            
-    //     })
-    //     // socket.close()
-        
-    //   }, [])
+    const calculateAverageDuration = () => {
+        var arr = []
+        for(var i = 0; i < userData.sessions.length; i++){
+            arr.push(userData.sessions[i].duration)
+        }
+        alert(arr)
+    }
 
-    //   useEffect(() => {
-    //       console.log(array.length)
-    //     //   if(array.length >= 5){
-    //     //       setArray(array.slice(1))
-    //     //   }
-    //     // if(array.length >= 3){
-    //     //     setArray(prevArray => [prevArray.slice(1)])
-    //     // }
-    //     //   console.log(array)
-    //   }, [array])
+    useEffect(() => {
+        if(userData != null){
+            // alert('set!')
+            console.log(userData)
+            setTotalSessions(userData.sessions.length)
+            calculateAverageDuration()
+        }
+    }, [userData])
+
+    useEffect(() => {
+        getUserData() 
+    }, [])
+
     return ( 
         <div className="content">
             {/* {array.length} */}
@@ -55,8 +59,10 @@ const Overview = ({user}) => {
                     Good Afternoon,<span className="name"> {JSON.parse(localStorage.getItem('profile'))?.username}!</span>
                 </div>
                 <div className="description" style={{fontSize:'12px', backgroundColor:'pink', margin:'0px 10px 15px 10px'}}>
-                <div style={{fontSize:'15px', fontWeight:'bold'}}>Keep up the good work!</div>
-                You danced an average of <span style={{fontWeight:'bold'}}>24</span> mins today and you have achieved an average grade of 
+                <div style={{fontSize:'15px', fontWeight:'bold'}}>
+                    {averageDuration > 5 ? 'Keep up the good work!' : 'Dance more!'}
+                </div>
+                You danced an average of <span style={{fontWeight:'bold'}}>24</span> mins everyday and you have achieved an average grade of 
                  <span style={{fontWeight:'bold'}}> 'Excellent'</span>! 
                 You tend to dance till your muscle is fatigued so do remember to stretch and take adequate rest!
                 </div>
@@ -66,12 +72,19 @@ const Overview = ({user}) => {
       <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 15 }}>
       <Card  bordered={false} style={{ width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225'}}>
                 <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Total Sessions <CollectionPlay /></div>
+                <Skeleton 
+                // loading={loading}
+                loading={loading}
+                active
+                >
                 <div style={{height:'130px'}}>
                 <div style={{fontSize:'50px', height:'100px'}}>
+                    {totalSessions}
                         {/* {test} */}
                     </div>
                 {/* <Skeleton size="large" active /> */}
                 </div>
+                </Skeleton>
         </Card>
       </Col>
       <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 10 }}>

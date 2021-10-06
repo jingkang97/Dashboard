@@ -16,7 +16,8 @@ const getUser = (req, res) => {
                 password: user.password,
                 wearable_id: user.wearable_id,
                 wearable_name: user.wearable_name,
-                image: user.image
+                image: user.image,
+                data: user
             })
         }else{
             res.json({
