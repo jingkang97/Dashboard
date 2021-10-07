@@ -27,7 +27,7 @@ const Overview = ({user}) => {
     const [favourite, setFavourite] = useState('No favourite move')
     const [isTired, setIsTired] = useState(false)
     const [grade, setGrade] = useState('Average')
-    const [percentageList, setPercentageList] = useState([])
+    const [percentageList, setPercentageList] = useState([{date: 0, accuracy: 50}, {date: 100, accuracy: 50}])
     const [percentageProgression, setPercentageProgression] = useState(0)
 
     const getUsers = () => {
