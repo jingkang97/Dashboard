@@ -24,6 +24,7 @@ const Overview = ({user}) => {
     const [favourite, setFavourite] = useState('No favourite move')
     const [isTired, setIsTired] = useState(false)
     const [grade, setGrade] = useState('Average')
+    const [percentageList, setPercentageList] = useState([])
 
     const getUsers = () => {
         setUserLoading(true)
@@ -56,6 +57,16 @@ const Overview = ({user}) => {
             addition += parseInt(seconds)
         }
         // alert(addition)
+        var average = addition / userData.sessions.length
+        var averageMinutes = Math.floor(average/60)
+        var averageSeconds = (average - averageMinutes * 60)
+        var averageTime = ''
+        if(averageMinutes > 0){
+            averageTime = `${averageMinutes} ${averageMinutes > 1 ? 'minutes' : 'minute'} ${averageSeconds.toFixed(2)} ${averageSeconds > 1 ? 'seconds' : 'second'}`
+        }else{
+            averageTime = `${average.toFixed(2) } ${averageSeconds> 1 ? 'seconds': 'second'}`
+        }
+
         var minutes = Math.floor(addition/60)
         var seconds = addition - minutes * 60
         var totalTime = ''
@@ -65,8 +76,8 @@ const Overview = ({user}) => {
             totalTime = `${addition} ${seconds > 1 ? 'seconds': 'second'}`
         }
 
-        setAverageDuration(totalTime)
-        setTotalDuration(addition)
+        setAverageDuration(averageTime)
+        setTotalDuration(totalTime)
         // alert(arr)
     }
 
@@ -106,9 +117,35 @@ const Overview = ({user}) => {
     }
 
     const calculateAveragePercentage = () => {
-        var percentage = 0
-
-
+        var totalPercentage = 0
+        var totalCount = 0
+        var percentageArray = []
+        const username = JSON.parse(localStorage.getItem('profile'))?.username
+        if(userData.sessions.length > 0){
+            for(var i = 0; i < userData.sessions.length; i ++){
+                for(var j = 0; j < userData.sessions[i].individualMoveScore.length; j++){
+                    if(userData.sessions[i].individualMoveScore[j].username == username){
+                        percentageArray.push({date: userData.sessions[i].endTime, score: userData.sessions[i].individualMoveScore[j].dataMove[0].value})
+                        totalPercentage += userData.sessions[i].individualMoveScore[j].dataMove[0].value
+                        totalCount += 1
+                    }
+                }
+            }
+        }
+        // alert(totalPercentage)
+        // alert(totalCount)
+        var average = totalPercentage/totalCount
+        if(average >= 75 && average < 100){
+            setGrade('Excellent')
+        }else if(average == 100){
+            setGrade('Perfect')
+        }else if(average < 75 && average >= 50){
+            setGrade('Average')
+        }else if(average < 50){
+            setGrade('Poor')
+        }
+        console.log(percentageArray)
+        setPercentageList(percentageArray)
     }
 
     const calculateTiredness = () => {
@@ -136,6 +173,7 @@ const Overview = ({user}) => {
             calculateAverageDuration()
             calculateFavourite()
             calculateTiredness()
+            calculateAveragePercentage()
         }
     }, [userData])
 
@@ -270,8 +308,8 @@ const Overview = ({user}) => {
                         />
                         <Tooltip />
                         <Legend layout="horizontal" verticalAlign="top" align="right" />
-                        <Line type="monotone" dataKey="ay" stroke="#E46389" dot={false} strokeWidth={3}/>
-                        <Area type="monotone" dataKey="ax" stroke="#5A65EA" 
+                        {/* <Line type="monotone" dataKey="ay" stroke="#E46389" dot={false} strokeWidth={3}/> */}
+                        <Area type="monotone" dataKey="score" stroke="#5A65EA" 
                         // animationDuration={500}
                         animationDuration={500}
 

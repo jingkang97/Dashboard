@@ -83,6 +83,7 @@ const NewSession = ({openModal}) => {
     }
     else{
       let current_time = moment()
+      // alert(startTime)
       setStartTime(current_time)
       setSelect(false)
       setStartSession(true)
@@ -185,13 +186,14 @@ const calculateIndividualDance = () => {
   const endSessionHandler = async(e) => {
     e.preventDefault()
     try{
-      let current_time = moment()
-      setEndTime(current_time)
+      
       setPostLoading(true)
 
       let difference = 0
       let start_time = startTime
-      let end_time = current_time
+      let end_time = moment(endTime)
+      // alert(startTime)
+      // alert(end_time)
       difference = end_time.diff(start_time)
       let duration = moment.utc(difference).format("mm:ss")
 
@@ -203,8 +205,8 @@ const calculateIndividualDance = () => {
         numberOfUsers: session.length ,
         syncDelay: syncDelay,
         emg: emg,
-        startTime: startTime.format("h:mm:ss A"),
-        endTime: moment().format("h:mm:ss A"),
+        startTime: startTime.format("DD MM YYYY h:mm:ss A"),
+        endTime: end_time.format("DD MM YYYY h:mm:ss A"),
         groupDanceScore: groupDanceScore,
         groupPositionScore: groupPositionScore,
         individualDanceScore: danceScore,
@@ -264,7 +266,8 @@ const calculateIndividualDance = () => {
     setStartSession(false)
     setStop(true)
     getEvaluation()
-
+    let current_time = moment()
+    setEndTime(current_time)
   }
 
   const handleSessionNameChange = (e) => {
@@ -300,7 +303,6 @@ const calculateIndividualDance = () => {
         setSocket(null)
       }
       else if(startSession == true){
-        // setStartTime(Date.now())
         setSocket(io("http://localhost:5000"))
       }
     }, [startSession])
