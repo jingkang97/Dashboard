@@ -154,38 +154,33 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end, sendPost, o
         setGroupPositionScore([{name: 'correct', value: totalCorrectPositionScorePercentage},{name: 'wrong', value: totalWrongPositionScorePercentage}])
     }
 
-    const handleSubmit = async() => {
-        console.log(object)
-        alert(object)
-        // var finalObj = obj
-        // finalObj['groupDanceScore'] = groupDanceScore
-        // finalObj['groupPositionScore'] = groupPositionScore
-        // finalObj['individualDanceScore'] = danceScore
-        // finalObj['individualMoveScore'] = moveChart
-        // console.log(finalObj)
-        // alert(finalObj)
-        // try {
-        //     await api.postSession(finalObj).then((data)=>{
-        //         // alert(data)
-        //         console.log(data)
-        //       //   setPostLoading(false)
-        //     })
-        // } catch (error) {
-        //     console.log(error)
-        // }
+    // const handleSubmit = async() => {
+    //     console.log(object)
+    //     alert(object)
+    //     // var finalObj = obj
+    //     // finalObj['groupDanceScore'] = groupDanceScore
+    //     // finalObj['groupPositionScore'] = groupPositionScore
+    //     // finalObj['individualDanceScore'] = danceScore
+    //     // finalObj['individualMoveScore'] = moveChart
+    //     // console.log(finalObj)
+    //     // alert(finalObj)
+    //     // try {
+    //     //     await api.postSession(finalObj).then((data)=>{
+    //     //         // alert(data)
+    //     //         console.log(data)
+    //     //       //   setPostLoading(false)
+    //     //     })
+    //     // } catch (error) {
+    //     //     console.log(error)
+    //     // }
         
-    }
+    // }
 
-    useEffect(() => {
-        if(sendPost == true){
-            alert(sendPost)
-            // alert('hihi')
-        }
-    }, [sendPost])
-
-
-
-    
+    // useEffect(() => {
+    //     if(sendPost == true){
+    //         alert(sendPost)
+    //     }
+    // }, [sendPost])
 
     useEffect(()=>{
         if(evaluation != null){

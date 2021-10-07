@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { Card, Skeleton, Row, Col, Spin} from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, ComposedChart, Legend } from 'recharts';
-import { UserOutlined, LikeOutlined } from '@ant-design/icons';
+import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, ComposedChart, Legend, AreaChart } from 'recharts';
+import { UserOutlined, LikeOutlined, CaretDownOutlined, CaretUpOutlined } from '@ant-design/icons';
 import { AppIndicator, CollectionPlay } from 'react-bootstrap-icons';
 import {io} from 'socket.io-client'
 import moment from 'moment'
@@ -11,6 +11,9 @@ import * as api from '../api/index'
 
 import './styles.css'
 import * as dummy from './dummydata'
+
+const formatTooltip = value => (`${value} %`);
+
 
 const Overview = ({user}) => {
     const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#5a65ea' }} spin />;
@@ -25,6 +28,7 @@ const Overview = ({user}) => {
     const [isTired, setIsTired] = useState(false)
     const [grade, setGrade] = useState('Average')
     const [percentageList, setPercentageList] = useState([])
+    const [percentageProgression, setPercentageProgression] = useState(0)
 
     const getUsers = () => {
         setUserLoading(true)
@@ -125,7 +129,7 @@ const Overview = ({user}) => {
             for(var i = 0; i < userData.sessions.length; i ++){
                 for(var j = 0; j < userData.sessions[i].individualMoveScore.length; j++){
                     if(userData.sessions[i].individualMoveScore[j].username == username){
-                        percentageArray.push({date: userData.sessions[i].endTime, score: userData.sessions[i].individualMoveScore[j].dataMove[0].value})
+                        percentageArray.push({date: userData.sessions[i].endTime, accuracy: userData.sessions[i].individualMoveScore[j].dataMove[0].value})
                         totalPercentage += userData.sessions[i].individualMoveScore[j].dataMove[0].value
                         totalCount += 1
                     }
@@ -146,6 +150,13 @@ const Overview = ({user}) => {
         }
         console.log(percentageArray)
         setPercentageList(percentageArray)
+
+        var progression = 0
+        if(percentageArray.length > 0){
+            progression = percentageArray[percentageArray.length-1].accuracy - percentageArray[0].accuracy
+        }
+        setPercentageProgression(progression)
+
     }
 
     const calculateTiredness = () => {
@@ -207,7 +218,7 @@ const Overview = ({user}) => {
             </Row>
         <Row gutter={21} style={{ marginBottom: 0 }}>
       <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 15 }}>
-      <Card  bordered={false} style={{ width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225'}}>
+      <Card  bordered={false} style={{width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225' }}>
                 <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Total Sessions <CollectionPlay /></div>
                 <Skeleton 
                 // loading={loading}
@@ -248,7 +259,7 @@ const Overview = ({user}) => {
       </Col>
       
       <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 12 }}>
-      <Card  bordered={false} style={{ width: '100%', backgroundColor: '#5a65ea', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #5a65ea' }}>
+      <Card  bordered={false}  style={{ width: '100%', backgroundColor: '#5a65ea', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #5a65ea' }}>
       <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Favourite Move <LikeOutlined /></div>
                 <Skeleton 
                 loading={loading}
@@ -271,15 +282,15 @@ const Overview = ({user}) => {
     </Row>
     <Row >
         <Card  bordered={false} style={{ width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225', position:'relative', overflow:'scroll'}}>
-                <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', marginBottom:'20px'}}>Your Performance
+                {/* <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', marginBottom:'20px'}}>Your Performance
                     <Spin indicator={antIcon} style={{position:'absolute', right:'0', top:'0', marginRight:'25px', marginTop:'30px'}}/>
-                </div>
-                <div style={{display:'flex', flexDirection:'row'}}>
-                    <div style={{width:'400px', height:'200px'}}>
+                </div> */}
+                <div style={{display:'flex', flexDirection:'row', width:'100%'}}>
+                    <div style={{width:'100%', height:'200px'}}>
                     <ResponsiveContainer width="100%" height="100%">
-                        <ComposedChart
-                        data={dummy.data}
-                        // data={array}
+                        <AreaChart
+                        // data={dummy.data}
+                        data={percentageList}
                         margin={{
                             top: 10,
                             right: 0,
@@ -293,36 +304,41 @@ const Overview = ({user}) => {
                                 <stop offset="95%" stopColor="#5A65EA" stopOpacity={0.2}/>
                             </linearGradient>
                         </defs>
-                        {/* <CartesianGrid strokeDasharray="3" /> */}
-                        {/* <XAxis dataKey="name" /> */}
                         <XAxis 
                         // dataKey="createdAt" 
-                        dataKey="createdAt"
-                        tickFormatter={timeStr => moment(timeStr).format('ss')} 
+                        dataKey="date"
                         />
 
                         <YAxis type="number" 
                         // domain={['auto', 'dataMax + 20']}
-                        domain={['dataMin - 50', 'dataMax + 50']}
+                        // domain={['dataMin - 50', 'dataMax + 50']}
 
                         />
-                        <Tooltip />
+                        <Tooltip formatter={formatTooltip}/>
                         <Legend layout="horizontal" verticalAlign="top" align="right" />
                         {/* <Line type="monotone" dataKey="ay" stroke="#E46389" dot={false} strokeWidth={3}/> */}
-                        <Area type="monotone" dataKey="score" stroke="#5A65EA" 
-                        // animationDuration={500}
-                        animationDuration={500}
-
+                        <Area type="monotone" dataKey="accuracy" stroke="#5A65EA" 
+                        isAnimationActive={true}
                         fill="url(#colorUv)" 
                         strokeWidth={3}
                         />
-                        </ComposedChart>
+                        </AreaChart>
                     </ResponsiveContainer>
                     </div>
-                    <div style={{fontSize:'15px'}}>   
+                    <div style={{fontSize:'15px', background:'transparent', width:'100%', display:'flex', flexDirection:'column', alignItems:'center'}}>   
                         <div style={{fontWeight:'bold', color:'#9BA6B2', marginLeft:'20px'}}>
-                            Average Mistakes
+                            Move Accuracy Progression
                         </div>
+                        
+                        <div style={{display:'flex', width:'100%', flexDirection:'row', height:'100%', alignItems:'center', justifyContent:'center', padding:'30px'}}>
+                        <Skeleton
+                        loading={loading}
+                        active
+                        >
+                            {percentageProgression > 0 ? <div style={{fontSize:'50px', color:'lightgreen', fontWeight:'bold'}}>{percentageProgression}% <CaretUpOutlined /> </div> : (percentageProgression == 0 ? <div style={{fontSize:'50px', color:'white', fontWeight:'bold'}}>{percentageProgression}%</div>: <div style={{fontSize:'50px', color:'rgb(255, 109, 152)', fontWeight:'bold'}}>{percentageProgression}% <CaretDownOutlined /></div>)}
+                            </Skeleton>
+                        </div>
+                        
                     </div>
                 </div>
         </Card>
