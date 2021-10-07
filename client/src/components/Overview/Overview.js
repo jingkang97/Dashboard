@@ -19,6 +19,7 @@ const Overview = ({user}) => {
     const [totalSessions, setTotalSessions] = useState(null)
     const [averageDuration, setAverageDuration] = useState(0)
     const [number, setNumber] = useState(0)
+    const [favourite, setFavourite] = useState('')
 
     const getUsers = () => {
         api.getUsers().then(data => {
@@ -53,6 +54,54 @@ const Overview = ({user}) => {
         // alert(arr)
     }
 
+    const calculateFavourite = () => {
+        // const moves = {
+        //     'cowboy': 0,
+        //     'dab': 0,
+        //     'jamesbond': 0,
+        //     'mermaid': 0,
+        //     'pushback': 0,
+        //     'scarecrow': 0,
+        //     'snake': 0,
+        //     'window360': 0
+        // }
+        var danceMoves = []
+        var result = {}
+        const username = JSON.parse(localStorage.getItem('profile'))?.username
+        if(userData.sessions.length > 0){
+            for(var i = 0; i < userData.sessions.length; i++){
+                // alert('hi')
+                for(var j = 0; j < userData.sessions[i].users.length; j++){
+                    if(userData.sessions[i].users[j].username == username){
+                        // alert('yes')
+                        for(var k = 0; k < userData.sessions[i].users[j].session.length; k++){
+                            danceMoves.push(userData.sessions[i].users[j].session[k].danceMove)
+                        }
+                    }
+                }
+            }
+        }
+        // alert(danceMoves)
+        for(var i = 0; i < danceMoves.length; i++){
+            if(!result[danceMoves[i]]){
+                result[danceMoves[i]] = 1;
+            }else{
+                result[danceMoves[i]] += 1;
+            }
+        }
+
+        var maximum = 0;
+        var maximum_field = ''
+        for(const key in result){
+            if(result[key] > maximum){
+                maximum = result[key]
+                maximum_field = key
+            }
+        }
+        setFavourite(maximum_field)
+
+    }
+
     const calculateAveragePercentage = () => {
 
     }
@@ -64,6 +113,7 @@ const Overview = ({user}) => {
             setTotalSessions(userData.sessions.length)
             calculateAverageDuration()
             getUsers()
+            calculateFavourite()
         }
     }, [userData])
 
@@ -114,7 +164,7 @@ const Overview = ({user}) => {
         </Card>
       </Col>
       <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 10 }}>
-            <Card  bordered={false} style={{height:'200px', width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225' }}>
+            <Card  bordered={false} style={{width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225' }}>
             <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Number of Users <UserOutlined /></div>
                 <Skeleton 
                 loading={loading}
@@ -136,11 +186,23 @@ const Overview = ({user}) => {
       </Col>
       
       <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 12 }}>
-      <Card  bordered={false} style={{ height:'200px',width: '100%', backgroundColor: '#5a65ea', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #5a65ea' }}>
+      <Card  bordered={false} style={{ width: '100%', backgroundColor: '#5a65ea', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #5a65ea' }}>
       <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Favourite Move <LikeOutlined /></div>
-                <div style={{height:'50px'}}>
-                <Skeleton active />
-                </div>
+                <Skeleton 
+                loading={loading}
+                active
+                >
+                    <div style={{height:'130px'}}>
+                    <div style={{fontSize:'50px', height:'100px'}}>
+                    {favourite}
+
+                    </div>
+                    </div>
+                    {/* <div style={{fontSize:'50px', height:'100px'}}>
+                        16
+                    </div> */}
+                   
+                </Skeleton>
                 
             </Card>
       </Col>
