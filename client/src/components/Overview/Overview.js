@@ -129,7 +129,7 @@ const Overview = ({user}) => {
             for(var i = 0; i < userData.sessions.length; i ++){
                 for(var j = 0; j < userData.sessions[i].individualMoveScore.length; j++){
                     if(userData.sessions[i].individualMoveScore[j].username == username){
-                        percentageArray.push({date: userData.sessions[i].endTime, accuracy: userData.sessions[i].individualMoveScore[j].dataMove[0].value})
+                        percentageArray.push({date: moment(userData.sessions[i].endTime, 'DD MM YYYY h:mm:ss A').format('DD/MM/YYYY'), accuracy: userData.sessions[i].individualMoveScore[j].dataMove[0].value})
                         totalPercentage += userData.sessions[i].individualMoveScore[j].dataMove[0].value
                         totalCount += 1
                     }
@@ -307,12 +307,14 @@ const Overview = ({user}) => {
                         <XAxis 
                         // dataKey="createdAt" 
                         dataKey="date"
+                        interval={0}
                         />
 
                         <YAxis type="number" 
+                        tickFormatter={(tickValue) => `${tickValue}%`}
+
                         // domain={['auto', 'dataMax + 20']}
                         // domain={['dataMin - 50', 'dataMax + 50']}
-
                         />
                         <Tooltip formatter={formatTooltip}/>
                         <Legend layout="horizontal" verticalAlign="top" align="right" />
