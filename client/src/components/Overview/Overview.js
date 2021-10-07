@@ -15,17 +15,23 @@ import * as dummy from './dummydata'
 const Overview = ({user}) => {
     const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#5a65ea' }} spin />;
     const [loading, setLoading] = useState(false)
+    const [userLoading, setUserLoading] = useState(false)
     const [userData, setUserData] = useState(null)
-    const [totalSessions, setTotalSessions] = useState(null)
+    const [totalSessions, setTotalSessions] = useState(0)
     const [averageDuration, setAverageDuration] = useState(0)
+    const [totalDuration, setTotalDuration] = useState(0)
     const [number, setNumber] = useState(0)
-    const [favourite, setFavourite] = useState('')
+    const [favourite, setFavourite] = useState('No favourite move')
+    const [isTired, setIsTired] = useState(false)
+    const [grade, setGrade] = useState('Average')
 
     const getUsers = () => {
+        setUserLoading(true)
         api.getUsers().then(data => {
             console.log(data.data.length)
             // alert(data)
             setNumber(data.data.length)
+            setUserLoading(false)
         })
     }
 
@@ -50,21 +56,21 @@ const Overview = ({user}) => {
             addition += parseInt(seconds)
         }
         // alert(addition)
-        setAverageDuration(addition)
+        var minutes = Math.floor(addition/60)
+        var seconds = addition - minutes * 60
+        var totalTime = ''
+        if(minutes > 0){
+            totalTime = `${minutes} ${minutes > 1 ? 'minutes' : 'minute'} ${seconds} ${seconds > 1 ? 'seconds' : 'second'}`
+        }else{
+            totalTime = `${addition} ${seconds > 1 ? 'seconds': 'second'}`
+        }
+
+        setAverageDuration(totalTime)
+        setTotalDuration(addition)
         // alert(arr)
     }
 
     const calculateFavourite = () => {
-        // const moves = {
-        //     'cowboy': 0,
-        //     'dab': 0,
-        //     'jamesbond': 0,
-        //     'mermaid': 0,
-        //     'pushback': 0,
-        //     'scarecrow': 0,
-        //     'snake': 0,
-        //     'window360': 0
-        // }
         var danceMoves = []
         var result = {}
         const username = JSON.parse(localStorage.getItem('profile'))?.username
@@ -81,7 +87,6 @@ const Overview = ({user}) => {
                 }
             }
         }
-        // alert(danceMoves)
         for(var i = 0; i < danceMoves.length; i++){
             if(!result[danceMoves[i]]){
                 result[danceMoves[i]] = 1;
@@ -89,7 +94,6 @@ const Overview = ({user}) => {
                 result[danceMoves[i]] += 1;
             }
         }
-
         var maximum = 0;
         var maximum_field = ''
         for(const key in result){
@@ -99,11 +103,29 @@ const Overview = ({user}) => {
             }
         }
         setFavourite(maximum_field)
-
     }
 
     const calculateAveragePercentage = () => {
+        var percentage = 0
 
+
+    }
+
+    const calculateTiredness = () => {
+        var tired = {'true': 0, 'false': 0}
+        const username = JSON.parse(localStorage.getItem('profile'))?.username
+        if(userData.sessions.length > 0){
+            for(var i = 0; i < userData.sessions.length; i++){
+                // alert('hi')
+                tired[`${userData.sessions[i].tired}`] += 1
+            }
+        }
+        // alert(tired['true'])
+        if(tired['true'] > tired['false']){
+            setIsTired(true)
+        }else{
+            setIsTired(false)
+        }
     }
 
     useEffect(() => {
@@ -112,12 +134,13 @@ const Overview = ({user}) => {
             console.log(userData)
             setTotalSessions(userData.sessions.length)
             calculateAverageDuration()
-            getUsers()
             calculateFavourite()
+            calculateTiredness()
         }
     }, [userData])
 
     useEffect(() => {
+        getUsers()
         getUserData() 
     }, [])
 
@@ -135,11 +158,11 @@ const Overview = ({user}) => {
                 active
                 >
                 <div style={{fontSize:'15px', fontWeight:'bold'}}>
-                    {averageDuration > 5 ? 'Keep up the good work!' : 'Dance more!'}
+                    {grade == 'Excellent' || grade == 'Perfect' ? 'Keep up the good work!' : 'Practice makes perfect!'}
                 </div>
-                You danced an average of <span style={{fontWeight:'bold'}}>{averageDuration}</span> seconds everyday and you have achieved an average grade of 
-                 <span style={{fontWeight:'bold'}}> 'Excellent'</span>! 
-                You tend to dance till your muscle is fatigued so do remember to stretch and take adequate rest!
+                You danced an average of <span style={{fontWeight:'bold'}}>{averageDuration}</span> every session and you have achieved an average grade of 
+                 <span style={{fontWeight:'bold'}}> {`'${grade}'`}</span>! 
+                 {isTired ? ' You tend to dance till your muscle is fatigued so do remember to stretch and take adequate rest!': ' You do not dance till your muscle is fatigue so keep that up!'}
                 </Skeleton>
                 </div>
                 
@@ -155,6 +178,7 @@ const Overview = ({user}) => {
                 >
                 <div style={{height:'130px'}}>
                 <div style={{fontSize:'50px', height:'100px'}}>
+                    
                     {totalSessions}
                         {/* {test} */}
                     </div>
@@ -167,7 +191,7 @@ const Overview = ({user}) => {
             <Card  bordered={false} style={{width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225' }}>
             <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Number of Users <UserOutlined /></div>
                 <Skeleton 
-                loading={loading}
+                loading={userLoading}
                 active
                 >
                     <div style={{height:'130px'}}>
