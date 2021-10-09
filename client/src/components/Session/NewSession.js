@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, createContext} from 'react';
 import { Table, Avatar, Tag, Input, Spin, Row, Col, Button} from 'antd'
-import {UserOutlined, SyncOutlined,CloseOutlined} from '@ant-design/icons';
+import {UserOutlined, SyncOutlined,CloseOutlined, LoadingOutlined} from '@ant-design/icons';
 import { AiOutlineWarning, AiOutlineLike, AiOutlineUser } from 'react-icons/ai';
 import {IoIosSync} from 'react-icons/io'
 import {io} from 'socket.io-client'
@@ -9,8 +9,29 @@ import './styles.css'
 import Analytics from './Analytics'
 import moment from 'moment'
 import Modal from 'react-modal';
+import mqtt from 'mqtt';
+import Index from '../mqtt/index'
+import Receiver from '../mqtt/Receiver';
+import { connect } from 'react-redux';
+
+
+
+export const QosOption = createContext([])
+  const qosOption = [
+      {
+        label: '0',
+        value: 0,
+      }, {
+        label: '1',
+        value: 1,
+      }, {
+        label: '2',
+        value: 2,
+      },
+    ];
 
 const NewSession = ({openModal}) => {
+  const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#ff6d98' }} spin />;
   const columns = [
     {
       title: 'User',
@@ -71,6 +92,125 @@ const NewSession = ({openModal}) => {
   const [groupPositionScore, setGroupPositionScore] = useState([])
   const [evaluation, setEvaluation] = useState(null)
 
+
+  // mqtt 
+  const record = {
+    host: 'broker.emqx.io',
+    clientId: `mqttjs_ + ${Math.random().toString(16).substr(2, 8)}`,
+    port: 8083,
+  };
+  const sub_record = {
+    topic: 'dancdance11',
+    qos: 1,
+  };
+  const [client, setClient] = useState(null);
+  const [isSubed, setIsSub] = useState(false);
+  const [payload, setPayload] = useState({});
+  const [connectStatus, setConnectStatus] = useState('Connect');
+  const [messages, setMessages] = useState([])
+
+  const handleSub = () => {
+    mqttSub(sub_record);
+  };
+
+  const handleUnsub = () => {
+    mqttUnSub(sub_record);
+  };
+
+  const handleConnect = (values) => {
+    // setStart(true)
+    const { host, clientId, port } = record;
+    const url = `ws://${host}:${port}/mqtt`;
+    const options = {
+      keepalive: 30,
+      protocolId: 'MQTT',
+      protocolVersion: 4,
+      clean: true,
+      reconnectPeriod: 1000,
+      connectTimeout: 30 * 1000,
+      will: {
+        topic: 'WillMsg',
+        payload: 'Connection Closed abnormally..!',
+        qos: 0,
+        retain: false
+      },
+      rejectUnauthorized: false
+    };
+    options.clientId = clientId;
+    mqttConnect(url, options);
+  };
+  const handleDisconnect = () => {
+    mqttDisconnect();
+  };
+  
+  const mqttConnect = (host, mqttOption) => {
+    setConnectStatus('Connecting');
+    setClient(mqtt.connect(host, mqttOption));
+    };
+
+    useEffect(() => {
+      if (client) {
+          client.on('connect', () => {
+          setConnectStatus('Connected');
+          });
+          client.on('error', (err) => {
+          console.error('Connection error: ', err);
+          client.end();
+          });
+          client.on('reconnect', () => {
+          setConnectStatus('Reconnecting');
+          });
+          client.on('message', (topic, message) => {
+          const payload = { topic, message: message.toString() };
+          setPayload(payload);
+          });
+      }
+      }, [client]);
+  
+      const mqttDisconnect = () => {
+      if (client) {
+          client.end(() => {
+          setConnectStatus('Connect');
+          });
+      }
+      }
+
+      const mqttSub = (subscription) => {
+        if (client) {
+            const { topic, qos } = subscription;
+            client.subscribe(topic, { qos }, (error) => {
+            if (error) {
+                console.log('Subscribe to topics error', error)
+                return
+            }
+            setIsSub(true)
+            });
+        }
+        };
+    
+        const mqttUnSub = (subscription) => {
+        if (client) {
+            const { topic } = subscription;
+            client.unsubscribe(topic, error => {
+            if (error) {
+                console.log('Unsubscribe error', error)
+                return
+            }
+            setIsSub(false);
+            });
+        }
+        };
+
+
+        useEffect(() => {
+          if (payload.topic) {
+            // setMessages(messages => [...messages, JSON.parse(payload.message)])
+            setSession(prevSess => prevSess.map(el => (el.userId == JSON.parse(payload.message).userId ? {...el,session:[...el.session, JSON.parse(payload.message)]} : el)))        
+            setArray(prevArray => [...prevArray, JSON.parse(payload.message)])
+          }
+        }, [payload])
+
+
   const startSessionHandler = (e) => {
     if(sessionName == ''){
       alert('Please fill in the name first!')
@@ -87,6 +227,8 @@ const NewSession = ({openModal}) => {
       setStartTime(current_time)
       setSelect(false)
       setStartSession(true)
+      // handleConnect()
+      // onFinish()
     }
   }
 
@@ -213,9 +355,6 @@ const calculateIndividualDance = () => {
         individualMoveScore: moveChart,
         tired: tired,
         duration: duration
-        // tired: , - calculate percentage of times emg hit above 3
-        // duration: moment(startTime).format("h:mm:ss A"), - average, all duration add up/number of durations
-
       }
 
       var userList = []
@@ -234,12 +373,6 @@ const calculateIndividualDance = () => {
           setPostLoading(false)
         })
       })
-      // await api.postSession(body).then((data)=>{
-      //   // alert(data)
-      //   console.log(data)
-      //   close()    
-      //   setPostLoading(false)
-      // })
     }catch(e){
       console.log(e)
     }
@@ -259,10 +392,15 @@ const calculateIndividualDance = () => {
     setArray([])
     setEmg([])
     setSyncDelay([])
-
+    handleDisconnect()
+    handleUnsub()
+    setMessages([])
   }
 
   const handleGetResults = (e) => {
+    handleDisconnect()
+    handleUnsub()
+    setMessages([])
     setStartSession(false)
     setStop(true)
     getEvaluation()
@@ -304,8 +442,16 @@ const calculateIndividualDance = () => {
       }
       else if(startSession == true){
         setSocket(io("http://localhost:5000"))
+        handleConnect()
       }
     }, [startSession])
+
+
+    useEffect(() => {
+      if(connectStatus == 'Connected'){
+        handleSub()
+      }
+    }, [connectStatus])
 
     useEffect(() => {
       console.log(session)
@@ -316,6 +462,9 @@ const calculateIndividualDance = () => {
         setIsModalVisible(true)
       }
     },[openModal])
+
+
+
 
     useEffect(()=>{
       const messageListener = (data) => {
@@ -366,16 +515,40 @@ const calculateIndividualDance = () => {
           >
           <Spin style={{height:'100%', display:'flex', flexDirection:'column', justifyContent:'center', alignItems:'center'}} spinning={postLoading} size="large">
           <Button type="primary" style={{marginTop:'10px', background:'grey', border:'1px solid grey',marginRight:'10px', position:'absolute', right:'0', top:'0'}} shape="circle" icon={<CloseOutlined />} size='big' onClick={close}/>
+          
+          
+          {/* <Button danger onClick={handleDisconnect}>Disconnect</Button> */}
+          {/* <Button type="primary" onClick={handleConnect}>{connectStatus}</Button> */}
+
 
         <div style={{height:'100%', width:'100%', padding:'20px'}}>
-          {console.log(emg)}
+          {/* {console.log(emg)} */}
+          {/* <Index /> */}
             {startSession ? 
             <div>
                 {/* DASHBOARD */}
-                <div style={{fontSize:'30px', color:'white', marginBottom:'10px'}}>
-                Session: {sessionName}
-
+                <div style={{fontSize:'30px', color:'white', marginBottom:'10px', display:'flex', flexDirection:'row', alignItems:'center', width:'100%', height:'100%'}}>
+                  <div>Session: {sessionName}</div>
+                  {connectStatus == 'Connected' ? <div style={{height:'100%', alignItems:'center', marginLeft:'20px', marginTop:'-10px'}}><Tag style={{background:'#5a65ea', border:'1px solid #5a65ea', color:'white', fontSize:'15px', fontWeight:'bold', padding:'3px 8px 5px 8px', borderRadius:'5px'}}>{connectStatus}</Tag></div> : 
+                  <div style={{height:'100%', alignItems:'center', marginLeft:'20px', marginTop:'-10px'}}><Tag style={{background:'transparent', border:'1px solid #ff6d98', color:'#ff6d98', fontSize:'15px', borderRadius:'5px'}}>
+                    {connectStatus}
+                    <Spin indicator={antIcon} style={{color:'pink', margin:'5px'}}/>
+                  </Tag></div>
+                  }
+                  {isSubed == true ? <div style={{height:'100%', alignItems:'center', marginLeft:'10px', marginTop:'-10px'}}><Tag style={{background:'#5a65ea', border:'1px solid #5a65ea', color:'white', fontSize:'15px', fontWeight:'bold', padding:'3px 8px 5px 8px', borderRadius:'5px'}}>Ready!</Tag></div> : 
+                  <div style={{height:'100%', alignItems:'center', marginLeft:'10px', marginTop:'-10px'}}><Tag style={{background:'transparent', border:'1px solid #ff6d98', color:'#ff6d98', fontSize:'15px', borderRadius:'5px'}}>
+                    Getting Ready
+                    <Spin indicator={antIcon} style={{color:'pink', margin:'5px'}}/>
+                  </Tag></div>
+                  }
                 </div>
+                {/* <Index /> */}
+                {/* {console.log(messages)} */}
+                
+               {/* {messages.map((m) => {return(
+                  <div>{m.userId}</div>
+               )
+               })} */}
                 <Row gutter={[20, 20]} style={{width:'inherit', background:'transparent'}}>                
                 {session.map((item,index)=>{
                     return (
@@ -524,6 +697,13 @@ const calculateIndividualDance = () => {
             {
               stop ? 
               <div>
+                {/* {connectStatus == 'Connect' ? 'disconnected' : 'connected'} */}
+                {connectStatus == 'Connect' ? <div style={{height:'100%', alignItems:'center', marginTop:'10px', marginBottom:'10px'}}><Tag style={{background:'#ff6d98', border:'1px solid #ff6d98', color:'white', fontSize:'15px', fontWeight:'bold', padding:'3px 8px 5px 8px', borderRadius:'5px'}}>Disconnected</Tag></div> : 
+                  <div style={{height:'100%', alignItems:'center', marginLeft:'20px', marginTop:'-10px'}}><Tag style={{background:'transparent', border:'1px solid #ff6d98', color:'#ff6d98', fontSize:'15px', borderRadius:'5px'}}>
+                    {connectStatus}
+                    <Spin indicator={antIcon} style={{color:'pink', margin:'5px'}}/>
+                  </Tag></div>
+                  }
               <Analytics stop={stop} start={startTime} end={endTime} rows={rows} session={session} emg={emg} syncDelay={syncDelay} sendPost={sendPost}/>
                 <div style={{display:'flex', flexDirection:'row', justifyContent:'flex-end', width:'100%', marginBottom:'0px', background:'transparent', height:'100%'}}><Button type="primary" style={{marginTop:'20px', marginRight:'20px', marginBottom:'20px'}} onClick={endSessionHandler}>End Session</Button></div>
               </div>
