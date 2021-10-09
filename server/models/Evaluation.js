@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const evaluationSchema = new Schema({
     sessionId:{
-        type: String
+        type: Number
     },
     datas:{ type: Array
     }

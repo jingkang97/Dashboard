@@ -8,10 +8,20 @@ const getEval = async(res, next) => {
         // console.log(eval)
         // res.json(users) 
         // return eval[0]
-        Evaluation.findById('6151f234c3d9592890d06910').then(data => {
+        
+        
+        // Evaluation.findById('6151f234c3d9592890d06910').then(data => {
+        //     // return(data)
+        //     next.status(200).json({message: 'success', data: data})
+        // })
+
+        Evaluation.findOne({sessionId:123}).then(data => {
             // return(data)
             next.status(200).json({message: 'success', data: data})
         })
+
+
+
         
         // Evaluation.findOne({sessionId:123}).then(data => {
         //     if(data){
