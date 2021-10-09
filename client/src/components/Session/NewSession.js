@@ -100,7 +100,7 @@ const NewSession = ({openModal}) => {
     port: 8083,
   };
   const sub_record = {
-    topic: 'dancdance11',
+    topic: 'dancedance11',
     qos: 1,
   };
   const [client, setClient] = useState(null);
@@ -201,10 +201,9 @@ const NewSession = ({openModal}) => {
         }
         };
 
-
         useEffect(() => {
           if (payload.topic) {
-            // setMessages(messages => [...messages, JSON.parse(payload.message)])
+            setMessages(messages => [...messages, JSON.parse(payload.message)])
             setSession(prevSess => prevSess.map(el => (el.userId == JSON.parse(payload.message).userId ? {...el,session:[...el.session, JSON.parse(payload.message)]} : el)))        
             setArray(prevArray => [...prevArray, JSON.parse(payload.message)])
           }
@@ -544,6 +543,7 @@ const calculateIndividualDance = () => {
                 </div>
                 {/* <Index /> */}
                 {/* {console.log(messages)} */}
+                {console.log(array)}
                 
                {/* {messages.map((m) => {return(
                   <div>{m.userId}</div>

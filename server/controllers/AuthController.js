@@ -23,7 +23,7 @@ const register = (req, res, next) => {
                 })
                 user.save()
                 .then(user => {
-                    let token = jwt.sign({name: user.username}, 'verySecretValue', {expiresIn: '1h'})
+                    let token = jwt.sign({name: user.username}, 'verySecretValue', {expiresIn: '10h'})
                     res.json({
                         message: 'User Added Successfully!',
                         token: token,
