@@ -1,5 +1,4 @@
-# <p align="center">DanceDance <img src="DanceOnLogo.svg" width="50"></p>
-
+# <img src="DanceOnFullLogo.svg" width="400">
 
 A dashboard web application to visualise real time dance move stats and provide offline analytics
 

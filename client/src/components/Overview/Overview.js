@@ -155,7 +155,7 @@ const Overview = ({user}) => {
         if(percentageArray.length > 0){
             progression = percentageArray[percentageArray.length-1].accuracy - percentageArray[0].accuracy
         }
-        setPercentageProgression(progression)
+        setPercentageProgression(progression.toFixed(2))
 
     }
 
@@ -307,7 +307,7 @@ const Overview = ({user}) => {
                         <XAxis 
                         // dataKey="createdAt" 
                         dataKey="date"
-                        interval={0}
+                        // interval={0}
                         />
 
                         <YAxis type="number" 

@@ -10,25 +10,7 @@ import Analytics from './Analytics'
 import moment from 'moment'
 import Modal from 'react-modal';
 import mqtt from 'mqtt';
-import Index from '../mqtt/index'
-import Receiver from '../mqtt/Receiver';
-import { connect } from 'react-redux';
 
-
-
-export const QosOption = createContext([])
-  const qosOption = [
-      {
-        label: '0',
-        value: 0,
-      }, {
-        label: '1',
-        value: 1,
-      }, {
-        label: '2',
-        value: 2,
-      },
-    ];
 
 const NewSession = ({openModal}) => {
   const antIcon = <LoadingOutlined style={{ fontSize: 24, color:'#ff6d98' }} spin />;
@@ -206,6 +188,16 @@ const NewSession = ({openModal}) => {
             setMessages(messages => [...messages, JSON.parse(payload.message)])
             setSession(prevSess => prevSess.map(el => (el.userId == JSON.parse(payload.message).userId ? {...el,session:[...el.session, JSON.parse(payload.message)]} : el)))        
             setArray(prevArray => [...prevArray, JSON.parse(payload.message)])
+            let current_time = moment().format("h:mm:ss A")
+
+            if(JSON.parse(payload.message).hasOwnProperty('emg')){
+              var voltage = ((Number(JSON.parse(payload.message).emg) / 1023) * 5.0).toFixed(4)
+              console.log(voltage)
+              setEmg(prevArray => [...prevArray, {emg: voltage , time: current_time}])
+            }
+            if(JSON.parse(payload.message).hasOwnProperty('syncDelay')){
+              setSyncDelay(prevArray => [...prevArray, {sync: JSON.parse(payload.message).syncDelay, time: current_time}])
+            }
           }
         }, [payload])
 
@@ -587,8 +579,8 @@ const calculateIndividualDance = () => {
                       <div >
                         Fatigue Check
                       </div>
-                      {emg.length ? (Number(emg[emg.length-1].emg) > 3 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : <div style={{fontSize:'30px', color:'white'}}>?</div>}
-                      {emg.length ? (Number(emg[emg.length-1].emg) > 3 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : <div style={{fontSize:'30px'}}>Get ready...</div>}
+                      {emg.length ? (Number(emg[emg.length-1].emg) >= 3 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : <div style={{fontSize:'30px', color:'white'}}>?</div>}
+                      {emg.length ? (Number(emg[emg.length-1].emg) >= 3 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : <div style={{fontSize:'30px'}}>Get ready...</div>}
                       {/* {emg.length ? (emg[emg.length-1] =='tired' ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
                       {emg.length ? (emg[emg.length-1] =='tired' ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'} */}
                     </div>
