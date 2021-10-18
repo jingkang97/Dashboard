@@ -259,7 +259,9 @@ const Overview = ({user}) => {
       </Col>
       
       <Col className="gutter-row" xs={21} lg={8} style={{ marginBottom: 12 }}>
-      <Card  bordered={false}  style={{ width: '100%', backgroundColor: '#5a65ea', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #5a65ea' }}>
+      <Card  bordered={false} style={{width: '100%', backgroundColor: '#3A3C41', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #202225' }}>
+
+      {/* <Card  bordered={false}  style={{ width: '100%', backgroundColor: '#5a65ea', borderRadius:'20px', color:'white',boxShadow:'0px 0px 20px 1px #5a65ea' }}> */}
       <div style={{fontWeight:'bold', fontSize:'15px', color:'#9BA6B2', display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>Favourite Move <LikeOutlined /></div>
                 <Skeleton 
                 loading={loading}
