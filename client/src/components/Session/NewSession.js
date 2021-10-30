@@ -186,14 +186,32 @@ const NewSession = ({openModal}) => {
         useEffect(() => {
           if (payload.topic) {
             setMessages(messages => [...messages, JSON.parse(payload.message)])
-            setSession(prevSess => prevSess.map(el => (el.userId == JSON.parse(payload.message).userId ? {...el,session:[...el.session, JSON.parse(payload.message)]} : el)))        
+            if(!JSON.parse(payload.message).hasOwnProperty('emg')){
+              var index = session.findIndex(item => item.userId === JSON.parse(payload.message).userId);
+              // var index = session.map(function(e) { return session.userId; }).indexOf(JSON.parse(payload.message).userId);
+              // alert(index)
+              var newPosition = JSON.parse(payload.message).position.split(',').indexOf(String(index + 1))
+              // alert(newPosition)
+              var newData = {
+                userId: JSON.parse(payload.message).userId,
+                danceMove: JSON.parse(payload.message).danceMove,
+                position: newPosition + 1
+              }
+              setSession(prevSess => prevSess.map(el => (el.userId == newData.userId ? {...el,session:[...el.session, newData]} : el)))        
+
+            }
+
+            // setSession(prevSess => prevSess.map(el => (el.userId == JSON.parse(payload.message).userId ? {...el,session:[...el.session, JSON.parse(payload.message)]} : el)))        
             setArray(prevArray => [...prevArray, JSON.parse(payload.message)])
             let current_time = moment().format("h:mm:ss A")
 
             if(JSON.parse(payload.message).hasOwnProperty('emg')){
-              var voltage = ((Number(JSON.parse(payload.message).emg) / 1023) * 5.0).toFixed(4)
-              console.log(voltage)
-              setEmg(prevArray => [...prevArray, {emg: voltage , time: current_time}])
+              // to account for redundant emg values since there's three emg values - some with -ve values
+              if(Number(JSON.parse(payload.message).emg) >= 0 || Number(JSON.parse(payload.message).emg) != -1){
+                var voltage = ((Number(JSON.parse(payload.message).emg) / 1023) * 5.0).toFixed(4)
+                console.log(voltage)
+                setEmg(prevArray => [...prevArray, {emg: voltage , time: current_time}])
+              }
             }
             if(JSON.parse(payload.message).hasOwnProperty('syncDelay')){
               setSyncDelay(prevArray => [...prevArray, {sync: JSON.parse(payload.message).syncDelay, time: current_time}])
@@ -330,7 +348,7 @@ const calculateIndividualDance = () => {
       difference = end_time.diff(start_time)
       let duration = moment.utc(difference).format("mm:ss")
 
-      var tired = Math.max(...emg.map(o => o.emg)) >= 3
+      var tired = Math.max(...emg.map(o => o.emg)) <= 0.6
       const body = {
         sessionName: sessionName,
         owner: JSON.parse(localStorage.getItem('profile'))?.username,
@@ -460,6 +478,8 @@ const calculateIndividualDance = () => {
     useEffect(()=>{
       const messageListener = (data) => {
         // set start time
+        
+        
         setSession(prevSess => prevSess.map(el => (el.userId == data.userId ? {...el,session:[...el.session, data]} : el)))        
         setArray(prevArray => [...prevArray, data])
         let current_time = moment().format("h:mm:ss A")
@@ -579,8 +599,8 @@ const calculateIndividualDance = () => {
                       <div >
                         Fatigue Check
                       </div>
-                      {emg.length ? (Number(emg[emg.length-1].emg) >= 3 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : <div style={{fontSize:'30px', color:'white'}}>?</div>}
-                      {emg.length ? (Number(emg[emg.length-1].emg) >= 3 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : <div style={{fontSize:'30px'}}>Get ready...</div>}
+                      {emg.length ? (Number(emg[emg.length-1].emg) <= 0.6 ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : <div style={{fontSize:'30px', color:'white'}}>?</div>}
+                      {emg.length ? (Number(emg[emg.length-1].emg) <= 0.6 ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : <div style={{fontSize:'30px'}}>Get ready...</div>}
                       {/* {emg.length ? (emg[emg.length-1] =='tired' ? <div className="tired"><AiOutlineWarning style={{ filter: 'drop-shadow(1px 1px 20px red)', fontSize:'40px'}}/>Take a break!</div> : <div className="ok"><AiOutlineLike style={{ filter: 'drop-shadow(1px 1px 20px white)', fontSize:'40px', color:'white', marginRight:'10px'}}/>Keep Going!</div> ) : 'Get ready ...'}
                       {emg.length ? (emg[emg.length-1] =='tired' ? <div className="fatigue">Your muscle fatigue level is high</div> : <div className="fatigue">Your muscle fatigue level is normal</div> ) : 'Get ready ...'} */}
                     </div>
@@ -595,7 +615,7 @@ const calculateIndividualDance = () => {
                       <Row gutter={40} style={{margin:'0px', width:'100%'}}>
                         <div style={{display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'space-around', width:'inherit', background:'transparent'}}>
                           
-                          {syncDelay.length ?  (syncDelay[syncDelay.length-1].sync == 0 ? 
+                          {syncDelay.length ?  (syncDelay[syncDelay.length-1].sync == 0.0 ? 
                           <div className="perfectSync">Perfect Sync</div> : (
                             syncDelay[syncDelay.length-1].sync > 0 && syncDelay[syncDelay.length-1].sync <= 0.5 ? 
                             <div className="okSync">Almost Perfect Sync</div> : (syncDelay[syncDelay.length-1].sync > 0.5 ? <div className="notSync">Please Match Up!</div> : null)
@@ -608,7 +628,7 @@ const calculateIndividualDance = () => {
                               <IoIosSync className="syncMove"/>
                               <div style={{position:'absolute', top: '50%', left:'50%', transform:'translate(-50%, -50%)',fontSize:'32px', fontWeight:'bold'}}>
                                 {syncDelay.length ? 
-                                <div>{syncDelay[syncDelay.length-1].sync}s </div> 
+                                <div>{syncDelay[syncDelay.length-1].sync.toFixed(1)}s</div> 
                                 : '?'}
                                 </div>
                             </div>
@@ -627,9 +647,17 @@ const calculateIndividualDance = () => {
                           {rows.map((item, number) => 
                               <Col key={number}>
                                 {array.length ? null : <div className="blobempty">?</div>}
+                                {/* {session.map((item) => (item.session.length ? (item.session[item.session.length-1].position.split(",").indexOf(String(number + 1)) + 1 == number + 1 ?   */}
+
                                 {session.map((item) => (item.session.length ? (item.session[item.session.length-1].position == number + 1 ?  
+
                                 <div className={`blob${(rows.findIndex(x => x.userId == item.userId) + 1) == 1 ? 'one' : (rows.findIndex(x => x.userId == item.userId) + 1) == 2 ? 'two' : 'three'}`}>{rows.findIndex(x => x.userId == item.userId) + 1}</div>
-                                  : null) : null))}
+                                  : null) : null)
+                                  
+                                  )}
+                                  {/* {session.map((item) => (item.session.length ? (item.session[item.session.length-1].position.split(",").indexOf(String(number+1)))
+                                  : null)
+                                  )} */}
                                  </Col>
                           )}
                         </Row>

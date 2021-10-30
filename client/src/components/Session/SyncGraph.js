@@ -55,7 +55,7 @@ const SyncGraph = ({syncData}) => {
         <div style={styles}>
             {/* {alert(percent)} */}
             {console.log(syncData)}
-            <AreaChart
+            <LineChart
             width={500}
             height={300}
             data={syncData}
@@ -71,10 +71,12 @@ const SyncGraph = ({syncData}) => {
             <Tooltip />
             <ReferenceLine y={0.75} label={<div style={{color:'white'}}>Exceed Threshold</div>} />
             {/* <Area type={type} dataKey="sync" fill="#5A65EA" stroke="#5A65EA"/> */}
-            <Area type={type} dataKey="sync" fill="url(#gradient)" stroke="url(#gradient)"/>
+            {/* <Area type={type} dataKey="sync" fill="url(#gradient)" stroke="url(#gradient)"/> */}
+            <Line type={type} dataKey="sync" fill="url(#gradient)" stroke="#5A65EA" strokeWidth={3} dot={false}/>
+
             <XAxis dataKey="time" />
             <YAxis dataKey="sync"/>
-            </AreaChart>
+            </LineChart>
         </div>
      );
 }

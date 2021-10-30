@@ -61,7 +61,7 @@ const FatigueGraph = ({emgData}) => {
         <div style={styles}>
             {console.log(emgData)}
             {/* {alert(percentage)} */}
-            <AreaChart
+            <LineChart
             width={500}
             height={300}
             data={emgData}
@@ -75,13 +75,16 @@ const FatigueGraph = ({emgData}) => {
                 
             </defs>
             <Tooltip />
-            <Area type={type} dataKey="emg" fill="url(#gradient)" stroke="url(#gradient)" strokeWidth={3}/>
+            {/* <Area type={type} dataKey="emg" fill="url(#gradient)" stroke="url(#gradient)" strokeWidth={3}/> */}
+            {/* <Line type={type} dataKey="emg" fill="url(#gradient)" stroke="url(#gradient)" strokeWidth={3} dot={false}/> */}
+            <Line type={type} dataKey="emg" fill="url(#gradient)" stroke="#5A65EA" strokeWidth={3} dot={false}/>
+
             <XAxis dataKey="time" />
             <YAxis dataKey="emg"/>
             {/* <ReferenceLine x={tiredTime} label={<div style={{color:'white'}}>{tiredTime}</div>} /> */}
             {/* <ReferenceLine x={tiredTime}  */}
-            <ReferenceLine y={3} label={<div style={{color:'white'}}>Fatigue</div>} />
-            </AreaChart>
+            <ReferenceLine y={0.6} label={<div style={{color:'white'}}>Fatigue</div>} />
+            </LineChart>
         </div>
      );
 }

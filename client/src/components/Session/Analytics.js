@@ -26,8 +26,8 @@ const Analytics = ({stop, rows, session, emg, syncDelay, start, end, sendPost, o
 
     const calculateTired = () => {
         for(let i = 0; i < emg.length; i ++){
-            if(emg[i].emg > 3){
-                setTired(emg[i].time)
+            if(emg[i].emg <= 0.6){
+                setTired(emg[i].emg)
                 calculateTiredDuration(emg[i].time)
                 break;
             }
